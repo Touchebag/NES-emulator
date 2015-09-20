@@ -1,5 +1,5 @@
 # Compiler options
-CC       := gcc
+CC       := g++
 CC_FLAGS := -Wall
 LD_FLAGS := -L $(LIB_DIR)
 
@@ -13,9 +13,9 @@ LIB_DIR := lib
 DEBUG := DEBUG
 
 # Files
-SRC := $(wildcard  $(SRC_DIR)/*.c)
+SRC := $(wildcard  $(SRC_DIR)/*.cpp)
 INC := $(wildcard  $(INC_DIR)/*.h)
-OBJ := $(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.c=.o)))
+OBJ := $(addprefix $(OBJ_DIR)/, $(notdir $(SRC:.cpp=.o)))
 LIB := $(wildcard  $(LIB_DIR)/*)
 
 # Executable
@@ -31,7 +31,7 @@ debug: $(OBJ)
 	$(CC) $(CC_FLAGS) $^ -o Debug_$(TARGET)
 
 # Main source file (no header)
-$(OBJ_DIR)/main.o: $(SRC_DIR)/main.c
+$(OBJ_DIR)/main.o: $(SRC_DIR)/main.cpp
 	$(CC) $(CC_FLAGS) -c -o $@ $<
 
 # Objects

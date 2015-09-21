@@ -5,7 +5,7 @@ LD_FLAGS := -L $(LIB_DIR)
 
 # Directories
 SRC_DIR := src
-INC_DIR := include
+INC_DIR := inc
 OBJ_DIR := obj
 LIB_DIR := lib
 

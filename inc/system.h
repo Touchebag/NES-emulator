@@ -20,14 +20,27 @@ struct Registers{
 // Main system class
 class System {
   public:
-    // Read a NES rom image and store internally
+    /* Reads a NES rom image and store in current_rom
+     *
+     * Argument is the filepath
+     *
+     * Returns 0 if no errors nad -1 otherwise
+     */
     int open_rom(std::string);
+#ifdef DEBUG
+    // When debugging ROM image is public
+    BYTE *current_rom;
+#endif
 
   private:
     // The (full) currently loaded rom image
+#ifndef DEBUG
     BYTE *current_rom;
+#endif
     // Rom image size in bytes
     int current_rom_size;
+    // The NES cpu registers
+    Registers reg;
 };
 
 #endif

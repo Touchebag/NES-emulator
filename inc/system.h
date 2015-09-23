@@ -5,17 +5,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-typedef unsigned char BYTE;
-
-// Structure for the registers in the NES architecture
-struct Registers{
-  BYTE pc;
-  BYTE sp;
-  BYTE p;
-  BYTE acc;
-  BYTE x;
-  BYTE y;
-};
+#include "utility.h"
 
 // Main system class
 class System {

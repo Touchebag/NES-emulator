@@ -17,9 +17,25 @@ int System::open_rom(std::string filepath) {
     fread(current_rom, filesize, 1, file);
   } else {
     delete current_rom;
-    return -1;
+    return CANNOT_OPEN_FILE;
   }
 
   fclose(file);
-  return 0;
+  return OK;
 };
+
+int System::check_current_rom() {
+  if (!((current_rom[0] == 'N') &&
+        (current_rom[1] == 'E') &&
+        (current_rom[2] == 'S'))) {
+    return BAD_ROM_FILE;
+  };
+
+  if (current_rom[3] != 0x1A) {
+    return BAD_ROM_FILE;
+  }
+  // TODO Add more checks
+
+  return OK;
+};
+

@@ -14,9 +14,16 @@ class System {
      *
      * Argument is the filepath
      *
-     * Returns 0 if no errors nad -1 otherwise
+     * Returns the error code
      */
     int open_rom(std::string);
+
+    /* Checks if the currently loaded file is actaully a valid NES rom image
+     *
+     * Returns the error code
+     */
+    int check_current_rom();
+
 #ifdef DEBUG
     // When debugging ROM image is public
     BYTE *current_rom;

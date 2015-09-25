@@ -24,20 +24,33 @@ class System {
      */
     int check_current_rom();
 
+    /* Reads data such as PRG/CHR ROM size from the current rom
+     *
+     * Returns the error code
+     */
+    int parse_current_rom();
+
 #ifdef DEBUG
-    // When debugging ROM image is public
+    // When debugging ROM and memory is public
     BYTE *current_rom;
+    BYTE *system_ram[65536];
 #endif
 
   private:
-    // The (full) currently loaded rom image
 #ifndef DEBUG
+    // The (full) currently loaded rom image
     BYTE *current_rom;
+    // The system RAM
+    BYTE *system_ram[65536];
 #endif
     // Rom image size in bytes
     int current_rom_size;
     // The NES cpu registers
     Registers reg;
+    // PRG ROM size (# of 16KiB blocks)
+    int prg_rom_blocks;
+    // CHR ROM size (# of 8KiB blocks)
+    int chr_rom_blocks;
 };
 
 #endif

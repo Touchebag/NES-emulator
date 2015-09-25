@@ -39,3 +39,9 @@ int System::check_current_rom() {
   return OK;
 };
 
+int System::parse_current_rom() {
+  prg_rom_blocks = current_rom[4];
+  chr_rom_blocks = current_rom[5];
+  return OK;
+}
+

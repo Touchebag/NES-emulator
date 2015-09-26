@@ -22,7 +22,7 @@ class System {
 #ifdef DEBUG
     // When debugging ROM and memory is public
     BYTE *current_rom;
-    BYTE *system_ram[65536];
+    BYTE *system_ram[0x10000];
 #endif
 
   private:
@@ -33,7 +33,7 @@ class System {
     // The (full) currently loaded rom image
     BYTE *current_rom;
     // The system RAM
-    BYTE *system_ram[65536];
+    BYTE *system_ram[0x10000];
 #endif
     // Rom image size in bytes
     int current_rom_size;

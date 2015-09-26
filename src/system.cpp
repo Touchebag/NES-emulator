@@ -1,4 +1,3 @@
-
 #include "../inc/system.h"
 
 int System::load_rom_image(std::string filepath) {
@@ -64,5 +63,5 @@ int System::parse_current_rom() {
   prg_rom_blocks = current_rom[4];
   chr_rom_blocks = current_rom[5];
   return OK;
-}
+};
 

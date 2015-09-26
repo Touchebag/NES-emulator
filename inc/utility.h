@@ -40,8 +40,6 @@ enum Ram_pointers {
   IO_REGISTERS = 0x2000,
   EXPANSION_ROM = 0x4020,
   SRAM = 0x6000,
-  PRG_ROM_LOWER = 0x8000,
-  PRG_ROM_UPPER = 0xC000
 };
 
 #endif

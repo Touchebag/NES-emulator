@@ -10,25 +10,14 @@
 // Main system class
 class System {
   public:
-    /* Reads a NES rom image and store in current_rom
+    /* Loads a ROM image
      *
      * Argument is the filepath
      *
-     * Returns the error code
+     * Returns the error code of any subroutine
      */
-    int open_rom(std::string);
+    int load_rom_image(std::string);
 
-    /* Checks if the currently loaded file is actaully a valid NES rom image
-     *
-     * Returns the error code
-     */
-    int check_current_rom();
-
-    /* Reads data such as PRG/CHR ROM size from the current rom
-     *
-     * Returns the error code
-     */
-    int parse_current_rom();
 
 #ifdef DEBUG
     // When debugging ROM and memory is public
@@ -37,6 +26,9 @@ class System {
 #endif
 
   private:
+
+    /*********** Variables ************/
+
 #ifndef DEBUG
     // The (full) currently loaded rom image
     BYTE *current_rom;
@@ -51,6 +43,29 @@ class System {
     int prg_rom_blocks;
     // CHR ROM size (# of 8KiB blocks)
     int chr_rom_blocks;
+
+
+    /*********** Functions ***********/
+
+    /* Reads a NES rom image and store in current_rom
+     *
+     * Argument is the filepath
+     *
+     * Returns the error code
+     */
+    int open_rom(std::string);
+
+    /* Checks if the currently loaded file is actually a valid NES rom image
+     *
+     * Returns the error code
+     */
+    int check_current_rom();
+
+    /* Reads data such as PRG/CHR ROM size from the current rom
+     *
+     * Returns the error code
+     */
+    int parse_current_rom();
 };
 
 #endif

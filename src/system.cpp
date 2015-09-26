@@ -1,6 +1,27 @@
 
 #include "../inc/system.h"
 
+int System::load_rom_image(std::string filepath) {
+  int error_code = OK;
+
+  error_code = System::open_rom(filepath);
+  if (error_code != OK) {
+    return error_code;
+  };
+
+  error_code = System::check_current_rom();
+  if (error_code != OK) {
+    return error_code;
+  };
+
+  error_code = System::parse_current_rom();
+  if (error_code != OK) {
+    return error_code;
+  };
+
+  return OK;
+}
+
 int System::open_rom(std::string filepath) {
   // Get file size
   struct stat filestatus;

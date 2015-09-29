@@ -44,10 +44,20 @@ class System {
     int current_rom_size;
     // The NES cpu registers
     Registers reg;
+
+    /* --- ROM info --- */
+
     // PRG ROM size (# of 16KiB blocks)
     int prg_rom_blocks;
+    // PRG ROM pointer
+    BYTE **prg_rom;
     // CHR ROM size (# of 8KiB blocks)
     int chr_rom_blocks;
+    // CHR ROM pointer
+    BYTE **chr_rom;
+    // True if rom has trainer data
+    bool has_trainer;
+
 
 
     /*********** Functions ***********/

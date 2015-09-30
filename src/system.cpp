@@ -19,7 +19,12 @@ int System::load_rom_image(std::string filepath) {
   };
 
   return OK;
-}
+};
+
+int System::init(std::string filepath) {
+  load_rom_image(filepath);
+  return OK;
+};
 
 int System::open_rom(std::string filepath) {
   // Get file size

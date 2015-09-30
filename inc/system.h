@@ -10,13 +10,11 @@
 // Main system class
 class System {
   public:
-    /* Loads a ROM image
+    /* Initialises the emulator (sets pc, loads prg rom etc)
      *
-     * Argument is the filepath
-     *
-     * Returns the error code of any subroutine
+     * Returns the error code
      */
-    int load_rom_image(std::string);
+    int init(std::string);
 
 
 #ifdef DEBUG
@@ -61,6 +59,14 @@ class System {
 
 
     /*********** Functions ***********/
+
+    /* Loads a ROM image. Calls all neccessary subroutines to load a ROM file
+     *
+     * Argument is the filepath
+     *
+     * Returns the error code of any subroutine
+     */
+    int load_rom_image(std::string);
 
     /* Reads a NES rom image and store in current_rom
      *

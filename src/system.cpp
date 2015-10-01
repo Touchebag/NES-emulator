@@ -23,6 +23,8 @@ int System::load_rom_image(std::string filepath) {
 
 int System::init(std::string filepath) {
   load_rom_image(filepath);
+  memory = new Cpu_ram();
+
   return OK;
 };
 

@@ -2,7 +2,7 @@
 #define UTILITY
 
 // For ease of use
-typedef unsigned char BYTE;
+typedef uint8_t BYTE;
 
 // Structure for the registers in the NES architecture
 struct Registers {
@@ -30,16 +30,6 @@ enum Status_flags {
   BREAK_FLAG = 16,
   OVERFLOW_FLAG = 64,
   NEGATIVE_FLAG = 128
-};
-
-// RAM addresses
-enum Ram_pointers {
-  ZERO_PAGE = 0x0000,
-  STACK = 0x0100,
-  SYSTEM_RAM = 0x0200,
-  IO_REGISTERS = 0x2000,
-  EXPANSION_ROM = 0x4020,
-  SRAM = 0x6000,
 };
 
 #endif

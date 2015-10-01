@@ -6,9 +6,11 @@
 #include <sys/stat.h>
 
 #include "utility.h"
+#include "cpu_ram.h"
 
 // Main system class
 class System {
+  // friend class Interpreter;
   public:
     /* Initialises the emulator (sets pc, loads prg rom etc)
      *
@@ -18,25 +20,21 @@ class System {
 
 
 #ifdef DEBUG
-    // When debugging ROM and memory is public
+    // When debugging ROM is public
     BYTE *current_rom;
-    BYTE *system_ram[0x8000];
-    BYTE *prg_rom_lower_bank[0x4000];
-    BYTE *prg_rom_upper_bank[0x4000];
 #endif
 
   private:
+    /*********** Classes ************/
+
+    Cpu_ram *memory;
+    //Interpreter cpu;
 
     /*********** Variables ************/
 
 #ifndef DEBUG
     // The (full) currently loaded rom image
     BYTE *current_rom;
-    // The system RAM
-    BYTE *system_ram[0x8000];
-    // With pointers to prg rom banks
-    BYTE *prg_rom_lower_bank[0x4000];
-    BYTE *prg_rom_upper_bank[0x4000];
 #endif
     // Rom image size in bytes
     int current_rom_size;

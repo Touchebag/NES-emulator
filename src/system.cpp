@@ -25,6 +25,13 @@ int System::init(std::string filepath) {
   load_rom_image(filepath);
   memory = new Cpu_ram();
 
+  cpu = new Interpreter(&reg, memory);
+
+  BYTE pc_low = memory->read_ram(0xFC, 0xFF);
+  BYTE pc_high = memory->read_ram(0xFD, 0xFF);
+
+  cpu->set_pc(pc_low, pc_high);
+
   return OK;
 };
 

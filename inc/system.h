@@ -7,6 +7,7 @@
 
 #include "utility.h"
 #include "cpu_ram.h"
+#include "interpreter.h"
 
 // Main system class
 class System {
@@ -28,7 +29,7 @@ class System {
     /*********** Classes ************/
 
     Cpu_ram *memory;
-    //Interpreter cpu;
+    Interpreter *cpu;
 
     /*********** Variables ************/
 

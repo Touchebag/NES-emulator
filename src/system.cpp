@@ -87,9 +87,12 @@ int System::parse_current_rom() {
 
   prg_rom_blocks = current_rom[4];
   chr_rom_blocks = current_rom[5];
+  std::cout << prg_rom_blocks << " " << chr_rom_blocks << "\n";
 
   // Array of pointers to the start of each PRG ROM block in current_rom
   prg_rom = new BYTE*[prg_rom_blocks];
+  // And CHR ROM blocks
+  chr_rom = new BYTE*[chr_rom_blocks];
 
   //Add 512 bytes to offset if the ROM has a trainer
   has_trainer = (flags_6 & 4);
@@ -109,7 +112,8 @@ int System::parse_current_rom() {
   // CHR ROM blocks
   for (int i = 0; i < chr_rom_blocks; i++) {
     // Calculate location of CHR ROM banks (offset by size of PRG ROM)
-    int tmp = 16 + (prg_rom_blocks * 16384) + trainer_offset + (i * 16384);
+    int tmp = 16 + (prg_rom_blocks * 16384) + trainer_offset + (i * 8192);
+  std::cout << tmp;
     chr_rom[i] = &current_rom[tmp];
   };
 

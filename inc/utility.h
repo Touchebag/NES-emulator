@@ -1,6 +1,8 @@
 #ifndef UTILITY
 #define UTILITY
 
+#include <stdint.h>
+
 // For ease of use
 typedef uint8_t BYTE;
 

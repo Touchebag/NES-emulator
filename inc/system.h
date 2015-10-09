@@ -19,6 +19,9 @@ class System {
      */
     int init(std::string);
 
+    // The main loop of the program. Run only after init
+    void run();
+
 
 #ifdef DEBUG
     // When debugging ROM is public

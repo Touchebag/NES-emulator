@@ -35,6 +35,12 @@ int System::init(std::string filepath) {
   return OK;
 };
 
+void System::run() {
+  while (true) {
+    cpu->execute_instruction();
+  };
+};
+
 int System::open_rom(std::string filepath) {
   // Get file size
   struct stat filestatus;

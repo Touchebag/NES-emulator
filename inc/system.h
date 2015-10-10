@@ -13,14 +13,12 @@
 class System {
   // friend class Interpreter;
   public:
-    /* Initialises the emulator (sets pc, loads prg rom etc)
-     *
-     * Returns the error code
-     */
-    int init(std::string);
-
-    // The main loop of the program. Run only after init
+    // The main loop of the program
     void run();
+
+    // Constructor and destructor. Takes name of ROM file
+    System(std::string);
+    ~System();
 
 
 #ifdef DEBUG

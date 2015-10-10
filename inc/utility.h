@@ -34,4 +34,10 @@ enum Status_flag {
   NEGATIVE_FLAG = 128
 };
 
+// PRG ROM block slots in RAM
+enum Block_slot {
+  PRG_SLOT_LOWER,
+  PRG_SLOT_UPPER
+};
+
 #endif

@@ -23,7 +23,10 @@ int System::load_rom_image(std::string filepath) {
 
 int System::init(std::string filepath) {
   load_rom_image(filepath);
-  memory = new Cpu_ram();
+  memory = new Cpu_ram(prg_rom);
+
+  memory->load_prg_block(PRG_SLOT_LOWER, 0);
+  memory->load_prg_block(PRG_SLOT_UPPER, 0);
 
   cpu = new Interpreter(&reg, memory);
 
@@ -87,7 +90,6 @@ int System::parse_current_rom() {
 
   prg_rom_blocks = current_rom[4];
   chr_rom_blocks = current_rom[5];
-  std::cout << prg_rom_blocks << " " << chr_rom_blocks << "\n";
 
   // Array of pointers to the start of each PRG ROM block in current_rom
   prg_rom = new BYTE*[prg_rom_blocks];
@@ -113,7 +115,6 @@ int System::parse_current_rom() {
   for (int i = 0; i < chr_rom_blocks; i++) {
     // Calculate location of CHR ROM banks (offset by size of PRG ROM)
     int tmp = 16 + (prg_rom_blocks * 16384) + trainer_offset + (i * 8192);
-  std::cout << tmp;
     chr_rom[i] = &current_rom[tmp];
   };
 

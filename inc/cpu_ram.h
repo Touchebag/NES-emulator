@@ -63,7 +63,10 @@ class Cpu_ram {
       PRG_ROM_UPPER = 0xC000,
     };
 
+    // Calculates where a specific address is referring to
     BYTE* access_memory_byte(BYTE address_low, BYTE address_high);
 
+    // Pointers to the PRG ROM in the ROM image
+    BYTE **prg_rom;
 };
 #endif

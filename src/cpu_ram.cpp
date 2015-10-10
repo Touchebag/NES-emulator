@@ -1,5 +1,12 @@
 #include "../inc/cpu_ram.h"
 
+Cpu_ram::Cpu_ram(BYTE **prg_rom_pointer) {
+  prg_rom = prg_rom_pointer;
+};
+
+Cpu_ram::~Cpu_ram() {
+};
+
 //TODO handle NULL pointer
 BYTE Cpu_ram::read_ram(BYTE address_low, BYTE address_high) {
   BYTE *location = access_memory_byte(address_low, address_high);
@@ -51,3 +58,12 @@ BYTE* Cpu_ram::access_memory_byte(BYTE address_low, BYTE address_high) {
   return pointer;
 };
 
+void Cpu_ram::load_prg_block(Block_slot slot, int block_index) {
+  BYTE *block = prg_rom[block_index];
+
+  if (slot == PRG_SLOT_LOWER) {
+    prg_rom_lower_bank = block;
+  } else {
+    prg_rom_upper_bank = block;
+  };
+};

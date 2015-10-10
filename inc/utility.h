@@ -24,7 +24,7 @@ enum Error_code {
 };
 
 // CPU status flags
-enum Status_flags {
+enum Status_flag {
   CARRY_FLAG = 1,
   ZERO_FLAG = 2,
   INTERRUPT_FLAG = 4,

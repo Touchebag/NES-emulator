@@ -20,7 +20,8 @@ class Interpreter {
     // Increments the pc register by "number"
     void inc_pc(int number);
 
-    // Constructor and destructor
+    // Constructor and destructor. Takes the pointers to the systems registers
+    // and the memory object
     Interpreter(Registers*, Cpu_ram*);
     ~Interpreter();
 

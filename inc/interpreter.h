@@ -29,6 +29,22 @@ class Interpreter {
     // Pointer to the registers and memory from system class
     Registers *reg;
     Cpu_ram *memory;
+
+    /* Sets (or clears) a bit in the p register
+     *
+     * Arguments are which bit and the value of it
+     * (true = 1, false = 0)
+     */
+    void set_status_bit(Status_flag bit, bool value);
+
+    /* These functions automatically sets or clears the bits in the p register
+     * dependant on the value (i.e. the result of the operation)
+     */
+    void set_negative_bit(BYTE value);
+    void set_zero_bit(BYTE value);
+
+    // Fetches the byte stored at the address in pc
+    BYTE read_from_pc();
 };
 
 #endif

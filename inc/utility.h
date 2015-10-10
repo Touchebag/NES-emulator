@@ -11,7 +11,7 @@ struct Registers {
   BYTE pc[2];
   BYTE sp;
   BYTE p;
-  BYTE acc;
+  BYTE a;
   BYTE x;
   BYTE y;
 };
@@ -30,6 +30,7 @@ enum Status_flag {
   INTERRUPT_FLAG = 4,
   DECIMAL_FLAG = 8,
   BREAK_FLAG = 16,
+  UNUSED_FLAG = 32,
   OVERFLOW_FLAG = 64,
   NEGATIVE_FLAG = 128
 };

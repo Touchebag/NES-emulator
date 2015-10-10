@@ -6,17 +6,6 @@
 
 class Cpu_ram {
   public:
-#ifdef DEBUG
-    // When debugging RAM is public
-    BYTE system_ram[0x0800];
-    BYTE ppu_registers[0x0008];
-    BYTE io_registers[0x0020];
-    BYTE expansion_rom[0x1FE0];
-    BYTE sram[0x2000];
-    BYTE prg_rom_lower_bank[0x4000];
-    BYTE prg_rom_upper_bank[0x4000];
-#endif
-
     /* Reads an address from memory
      *
      * Arguments are the lowest byte (LSB)
@@ -34,18 +23,34 @@ class Cpu_ram {
      */
     void write_ram(BYTE address_low, BYTE address_high, BYTE value);
 
+    /* Replaces (or sets) a loaded PRG ROM block in memory
+     *
+     * Arguments are the slot to set and the index of the PRG ROM
+     * (from the order in the ROM)
+     */
+    void load_prg_block(Block_slot slot, int block_index);
 
-  private:
+    // Constructor and destructor. Takes the pointer to the PRG ROM banks
+    // in the ROM image
+    Cpu_ram(BYTE **prg_rom);
+    ~Cpu_ram();
+
+
+  // When debugging RAM is public
 #ifndef DEBUG
+  // ...but private otherwise
+  private:
+#endif
     // Pointers to all sections of system RAM
     BYTE system_ram[0x0800];
     BYTE ppu_registers[0x0008];
     BYTE io_registers[0x0020];
     BYTE expansion_rom[0x1FE0];
     BYTE sram[0x2000];
-    BYTE prg_rom_lower_bank[0x4000];
-    BYTE prg_rom_upper_bank[0x4000];
-#endif
+    BYTE *prg_rom_lower_bank;
+    BYTE *prg_rom_upper_bank;
+
+  private:
 
     // RAM addresses
     enum Ram_pointers {

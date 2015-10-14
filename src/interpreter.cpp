@@ -52,7 +52,7 @@ void Interpreter::set_zero_flag(BYTE value) {
   set_status_bit(ZERO_FLAG, (value == 0));
 };
 
-/* {{{ Main interpreter loop */
+/* Main interpreter loop */
 int Interpreter::execute_instruction() {
   int opcode = read_from_pc();
   int cycles = 0;
@@ -95,7 +95,8 @@ int Interpreter::execute_instruction() {
 
     // }}}
     // LDA {{{
-    case 0xA9: // Immediate
+    // Immediate {{{
+    case 0xA9:
       inc_pc(1);
       c = read_from_pc();
       reg->a = c;
@@ -111,8 +112,9 @@ int Interpreter::execute_instruction() {
 #ifdef VERBOSE
       cout << std::hex << opcode << " LDA #" << (int)c << "\n";
 #endif
-      break;
-    case 0xBD: // Absolute, X
+      break; // }}}
+    // Absolute, X {{{
+    case 0xBD:
       // Cycles first for easier adding of potential page-crossing cycle
       cycles = 4;
 
@@ -148,8 +150,10 @@ int Interpreter::execute_instruction() {
 #endif
       break;
       // }}}
+      // }}}
     // LDX {{{
-    case 0xA2: // Immediate
+    // Immediate {{{
+    case 0xA2:
       inc_pc(1);
       c = read_from_pc();
       reg->x = c;
@@ -167,8 +171,10 @@ int Interpreter::execute_instruction() {
 #endif
       break;
       // }}}
+      // }}}
     // STA {{{
-    case 0x8D: // Absolute
+    // Absolute {{{
+    case 0x8D:
       inc_pc(1);
       lo = read_from_pc();
       inc_pc(1);
@@ -187,17 +193,17 @@ int Interpreter::execute_instruction() {
         << " " << (int)reg->a << "\n";
 #endif
       break;
+      // }}}
+      // }}}
     default:
 #ifdef VERBOSE
       cout << "Unknown opcode " << std::hex << (int)opcode;
       exit(1);
 #endif
       break;
-      // }}}
   };
 
   // ppu.cycle(cycles);
 
   return OK;
 };
-/* }}} */

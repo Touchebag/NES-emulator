@@ -40,8 +40,8 @@ class Interpreter {
     /* These functions automatically sets or clears the bits in the p register
      * dependant on the value (i.e. the result of the operation)
      */
-    void set_negative_bit(BYTE value);
-    void set_zero_bit(BYTE value);
+    void set_negative_flag(BYTE value);
+    void set_zero_flag(BYTE value);
 
     // Fetches the byte stored at the address in pc
     BYTE read_from_pc();

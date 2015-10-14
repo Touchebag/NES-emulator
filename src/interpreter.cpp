@@ -42,13 +42,13 @@ void Interpreter::set_status_bit(Status_flag bit, bool value) {
   };
 };
 
-void Interpreter::set_negative_bit(BYTE value) {
+void Interpreter::set_negative_flag(BYTE value) {
   bool bit = (value >> 7) & 1;
 
   set_status_bit(NEGATIVE_FLAG, bit);
 };
 
-void Interpreter::set_zero_bit(BYTE value) {
+void Interpreter::set_zero_flag(BYTE value) {
   set_status_bit(ZERO_FLAG, (value == 0));
 };
 
@@ -63,20 +63,47 @@ int Interpreter::execute_instruction() {
    * hi/lo -> Memory addresses
    * c     -> constants
    * a,x.y -> contents of registers
+   * m     -> value in memory
+   * tmp   -> temporary calculations
    */
-  BYTE hi, lo, c, a, x, y;
+  BYTE hi, lo, c, a, x, y, tmp;
 
   switch (opcode) {
-    /********  LDA  ********/
+    // CMP {{{
+    case 0xC9:
+      inc_pc(1);
+      c = read_from_pc();
+      inc_pc(1);
+
+      // Compare
+      a = reg->a;
+      tmp = a - c;
+
+      // Set flags
+      set_negative_flag(tmp);
+      set_zero_flag(tmp);
+      // 0 if c > a
+      set_status_bit(CARRY_FLAG, c <= a);
+
+      // Set cycles
+      cycles = 2;
+
+#ifdef VERBOSE
+      cout << std::hex << opcode << " CMP #" << (int)c << "\n";
+#endif
+      break;
+
+    // }}}
+    // LDA {{{
     case 0xA9: // Immediate
       inc_pc(1);
-      a = read_from_pc();
-      reg->a = a;
+      c = read_from_pc();
+      reg->a = c;
       inc_pc(1);
 
       // Set status
-      set_negative_bit(a);
-      set_zero_bit(a);
+      set_negative_flag(c);
+      set_zero_flag(c);
 
       // Number of cycles
       cycles = 2;
@@ -110,8 +137,8 @@ int Interpreter::execute_instruction() {
       reg->a = a;
 
       // Set status
-      set_negative_bit(a);
-      set_zero_bit(a);
+      set_negative_flag(a);
+      set_zero_flag(a);
 
 #ifdef VERBOSE
       cout << std::hex << opcode << " LDA "
@@ -120,8 +147,8 @@ int Interpreter::execute_instruction() {
         << " " << (int)x << " " << (int)a << "\n";
 #endif
       break;
-
-    /********  LDX  ********/
+      // }}}
+    // LDX {{{
     case 0xA2: // Immediate
       inc_pc(1);
       c = read_from_pc();
@@ -129,8 +156,8 @@ int Interpreter::execute_instruction() {
       inc_pc(1);
 
       // Set status
-      set_negative_bit(c);
-      set_zero_bit(c);
+      set_negative_flag(c);
+      set_zero_flag(c);
 
       // Number of cycles
       cycles = 2;
@@ -139,8 +166,8 @@ int Interpreter::execute_instruction() {
       cout << std::hex << opcode << " LDX #" << (int)c << "\n";
 #endif
       break;
-
-    /********  STA  ********/
+      // }}}
+    // STA {{{
     case 0x8D: // Absolute
       inc_pc(1);
       lo = read_from_pc();
@@ -166,6 +193,7 @@ int Interpreter::execute_instruction() {
       exit(1);
 #endif
       break;
+      // }}}
   };
 
   // ppu.cycle(cycles);

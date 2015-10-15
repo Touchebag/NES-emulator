@@ -69,6 +69,53 @@ int Interpreter::execute_instruction() {
   BYTE hi, lo, c, a, x, y, tmp;
 
   switch (opcode) {
+    // BEQ {{{
+    case 0xF0:
+      // Cycles first to help with page crossing
+      cycles = 2;
+
+      lo = reg->pc[0];
+      hi = reg->pc[1];
+      inc_pc(1);
+      tmp = read_from_pc();
+      inc_pc(1);
+
+      // If latest operation was zero
+      if (reg->p & ZERO_FLAG) {
+        // If highest bit is set (negative)
+        if (tmp & 128) {
+          tmp &= 127;
+          // If no page crossing
+          if (tmp <= lo) {
+            lo -= tmp;
+            cycles += 1;
+          } else {
+            //TODO Ugly as balls, neccessary because of underflow?
+            tmp -= lo;
+            lo = 256 - tmp;
+            hi--;
+            cycles += 2;
+          };
+        } else { // If positive
+          // If no page crossing
+          if (tmp <= (255 - lo)) {
+            lo += tmp;
+            cycles += 1;
+          } else {
+            lo = (lo + tmp) % 255;
+            hi++;
+            cycles += 2;
+          };
+        };
+      set_pc(lo, hi);
+      };
+
+#ifdef VERBOSE
+      cout << std::hex << opcode << " BEQ " << (int)tmp << "\n";
+#endif
+
+      break;
+    // }}}
     // CMP {{{
     case 0xC9:
       inc_pc(1);
@@ -132,7 +179,7 @@ int Interpreter::execute_instruction() {
         lo = (lo + x) % 255;
         hi++;
         cycles++;
-      }
+      };
 
       // Store to A
       a = memory->read_ram(lo, hi);

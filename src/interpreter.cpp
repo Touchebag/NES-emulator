@@ -141,6 +141,23 @@ int Interpreter::execute_instruction() {
       break;
 
     // }}}
+    // INX {{{
+    case 0xE8:
+      inc_pc(1);
+      reg->x = (reg->x + 1) % 256;
+
+      // Set flags
+      set_negative_flag(reg->x);
+      set_zero_flag(reg->x);
+
+      // Number of cycles
+      cycles = 2;
+
+#ifdef VERBOSE
+      cout << std::hex << opcode << " INX" << "\n";
+#endif
+      break;
+    // }}}
     // LDA {{{
     // Immediate {{{
     case 0xA9:

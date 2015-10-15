@@ -267,6 +267,12 @@ int Interpreter::execute_instruction() {
       break;
   };
 
+#ifdef DEBUG
+  if (cycles == 0) {
+    cout << "WARNING unfinished opcode: " << opcode << "\n";
+  };
+#endif
+
   // ppu.cycle(cycles);
 
   return OK;

@@ -1,4 +1,4 @@
-#include "../inc/system.h"
+#include "system.h"
 
 int System::load_rom_image(std::string filepath) {
   int error_code = OK;

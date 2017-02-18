@@ -1,4 +1,4 @@
-#include "../inc/cpu_ram.h"
+#include "cpu_ram.h"
 
 Cpu_ram::Cpu_ram(BYTE **prg_rom_pointer) {
   prg_rom = prg_rom_pointer;

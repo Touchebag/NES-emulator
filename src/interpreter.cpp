@@ -1,4 +1,4 @@
-#include "../inc/interpreter.h"
+#include "interpreter.h"
 
 #ifdef DEBUG
 // Add extra stuff for debugging

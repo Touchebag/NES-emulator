@@ -66,7 +66,7 @@ int Interpreter::execute_instruction() {
    * m     -> value in memory
    * tmp   -> temporary calculations
    */
-  BYTE hi, lo, c, a, x, y, tmp;
+  BYTE hi, lo, c, a, x, y, m, tmp;
 
   switch (opcode) {
     // BEQ {{{
@@ -158,6 +158,24 @@ int Interpreter::execute_instruction() {
 #endif
       break;
     // }}}
+    // JMP {{{
+    // Immediate {{{
+    case 0x4C:
+      inc_pc(1);
+      lo = read_from_pc();
+      inc_pc(1);
+      hi = read_from_pc();
+
+      set_pc(lo, hi);
+
+      cycles = 3;
+
+#ifdef VERBOSE
+      cout << std::hex << opcode << " JMP " << (int)lo << " " << (int)hi << "\n";
+#endif
+      break;
+      // }}}
+    // }}}
     // LDA {{{
     // Immediate {{{
     case 0xA9:
@@ -176,7 +194,8 @@ int Interpreter::execute_instruction() {
 #ifdef VERBOSE
       cout << std::hex << opcode << " LDA #" << (int)c << "\n";
 #endif
-      break; // }}}
+      break;
+      // }}}
     // Absolute, X {{{
     case 0xBD:
       // Cycles first for easier adding of potential page-crossing cycle
@@ -214,7 +233,7 @@ int Interpreter::execute_instruction() {
 #endif
       break;
       // }}}
-      // }}}
+    // }}}
     // LDX {{{
     // Immediate {{{
     case 0xA2:
@@ -235,7 +254,9 @@ int Interpreter::execute_instruction() {
 #endif
       break;
       // }}}
-      // }}}
+    // }}}
+    // SBC {{{
+    // }}}
     // STA {{{
     // Absolute {{{
     case 0x8D:
@@ -258,7 +279,7 @@ int Interpreter::execute_instruction() {
 #endif
       break;
       // }}}
-      // }}}
+    // }}}
     default:
 #ifdef VERBOSE
       cout << "Unknown opcode " << std::hex << (int)opcode;

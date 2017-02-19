@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.7)
 project (NES_emulator)
 
-include_directories ("${PROJECT_SOURCE_DIR}/inc")
+include_directories ("${PROJECT_SOURCE_DIR}/include")
 
 set (COMPILE_FLAGS "-Wall")
 set (DEBUG_FLAGS "-DDEBUG")

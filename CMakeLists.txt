@@ -1,42 +1,31 @@
 cmake_minimum_required (VERSION 3.7)
 project (NES_emulator)
 
-include_directories ("${PROJECT_SOURCE_DIR}/include")
-
-set (COMPILE_FLAGS "-Wall")
+set (CC_OPTIONS -Wall -DLOG_LEVEL=3)
 set (DEBUG_FLAGS "-DDEBUG")
 
-set (SOURCES
-      src/main.cpp
-      src/interpreter.cpp
-      src/cpu_ram.cpp
-      src/system.cpp
-      )
+set (EMULATOR_TARGET "NES_emulator")
+set (TEST_TARGET "tests")
 
-add_executable (emu ${SOURCES})
-target_compile_options (emu PUBLIC ${COMPILE_FLAGS})
-set_target_properties (emu PROPERTIES OUTPUT_NAME "NES_emulator")
+file (GLOB_RECURSE SOURCES src/*.cpp)
+
+add_executable (${EMULATOR_TARGET} ${SOURCES})
+target_compile_options (${EMULATOR_TARGET} PUBLIC ${CC_OPTIONS})
+target_include_directories (${EMULATOR_TARGET} PUBLIC src/)
 
 add_executable (debug ${SOURCES})
 target_compile_options (debug PUBLIC ${COMPILE_FLAGS} ${DEBUG_FLAGS})
 set_target_properties (debug PROPERTIES OUTPUT_NAME "debug")
 
-enable_testing ()
-find_package (GTest REQUIRED)
-include_directories (${GTEST_INCLUDE_DIRS})
+find_package (GTest)
 
-set (TEST_SOURCES
-      test/test_interpreter.cpp
-      )
+if (GTest_FOUND)
+    # Test target
+    file (GLOB_RECURSE TEST_SOURCES test/*.cpp)
 
-add_executable (test_interpreter ${TEST_SOURCES})
-target_link_libraries (test_interpreter ${GTEST_BOTH_LIBRARIES})
+    add_executable (${TEST_TARGET} ${TEST_SOURCES})
+    target_compile_options (${TEST_TARGET} PUBLIC ${CC_OPTIONS})
+    target_include_directories (${TEST_TARGET} PUBLIC src/ test/)
 
-add_test (tests
-           test_interpreter
-           )
-
-add_custom_target (all_tests COMMAND ${CMAKE_CTEST_COMMAND}
-                    DEPENDS test_interpreter
-                    )
-
+    target_link_libraries (${TEST_TARGET} ${GTEST_BOTH_LIBRARIES})
+endif()

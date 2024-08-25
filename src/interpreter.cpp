@@ -1,12 +1,6 @@
 #include "interpreter.h"
 
-#ifdef DEBUG
-// Add extra stuff for debugging
-#include "stdlib.h"
-#include <iomanip>
-#define VERBOSE
-using namespace std;
-#endif
+#include "log.h"
 
 Interpreter::Interpreter(Registers *registers, Cpu_ram *ram) {
   reg = registers;
@@ -110,10 +104,7 @@ int Interpreter::execute_instruction() {
       set_pc(lo, hi);
       };
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " BEQ " << (int)tmp << "\n";
-#endif
-
+      LOGV("%x BEQ %i", opcode, tmp)
       break;
     // }}}
     // CMP {{{
@@ -135,9 +126,7 @@ int Interpreter::execute_instruction() {
       // Set cycles
       cycles = 2;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " CMP #" << (int)c << "\n";
-#endif
+      LOGV("%x CMP #%i", opcode, c)
       break;
 
     // }}}
@@ -153,9 +142,7 @@ int Interpreter::execute_instruction() {
       // Number of cycles
       cycles = 2;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " INX" << "\n";
-#endif
+      LOGV("%x INX", opcode)
       break;
     // }}}
     // JMP {{{
@@ -170,9 +157,7 @@ int Interpreter::execute_instruction() {
 
       cycles = 3;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " JMP " << (int)lo << " " << (int)hi << "\n";
-#endif
+      LOGV("%x JMP %i %i", opcode, lo, hi)
       break;
       // }}}
     // }}}
@@ -191,9 +176,7 @@ int Interpreter::execute_instruction() {
       // Number of cycles
       cycles = 2;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " LDA #" << (int)c << "\n";
-#endif
+      LOGV("%x LDA #%i", opcode, c)
       break;
       // }}}
     // Absolute, X {{{
@@ -225,12 +208,7 @@ int Interpreter::execute_instruction() {
       set_negative_flag(a);
       set_zero_flag(a);
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " LDA "
-        << setfill('0') << setw(2) << (int)hi
-        << setfill('0') << setw(2) << (int)lo
-        << " " << (int)x << " " << (int)a << "\n";
-#endif
+      LOGV("%x LDA %i %i %i %i", opcode, hi, lo, x, y)
       break;
       // }}}
     // }}}
@@ -249,9 +227,7 @@ int Interpreter::execute_instruction() {
       // Number of cycles
       cycles = 2;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " LDX #" << (int)c << "\n";
-#endif
+      LOGV("%x LDX #%i", opcode, c)
       break;
       // }}}
     // }}}
@@ -271,28 +247,15 @@ int Interpreter::execute_instruction() {
       // Number of cycles
       cycles = 3;
 
-#ifdef VERBOSE
-      cout << std::hex << opcode << " STA "
-        << setfill('0') << setw(2) << (int)hi
-        << setfill('0') << setw(2) << (int)lo
-        << " " << (int)reg->a << "\n";
-#endif
+      LOGV("%x STA %i %i %i", opcode, hi, lo, reg->a)
       break;
       // }}}
     // }}}
     default:
-#ifdef VERBOSE
-      cout << "Unknown opcode " << std::hex << (int)opcode;
+      LOGE("Unknown opcode %x", opcode)
       exit(1);
-#endif
       break;
   };
-
-#ifdef DEBUG
-  if (cycles == 0) {
-    cout << "WARNING unfinished opcode: " << opcode << "\n";
-  };
-#endif
 
   // ppu.cycle(cycles);
 

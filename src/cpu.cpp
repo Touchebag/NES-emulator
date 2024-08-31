@@ -4,6 +4,10 @@
 
 #include "log.h"
 
+bool Cpu::getStatusFlag(Cpu::StatusFlag flag) {
+    return reg_.p & static_cast<uint8_t>(flag);
+}
+
 void Cpu::setStatusFlag(StatusFlag bit, bool value) {
     if (value) {
         reg_.p |= static_cast<uint8_t>(bit);

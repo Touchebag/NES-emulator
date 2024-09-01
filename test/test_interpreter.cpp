@@ -30,6 +30,10 @@ class InterpreterTestFixture : public ::testing::Test {
         *(memory_.getAddress(lo, hi)) = value;
     }
 
+    void setStatusFlag(StatusFlag flag, bool value) {
+        cpu_.setStatusFlag(flag, value);
+    }
+
     void setRegisterA(uint8_t value) {
         cpu_.reg_.a = value;
     }
@@ -42,10 +46,31 @@ class InterpreterTestFixture : public ::testing::Test {
         cpu_.executeInstruction(memory_);
     }
 
+    uint16_t getPc() {
+        return (cpu_.reg_.pc[1] << 4) | cpu_.reg_.pc[0];
+    }
+
     Cpu cpu_;
     Memory memory_;
     int current_mem_byte_ = 0;
 };
+
+// BEQ
+TEST_F(InterpreterTestFixture, test_0xF0) {
+    setStatusFlag(StatusFlag::ZERO, false);
+
+    addInstruction({0xF0, 0x12});
+    addInstruction({0xF0, 0x12});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::ZERO, true);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0014);
+}
 
 // CMP immediate
 TEST_F(InterpreterTestFixture, test_0xC9) {

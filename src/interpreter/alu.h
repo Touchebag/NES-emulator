@@ -30,3 +30,36 @@ case 0xA9: { // LDA immediate
     LOGV("%x LDA #%i", opcode, c)
     break;
 }
+
+case 0xBD: { // LDA absolute,X
+    // Cycles first for easier adding of potential page-crossing cycle
+    cycles = 4;
+
+    incPc(1);
+    uint8_t lo = readFromPc(memory);
+    incPc(1);
+    uint8_t hi = readFromPc(memory);
+    incPc(1);
+    uint8_t x = reg_.x;
+
+    if (x < (256 - lo)) {
+        // If no page crossing, continue as normal
+        lo += x;
+    } else {
+        // else add extra cycle(s)
+        lo = (lo + x) % 255;
+        hi++;
+        cycles++;
+    };
+
+    // Store to A
+    uint8_t a = memory.readAddress(lo, hi);
+    reg_.a = a;
+
+    // Set status
+    setNegativeFlag(a);
+    setZeroFlag(a);
+
+    LOGV("%x LDA %i %i %i %i", opcode, hi, lo, x, y)
+    break;
+}

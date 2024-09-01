@@ -26,8 +26,16 @@ class InterpreterTestFixture : public ::testing::Test {
         return *(memory_.getAddress(lo, hi));
     }
 
+    void pokeMemoryAddress(uint8_t lo, uint8_t hi, uint8_t value) {
+        *(memory_.getAddress(lo, hi)) = value;
+    }
+
     void setRegisterA(uint8_t value) {
         cpu_.reg_.a = value;
+    }
+
+    void setRegisterX(uint8_t value) {
+        cpu_.reg_.x = value;
     }
 
     void executeNextInstruction() {
@@ -64,6 +72,39 @@ TEST_F(InterpreterTestFixture, test_0xA9) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// LDA absolute,X
+TEST_F(InterpreterTestFixture, text_0xBD) {
+    EXPECT_EQ(cpu_.getRegisters().a, 0);
+    EXPECT_EQ(cpu_.getRegisters().x, 0);
+
+    pokeMemoryAddress(0x12, 0x34, 0x18);
+    pokeMemoryAddress(0x15, 0x34, 0x00);
+    pokeMemoryAddress(0xA3, 0x59, 0xB9);
+
+    addInstruction({0xBD, 0x12, 0x34});
+    addInstruction({0xBD, 0x12, 0x34});
+    addInstruction({0xBD, 0xA0, 0x59});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x18);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterX(0x03);
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0xB9);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
 }
 
 // LDX immediate

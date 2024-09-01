@@ -16,7 +16,7 @@ case 0xC9: { // CMP immediate
     // Set cycles
     cycles = 2;
 
-    LOGV("%x CMP #%i", opcode, c)
+    LOGV("%x CMP #%x", opcode, c)
     break;
 }
 
@@ -32,7 +32,7 @@ case 0x8D: { // STA absolute
     // Number of cycles
     cycles = 3;
 
-    LOGV("%x STA %i %i %i", opcode, hi, lo, reg_.a)
+    LOGV("%x STA %x %x %x", opcode, hi, lo, reg_.a)
     break;
 }
 
@@ -49,7 +49,7 @@ case 0xA9: { // LDA immediate
     // Number of cycles
     cycles = 2;
 
-    LOGV("%x LDA #%i", opcode, c)
+    LOGV("%x LDA #%x", opcode, c)
     break;
 }
 
@@ -82,6 +82,6 @@ case 0xBD: { // LDA absolute,X
     setNegativeFlag(a);
     setZeroFlag(a);
 
-    LOGV("%x LDA %i %i %i %i", opcode, hi, lo, x, y)
+    LOGV("%x LDA %x %x %x %x", opcode, hi, lo, x)
     break;
 }

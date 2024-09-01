@@ -38,7 +38,7 @@ case 0xF0: { // BEQ
         setPc(lo, hi);
     };
 
-    LOGV("%x BEQ %i", opcode, tmp)
+    LOGV("%x BEQ %x", opcode, tmp)
     break;
 }
 
@@ -54,5 +54,19 @@ case 0xE8: { // INX
     cycles = 2;
 
     LOGV("%x INX", opcode)
+    break;
+}
+
+case 0x4C: { // JMP absolute
+    incPc(1);
+    uint8_t lo = readFromPc(memory);
+    incPc(1);
+    uint8_t hi = readFromPc(memory);
+
+    setPc(lo, hi);
+
+    cycles = 3;
+
+    LOGV("%x JMP %x %x", opcode, lo, hi)
     break;
 }

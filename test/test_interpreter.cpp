@@ -47,7 +47,7 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     uint16_t getPc() {
-        return (cpu_.reg_.pc[1] << 4) | cpu_.reg_.pc[0];
+        return (cpu_.reg_.pc[1] << 8) | cpu_.reg_.pc[0];
     }
 
     Cpu cpu_;
@@ -103,7 +103,7 @@ TEST_F(InterpreterTestFixture, test_0xC9) {
 
 // INX
 TEST_F(InterpreterTestFixture, test_0xE8) {
-    EXPECT_EQ(cpu_.getRegisters().x, 0);
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
 
     addInstruction({0xE8});
     addInstruction({0xE8});
@@ -111,7 +111,7 @@ TEST_F(InterpreterTestFixture, test_0xE8) {
 
     executeNextInstruction();
 
-    EXPECT_EQ(cpu_.getRegisters().x, 1);
+    EXPECT_EQ(cpu_.getRegisters().x, 0x01);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 
@@ -130,9 +130,20 @@ TEST_F(InterpreterTestFixture, test_0xE8) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// JMP absolute
+TEST_F(InterpreterTestFixture, test_0x4C) {
+    EXPECT_EQ(getPc(), 0x00);
+
+    addInstruction({0x4C, 0x34, 0x12});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(getPc(), 0x1234);
+}
+
 // LDA immediate
 TEST_F(InterpreterTestFixture, test_0xA9) {
-    EXPECT_EQ(cpu_.getRegisters().a, 0);
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
 
     addInstruction({0xA9, 0x4C});
     addInstruction({0xA9, 0xBC});
@@ -159,8 +170,8 @@ TEST_F(InterpreterTestFixture, test_0xA9) {
 
 // LDA absolute,X
 TEST_F(InterpreterTestFixture, text_0xBD) {
-    EXPECT_EQ(cpu_.getRegisters().a, 0);
-    EXPECT_EQ(cpu_.getRegisters().x, 0);
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
 
     pokeMemoryAddress(0x12, 0x34, 0x18);
     pokeMemoryAddress(0x15, 0x34, 0x00);
@@ -192,7 +203,7 @@ TEST_F(InterpreterTestFixture, text_0xBD) {
 
 // LDX immediate
 TEST_F(InterpreterTestFixture, test_0xA2) {
-    EXPECT_EQ(cpu_.getRegisters().x, 0);
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
 
     addInstruction({0xA2, 0xAC});
     addInstruction({0xA2, 0x00});
@@ -219,7 +230,7 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
 
 // STA absolute
 TEST_F(InterpreterTestFixture, test_0x8D) {
-    EXPECT_EQ(cpu_.getRegisters().a, 0);
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
 
     setRegisterA(0x5C);
 

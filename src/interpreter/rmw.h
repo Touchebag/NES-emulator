@@ -11,6 +11,6 @@ case 0xA2: { // LDX immediate
     // Number of cycles
     cycles = 2;
 
-    LOGV("%x LDX #%i", opcode, c)
+    LOGV("%x LDX #%x", opcode, c)
     break;
 }

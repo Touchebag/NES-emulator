@@ -41,3 +41,18 @@ case 0xF0: { // BEQ
     LOGV("%x BEQ %i", opcode, tmp)
     break;
 }
+
+case 0xE8: { // INX
+    incPc(1);
+    reg_.x = (reg_.x + 1) % 256;
+
+    // Set flags
+    setNegativeFlag(reg_.x);
+    setZeroFlag(reg_.x);
+
+    // Number of cycles
+    cycles = 2;
+
+    LOGV("%x INX", opcode)
+    break;
+}

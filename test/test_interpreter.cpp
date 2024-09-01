@@ -101,6 +101,35 @@ TEST_F(InterpreterTestFixture, test_0xC9) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// INX
+TEST_F(InterpreterTestFixture, test_0xE8) {
+    EXPECT_EQ(cpu_.getRegisters().x, 0);
+
+    addInstruction({0xE8});
+    addInstruction({0xE8});
+    addInstruction({0xE8});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 1);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterX(0xFE);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0xFF);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // LDA immediate
 TEST_F(InterpreterTestFixture, test_0xA9) {
     EXPECT_EQ(cpu_.getRegisters().a, 0);

@@ -1,3 +1,25 @@
+case 0xC9: { // CMP immediate
+    incPc(1);
+    uint8_t c = readFromPc(memory);
+    incPc(1);
+
+    // Compare
+    uint8_t a = reg_.a;
+    uint8_t tmp = a - c;
+
+    // Set flags
+    setNegativeFlag(tmp);
+    setZeroFlag(tmp);
+    // 0 if c > a
+    setStatusFlag(StatusFlag::CARRY, c <= a);
+
+    // Set cycles
+    cycles = 2;
+
+    LOGV("%x CMP #%i", opcode, c)
+    break;
+}
+
 case 0x8D: { // STA absolute
     incPc(1);
     uint8_t lo = readFromPc(memory);

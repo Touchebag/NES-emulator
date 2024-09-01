@@ -47,6 +47,35 @@ class InterpreterTestFixture : public ::testing::Test {
     int current_mem_byte_ = 0;
 };
 
+// CMP immediate
+TEST_F(InterpreterTestFixture, test_0xC9) {
+    setRegisterA(0x59);
+    addInstruction({0xC9, 0x4C});
+    addInstruction({0xC9, 0x59});
+    addInstruction({0xC9, 0xAD});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x59);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x59);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x59);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+}
+
 // LDA immediate
 TEST_F(InterpreterTestFixture, test_0xA9) {
     EXPECT_EQ(cpu_.getRegisters().a, 0);

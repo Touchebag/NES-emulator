@@ -101,6 +101,35 @@ TEST_F(InterpreterTestFixture, test_0xC9) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// CPX immediate
+TEST_F(InterpreterTestFixture, test_0xE0) {
+    setRegisterX(0xA2);
+    addInstruction({0xE0, 0x34});
+    addInstruction({0xE0, 0xA2});
+    addInstruction({0xE0, 0xB6});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA2);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA2);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA2);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+}
+
 // INX
 TEST_F(InterpreterTestFixture, test_0xE8) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);
@@ -236,6 +265,8 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     setRegisterX(0x07);
 
     addInstruction({0xE1, 0x1A});
+    addInstruction({0xE1, 0x1A});
+    addInstruction({0xE1, 0x1A});
 
     setRegisterA(0x6D);
     setStatusFlag(StatusFlag::CARRY, true);
@@ -246,7 +277,6 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 
-    addInstruction({0xE1, 0x1A});
     setRegisterA(0x5B);
     setStatusFlag(StatusFlag::CARRY, false);
 
@@ -256,7 +286,6 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
 
-    addInstruction({0xE1, 0x1A});
     setRegisterA(0x5C);
     setStatusFlag(StatusFlag::CARRY, false);
 

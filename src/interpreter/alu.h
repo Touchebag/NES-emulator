@@ -20,6 +20,28 @@ case 0xC9: { // CMP immediate
     break;
 }
 
+case 0xE0: { // CMX immediate
+    incPc(1);
+    uint8_t c = readFromPc(memory);
+    incPc(1);
+
+    // Compare
+    uint8_t x = reg_.x;
+    uint8_t tmp = x - c;
+
+    // Set flags
+    setNegativeFlag(tmp);
+    setZeroFlag(tmp);
+    // 0 if c > a
+    setStatusFlag(StatusFlag::CARRY, c <= x);
+
+    // Set cycles
+    cycles = 2;
+
+    LOGV("%x CMP #%x", opcode, c)
+    break;
+}
+
 case 0x8D: { // STA absolute
     incPc(1);
     uint8_t lo = readFromPc(memory);
@@ -97,14 +119,16 @@ case 0xE1: { // SBC (indirect, X)
     uint8_t hi = memory.readAddress(tmp + 0x01, 0x00);
 
     tmp = memory.readAddress(lo, hi);
+    uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
 
-    reg_.a = reg_.a - tmp + (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
+    setStatusFlag(StatusFlag::CARRY, (tmp + c) > reg_.a);
+
+    reg_.a = reg_.a - tmp + (c);
 
     uint8_t a = reg_.a;
 
     setNegativeFlag(a);
     setZeroFlag(a);
-    setStatusFlag(StatusFlag::CARRY, a & 0x80);
 
     cycles = 6;
 

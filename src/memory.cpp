@@ -18,7 +18,7 @@ void Memory::writeAddress(uint8_t address_low, uint8_t address_high, uint8_t val
 };
 
 void Memory::loadRom(Rom rom) {
-    rom_ = rom;
+    rom_ = {rom};
 }
 
 uint8_t* Memory::getAddress(uint8_t address_low, uint8_t address_high) {
@@ -35,9 +35,14 @@ uint8_t* Memory::getAddress(uint8_t address_low, uint8_t address_high) {
         // Disabled
         // return &(memory_[address]);
     } else if (address < 0x10000) {
-        // Get mapped address
+        // If rom is not loaded use direct memory (for testing)
+        // TODO Change to fake mapper instead
+        if (!rom_) {
+            return &(memory_[address]);
+        }
+        // Otherwise get mapped address
         if (address > 0x8000) {
-            return rom_.getAddress(address & 0x3FFF);
+            return rom_.value().getAddress(address & 0x3FFF);
         }
     } else {
         LOGE("Invalid memory address %x", address);

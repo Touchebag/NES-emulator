@@ -12,7 +12,7 @@ class InterpreterTestFixture : public ::testing::Test {
         memory_ = Memory{};
 
         current_mem_byte_ = 0;
-        cpu_.setPc(static_cast<uint8_t>(0x00), static_cast<uint8_t>(0x00));
+        setPc(0x00, 0x00);
     }
 
     void addInstruction(std::vector<uint8_t> bytes) {
@@ -44,6 +44,11 @@ class InterpreterTestFixture : public ::testing::Test {
 
     void executeNextInstruction() {
         cpu_.executeInstruction(memory_);
+    }
+
+    void setPc(uint8_t lo, uint8_t hi) {
+        cpu_.reg_.pc[0] = lo;
+        cpu_.reg_.pc[1] = hi;
     }
 
     uint16_t getPc() {
@@ -87,6 +92,28 @@ TEST_F(InterpreterTestFixture, test_0xD0) {
     setStatusFlag(StatusFlag::ZERO, false);
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x003F);
+}
+
+// BRK
+TEST_F(InterpreterTestFixture, test_0x00) {
+    setStatusFlag(StatusFlag::ZERO, true);
+    setStatusFlag(StatusFlag::CARRY, true);
+    setPc(0x34, 0x12);
+
+    pokeMemoryAddress(0xFE, 0xFF, 0x05);
+    pokeMemoryAddress(0xFF, 0xFF, 0x7D);
+
+    addInstruction({0x00});
+
+    uint8_t status = static_cast<uint8_t>(StatusFlag::ZERO)  |
+                     static_cast<uint8_t>(StatusFlag::CARRY) |
+                     static_cast<uint8_t>(StatusFlag::BREAK);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x7D05);
+    EXPECT_EQ(peekMemoryAddress(0xFF, 0x01), 0x12);
+    EXPECT_EQ(peekMemoryAddress(0xFE, 0x01), 0x36);
+    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), status);
 }
 
 // CMP immediate

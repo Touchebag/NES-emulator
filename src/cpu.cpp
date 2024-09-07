@@ -42,6 +42,14 @@ void Cpu::setPc(uint8_t pc_low, uint8_t pc_high) {
     reg_.pc[1] = pc_high;
 }
 
+void Cpu::pushStack(Memory& memory, uint8_t value) {
+    memory.writeAddress(reg_.sp--, 0x01, value);
+}
+
+uint8_t Cpu::popStack(Memory& memory) {
+    return memory.readAddress(reg_.sp++, 0x01);
+}
+
 void Cpu::executeInstruction(Memory& memory) {
     uint8_t opcode = readFromPc(memory);
     int cycles = 0;

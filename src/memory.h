@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstdint>
+#include <optional>
 
 #include "rom.h"
 
@@ -19,7 +20,7 @@ class Memory {
 
     std::vector<uint8_t> memory_ = std::vector<uint8_t>(0x10000);
 
-    Rom rom_;
+    std::optional<Rom> rom_ = std::nullopt;
 
     friend InterpreterTestFixture;
 };

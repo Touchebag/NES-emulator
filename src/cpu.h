@@ -9,7 +9,7 @@ class Cpu {
     void setPc(uint8_t pc_low, uint8_t pc_high);
 
     // CPU status flags
-    enum class StatusFlag {
+    enum class StatusFlag : uint8_t {
         CARRY = 1,
         ZERO = 2,
         INTERRUPT = 4,
@@ -23,7 +23,7 @@ class Cpu {
 
     struct Registers {
       uint8_t pc[2];
-      uint8_t sp;
+      uint8_t sp = 0xFF;
       uint8_t p;
       uint8_t a;
       uint8_t x;
@@ -37,6 +37,9 @@ class Cpu {
     void setZeroFlag(uint8_t);
 
     uint8_t readFromPc(Memory&);
+
+    void pushStack(Memory&, uint8_t);
+    uint8_t popStack(Memory&);
 
     void incPc(int);
     Registers reg_;

@@ -86,6 +86,30 @@ case 0xD0: { // BNE
     break;
 }
 
+case 0x00: { // BRK
+    uint8_t hi = reg_.pc[1];
+    uint8_t lo = reg_.pc[0];
+
+    // In case of lo overflow
+    if (lo >= 0xFE) {
+        hi++;
+    }
+
+    lo += 2;
+    uint8_t status = reg_.p | static_cast<uint8_t>(StatusFlag::BREAK);
+
+    pushStack(memory, hi);
+    pushStack(memory, lo);
+    pushStack(memory, status);
+
+    lo = memory.readAddress(0xFE, 0xFF);
+    hi = memory.readAddress(0xFF, 0xFF);
+    setPc(lo, hi);
+
+    LOGV("%x BRK", opcode)
+    break;
+}
+
 case 0xE8: { // INX
     incPc(1);
     reg_.x = (reg_.x + 1) % 256;

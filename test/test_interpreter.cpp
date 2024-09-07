@@ -72,6 +72,23 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
     EXPECT_EQ(getPc(), 0x0014);
 }
 
+// BNE
+TEST_F(InterpreterTestFixture, test_0xD0) {
+    setStatusFlag(StatusFlag::ZERO, true);
+
+    addInstruction({0xD0, 0x3D});
+    addInstruction({0xD0, 0x3D});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::ZERO, false);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x003F);
+}
+
 // CMP immediate
 TEST_F(InterpreterTestFixture, test_0xC9) {
     setRegisterA(0x59);

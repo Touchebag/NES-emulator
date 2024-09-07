@@ -82,6 +82,32 @@ case 0xBD: { // LDA absolute,X
     setNegativeFlag(a);
     setZeroFlag(a);
 
-    LOGV("%x LDA %x %x %x %x", opcode, hi, lo, x)
+    LOGV("%x LDA %x %x %x", opcode, hi, lo, x)
+    break;
+}
+
+case 0xE1: { // SBC (indirect, X)
+    incPc(1);
+    uint8_t tmp = readFromPc(memory);
+    incPc(1);
+
+    tmp += reg_.x;
+
+    uint8_t lo = memory.readAddress(tmp, 0x00);
+    uint8_t hi = memory.readAddress(tmp + 0x01, 0x00);
+
+    tmp = memory.readAddress(lo, hi);
+
+    reg_.a = reg_.a - tmp + (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
+
+    uint8_t a = reg_.a;
+
+    setNegativeFlag(a);
+    setZeroFlag(a);
+    setStatusFlag(StatusFlag::CARRY, a & 0x80);
+
+    cycles = 6;
+
+    LOGV("%x SBC %x %x %x", opcode, tmp, hi, lo);
     break;
 }

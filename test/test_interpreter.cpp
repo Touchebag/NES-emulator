@@ -52,7 +52,7 @@ class InterpreterTestFixture : public ::testing::Test {
 
     Cpu cpu_;
     Memory memory_;
-    int current_mem_byte_ = 0;
+    int current_mem_byte_ = 0x6000;
 };
 
 // BEQ
@@ -226,6 +226,45 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x59);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// SBC (indirect, X)
+TEST_F(InterpreterTestFixture, test_0xE1) {
+    pokeMemoryAddress(0x21, 0x00, 0x01);
+    pokeMemoryAddress(0x22, 0x00, 0x34);
+    pokeMemoryAddress(0x01, 0x34, 0x5C);
+    setRegisterX(0x07);
+
+    addInstruction({0xE1, 0x1A});
+
+    setRegisterA(0x6D);
+    setStatusFlag(StatusFlag::CARRY, true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x12);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+
+    addInstruction({0xE1, 0x1A});
+    setRegisterA(0x5B);
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xFF);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    addInstruction({0xE1, 0x1A});
+    setRegisterA(0x5C);
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
 // STA absolute

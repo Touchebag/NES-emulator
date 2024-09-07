@@ -106,6 +106,8 @@ case 0x00: { // BRK
     hi = memory.readAddress(0xFF, 0xFF);
     setPc(lo, hi);
 
+    cycles = 7;
+
     LOGV("%x BRK", opcode)
     break;
 }

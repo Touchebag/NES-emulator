@@ -10,32 +10,9 @@ case 0xF0: { // BEQ
 
     // If latest operation was zero
     if (getStatusFlag(StatusFlag::ZERO)) {
-        // If highest bit is set (negative)
-        if (tmp & 128) {
-            tmp &= 127;
-            // If no page crossing
-            if (tmp <= lo) {
-                lo -= tmp;
-                cycles += 1;
-            } else {
-                //TODO Ugly as balls, neccessary because of underflow?
-                tmp -= lo;
-                lo = 256 - tmp;
-                hi--;
-                cycles += 2;
-            };
-        } else { // If positive
-            // If no page crossing
-            if (tmp <= (255 - lo)) {
-                lo += tmp;
-                cycles += 1;
-            } else {
-                lo = (lo + tmp) % 255;
-                hi++;
-                cycles += 2;
-            };
-        };
-        setPc(lo, hi);
+        auto [new_lo, new_hi, page_cycles] = relativeJump(lo, hi, tmp);
+        setPc(new_lo, new_hi);
+        cycles += page_cycles;
     };
 
     LOGV("%x BEQ %x", opcode, tmp)
@@ -54,32 +31,9 @@ case 0xD0: { // BNE
 
     // If latest operation was zero
     if (!getStatusFlag(StatusFlag::ZERO)) {
-        // If highest bit is set (negative)
-        if (tmp & 128) {
-            tmp &= 127;
-            // If no page crossing
-            if (tmp <= lo) {
-                lo -= tmp;
-                cycles += 1;
-            } else {
-                //TODO Ugly as balls, neccessary because of underflow?
-                tmp -= lo;
-                lo = 256 - tmp;
-                hi--;
-                cycles += 2;
-            };
-        } else { // If positive
-            // If no page crossing
-            if (tmp <= (255 - lo)) {
-                lo += tmp;
-                cycles += 1;
-            } else {
-                lo = (lo + tmp) % 255;
-                hi++;
-                cycles += 2;
-            };
-        };
-        setPc(lo, hi);
+        auto [new_lo, new_hi, page_cycles] = relativeJump(lo, hi, tmp);
+        setPc(new_lo, new_hi);
+        cycles += page_cycles;
     };
 
     LOGV("%x BNE %x", opcode, tmp)

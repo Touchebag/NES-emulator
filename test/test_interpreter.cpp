@@ -3,6 +3,8 @@
 #include "cpu.h"
 #include "memory.h"
 
+#include "log.h"
+
 using StatusFlag = Cpu::StatusFlag;
 
 class InterpreterTestFixture : public ::testing::Test {
@@ -83,6 +85,24 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
     setStatusFlag(StatusFlag::ZERO, true);
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x0014);
+
+    setPc(0xA9, 0x13);
+    // Manually add instructions at pc
+    pokeMemoryAddress(0xA9, 0x13, 0xF0);
+    pokeMemoryAddress(0xAA, 0x13, 0x72);
+
+    setStatusFlag(StatusFlag::ZERO, true);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x141B);
+
+    setPc(0xAB, 0x13);
+    pokeMemoryAddress(0xAB, 0x13, 0xF0);
+    pokeMemoryAddress(0xAC, 0x13, 0xFC);
+    setStatusFlag(StatusFlag::ZERO, true);
+
+    // Negative jump
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x13A7);
 }
 
 // BNE

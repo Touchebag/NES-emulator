@@ -110,20 +110,16 @@ case 0xBD: { // LDA absolute,X
 
 case 0xE1: { // SBC (indirect, X)
     incPc(1);
-    uint8_t tmp = readFromPc(memory);
+    uint8_t addr = readFromPc(memory);
     incPc(1);
 
-    tmp += reg_.x;
+    auto [val, _] = indirectX(memory, addr, reg_.x);
 
-    uint8_t lo = memory.readAddress(tmp, 0x00);
-    uint8_t hi = memory.readAddress(tmp + 0x01, 0x00);
-
-    tmp = memory.readAddress(lo, hi);
     uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
 
-    setStatusFlag(StatusFlag::CARRY, (tmp + c) > reg_.a);
+    setStatusFlag(StatusFlag::CARRY, (val + c) > reg_.a);
 
-    reg_.a = reg_.a - tmp + (c);
+    reg_.a = reg_.a - val + (c);
 
     uint8_t a = reg_.a;
 
@@ -132,6 +128,6 @@ case 0xE1: { // SBC (indirect, X)
 
     cycles = 6;
 
-    LOGV("%x SBC %x %x %x", opcode, tmp, hi, lo);
+    LOGV("%x SBC %x %x %x", opcode, val);
     break;
 }

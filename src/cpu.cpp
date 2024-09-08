@@ -1,8 +1,43 @@
 #include "cpu.h"
 
 #include <stdexcept>
+#include <tuple>
 
 #include "log.h"
+
+namespace {
+
+std::tuple<uint8_t, uint8_t, int> relativeJump(uint8_t lo, uint8_t hi, uint8_t val) {
+    // Always add at least one cycle
+    int cycles = 1;
+
+    uint8_t new_lo = lo + val;
+    // If relative is negative
+    if (val & 128) {
+        if (new_lo > lo) {
+            // Underflow, carry to hi;
+            hi--;
+            cycles = 2;
+        }
+    } else if (new_lo < lo) {
+        // Overflow, carry to hi;
+        hi++;
+        cycles = 2;
+    }
+
+    return {new_lo, hi, cycles};
+}
+
+std::pair<uint8_t, bool> indirectX(Memory& memory, uint8_t address, uint8_t x) {
+    uint8_t lo = memory.readAddress(address + x, 0x00);
+    uint8_t hi = memory.readAddress(address + x + 0x01, 0x00);
+
+    uint8_t val = memory.readAddress(lo, hi);
+
+    return {val, false};
+}
+
+} // namespace
 
 bool Cpu::getStatusFlag(Cpu::StatusFlag flag) {
     return reg_.p & static_cast<uint8_t>(flag);

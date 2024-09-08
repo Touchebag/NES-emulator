@@ -55,6 +55,14 @@ class InterpreterTestFixture : public ::testing::Test {
         return (cpu_.reg_.pc[1] << 8) | cpu_.reg_.pc[0];
     }
 
+    uint8_t getStackPointer() {
+        return cpu_.reg_.sp;
+    }
+
+    void setStackPointer(uint8_t value) {
+        cpu_.reg_.sp = value;
+    }
+
     Cpu cpu_;
     Memory memory_;
     int current_mem_byte_ = 0x6000;
@@ -111,6 +119,7 @@ TEST_F(InterpreterTestFixture, test_0x00) {
 
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x7D05);
+    EXPECT_EQ(getStackPointer(), 0xFC);
     EXPECT_EQ(peekMemoryAddress(0xFF, 0x01), 0x12);
     EXPECT_EQ(peekMemoryAddress(0xFE, 0x01), 0x36);
     EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), status);
@@ -299,6 +308,21 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x59);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// RTI
+TEST_F(InterpreterTestFixture, test_0x40) {
+    pokeMemoryAddress(0xFF, 0x01, 0x23);
+    pokeMemoryAddress(0xFE, 0x01, 0x45);
+    pokeMemoryAddress(0xFD, 0x01, static_cast<uint8_t>(StatusFlag::BREAK) | static_cast<uint8_t>(StatusFlag::ZERO));
+    setStackPointer(0xFC);
+
+    addInstruction({0x40});
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x2345);
+    EXPECT_EQ(getStackPointer(), 0xFF);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
 }
 
 // SBC (indirect, X)

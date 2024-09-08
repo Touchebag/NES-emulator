@@ -140,3 +140,17 @@ case 0x4C: { // JMP absolute
     LOGV("%x JMP %x %x", opcode, lo, hi)
     break;
 }
+
+case 0x40: { // RTI
+    uint8_t p  = popStack(memory);
+    uint8_t lo = popStack(memory);
+    uint8_t hi = popStack(memory);
+
+    setPc(lo, hi);
+    reg_.p = p & ~(static_cast<uint8_t>(StatusFlag::BREAK));
+
+    cycles = 6;
+
+    LOGV("%x RTI", opcode)
+    break;
+}

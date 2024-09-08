@@ -86,23 +86,16 @@ case 0xBD: { // LDA absolute,X
     incPc(1);
     uint8_t x = reg_.x;
 
-    if (x < (256 - lo)) {
-        // If no page crossing, continue as normal
-        lo += x;
-    } else {
-        // else add extra cycle(s)
-        lo = (lo + x) % 255;
-        hi++;
-        cycles++;
-    };
+    auto [val, page_cross] = absoluteX(memory, lo, hi, x);
+    reg_.a = val;
 
-    // Store to A
-    uint8_t a = memory.readAddress(lo, hi);
-    reg_.a = a;
+    if (page_cross) {
+        cycles++;
+    }
 
     // Set status
-    setNegativeFlag(a);
-    setZeroFlag(a);
+    setNegativeFlag(val);
+    setZeroFlag(val);
 
     LOGV("%x LDA %x %x %x", opcode, hi, lo, x)
     break;

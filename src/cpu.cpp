@@ -28,6 +28,21 @@ std::tuple<uint8_t, uint8_t, int> relativeJump(uint8_t lo, uint8_t hi, uint8_t v
     return {new_lo, hi, cycles};
 }
 
+std::pair<uint8_t, bool> absoluteX(Memory& memory, uint8_t lo, uint8_t hi, uint8_t x) {
+    uint8_t new_lo = lo + x;
+    bool page_cross = false;
+
+    if (new_lo < lo) {
+        // Overflow, carry to hi
+        hi++;
+        page_cross = true;
+    }
+
+    uint8_t val = memory.readAddress(new_lo, hi);
+
+    return {val, page_cross};
+}
+
 std::pair<uint8_t, bool> indirectX(Memory& memory, uint8_t address, uint8_t x) {
     uint8_t lo = memory.readAddress(address + x, 0x00);
     uint8_t hi = memory.readAddress(address + x + 0x01, 0x00);

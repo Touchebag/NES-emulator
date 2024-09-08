@@ -112,6 +112,15 @@ case 0x00: { // BRK
     break;
 }
 
+case 0x18: { // CLC
+    incPc(1);
+
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    cycles = 2;
+    break;
+}
+
 case 0xE8: { // INX
     incPc(1);
     reg_.x = (reg_.x + 1) % 256;

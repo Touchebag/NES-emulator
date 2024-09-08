@@ -125,6 +125,23 @@ TEST_F(InterpreterTestFixture, test_0x00) {
     EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), status);
 }
 
+// CLC
+TEST_F(InterpreterTestFixture, text_0x18) {
+    setStatusFlag(StatusFlag::CARRY, true);
+
+    addInstruction({0x18});
+    addInstruction({0x18});
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+
+    // Ensure it doesn't change already cleared flag
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+}
+
 // CMP immediate
 TEST_F(InterpreterTestFixture, test_0xC9) {
     setRegisterA(0x59);

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "memory.h"
+#include "ppu.h"
 
 class Cpu {
   public:
-    void executeInstruction(Memory& memory);
+    int executeInstruction(Memory& memory);
 
     void setPc(uint8_t pc_low, uint8_t pc_high);
 

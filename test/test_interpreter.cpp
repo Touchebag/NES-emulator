@@ -11,6 +11,7 @@ class InterpreterTestFixture : public ::testing::Test {
   public:
     void SetUp() override {
         cpu_ = Cpu{};
+        ppu_ = Ppu{};
         memory_ = Memory{};
 
         current_mem_byte_ = 0;
@@ -66,6 +67,7 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     Cpu cpu_;
+    Ppu ppu_;
     Memory memory_;
     int current_mem_byte_ = 0x6000;
 };

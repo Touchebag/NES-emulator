@@ -101,7 +101,7 @@ case 0xBD: { // LDA absolute,X
     break;
 }
 
-case 0xE1: { // SBC (indirect, X)
+case 0xE1: { // SBC (indirect,X)
     incPc(1);
     uint8_t addr = readFromPc(memory);
     incPc(1);

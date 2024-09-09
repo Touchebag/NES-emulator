@@ -106,7 +106,7 @@ uint8_t Cpu::popStack(Memory& memory) {
     return memory.readAddress(++reg_.sp, 0x01);
 }
 
-void Cpu::executeInstruction(Memory& memory) {
+int Cpu::executeInstruction(Memory& memory) {
     uint8_t opcode = readFromPc(memory);
     int cycles = 0;
 
@@ -120,8 +120,7 @@ void Cpu::executeInstruction(Memory& memory) {
         break;
     };
 
-    // TODO Advance PPU
-    // ppu.cycle(cycles);
+    return cycles;
 };
 
 Cpu::Registers Cpu::getRegisters() {

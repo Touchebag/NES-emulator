@@ -1,5 +1,7 @@
 #include "system.h"
 
+#include <SFML/System.hpp>
+
 System::System() :
     cpu_{Cpu()},
     memory_{Memory()} {
@@ -16,10 +18,26 @@ void System::reset() {
     cpu_.setPc(pc_low, pc_high);
 }
 
-void System::run() {
+void System::run(sf::RenderWindow& window) {
     reset();
 
-    while (true) {
-        cpu_.executeInstruction(memory_);
+    while (window.isOpen()) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+            window.close();
+        }
+
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        int cycles = cpu_.executeInstruction(memory_);
+        ppu_.advance(cycles);
     };
 }

@@ -32,8 +32,8 @@ class Cpu {
       uint8_t y;
     };
     Registers getRegisters();
-  private:
 
+  private:
     void setStatusFlag(StatusFlag, bool);
     void setNegativeFlag(uint8_t);
     void setZeroFlag(uint8_t);

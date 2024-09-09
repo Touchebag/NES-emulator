@@ -15,6 +15,7 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     void SetUp() override {
+        System::getInstance().resetComponents();
         System::getInstance().reset();
 
         cpu_    = System::getInstance().get<Cpu>();

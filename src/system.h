@@ -13,11 +13,12 @@ class System {
     static System& getInstance();
 
     template <typename T>
-    T& get();
+    static T& get();
 
     void loadRom(const std::string& rom_file);
 
     void reset();
+    void resetComponents();
     void run(sf::RenderWindow& window);
 
   private:

@@ -121,6 +121,6 @@ case 0xE1: { // SBC (indirect,X)
 
     cycles = 6;
 
-    LOGV("%x SBC %x %x %x", opcode, val);
+    LOGV("%x SBC %x", opcode, val);
     break;
 }

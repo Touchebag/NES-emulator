@@ -40,13 +40,13 @@ std::pair<uint8_t, bool> absoluteX(uint8_t lo, uint8_t hi, uint8_t x) {
         page_cross = true;
     }
 
-    uint8_t val = System::getInstance().get<Memory>().readAddress(new_lo, hi);
+    uint8_t val = System::get<Memory>().readAddress(new_lo, hi);
 
     return {val, page_cross};
 }
 
 std::pair<uint8_t, bool> indirectX(uint8_t address, uint8_t x) {
-    auto& mem = System::getInstance().get<Memory>();
+    auto& mem = System::get<Memory>();
     uint8_t lo = mem.readAddress(address + x, 0x00);
     uint8_t hi = mem.readAddress(address + x + 0x01, 0x00);
 
@@ -78,7 +78,7 @@ void Cpu::setZeroFlag(uint8_t value) {
 }
 
 uint8_t Cpu::readFromPc() {
-    return System::getInstance().get<Memory>().readAddress(reg_.pc[0], reg_.pc[1]);
+    return System::get<Memory>().readAddress(reg_.pc[0], reg_.pc[1]);
 };
 
 void Cpu::incPc(int n) {
@@ -99,18 +99,18 @@ void Cpu::pushStack(uint8_t value) {
     if (reg_.sp == 0x00) {
         LOGW("Stack overflow");
     }
-    System::getInstance().get<Memory>().writeAddress(reg_.sp--, 0x01, value);
+    System::get<Memory>().writeAddress(reg_.sp--, 0x01, value);
 }
 
 uint8_t Cpu::popStack() {
     if (reg_.sp == 0xFF) {
         LOGW("Stack underflow");
     }
-    return System::getInstance().get<Memory>().readAddress(++reg_.sp, 0x01);
+    return System::get<Memory>().readAddress(++reg_.sp, 0x01);
 }
 
 int Cpu::executeInstruction() {
-    auto& memory = System::getInstance().get<Memory>();
+    auto& memory = System::get<Memory>();
     uint8_t opcode = readFromPc();
     int cycles = 0;
 

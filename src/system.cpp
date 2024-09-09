@@ -12,12 +12,13 @@ void System::loadRom(const std::string& rom_file) {
     memory_.loadRom(Rom::loadRomFromFile(rom_file));
 }
 
-void System::reset() {
-    // Clear all systems
-    cpu_ = Cpu{};
-    ppu_ = Ppu{};
-    memory_ = Memory{};
+void System::resetComponents() {
+    cpu_ = Cpu();
+    ppu_ = Ppu();
+    memory_ = Memory();
+}
 
+void System::reset() {
     uint8_t pc_low = memory_.readAddress(0xFC, 0xFF);
     uint8_t pc_high = memory_.readAddress(0xFD, 0xFF);
 

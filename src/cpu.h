@@ -1,11 +1,12 @@
 #pragma once
 
-#include "memory.h"
-#include "ppu.h"
+#include <cstdint>
+
+class InterpreterTestFixture;
 
 class Cpu {
   public:
-    int executeInstruction(Memory& memory);
+    int executeInstruction();
 
     void setPc(uint8_t pc_low, uint8_t pc_high);
 
@@ -37,10 +38,10 @@ class Cpu {
     void setNegativeFlag(uint8_t);
     void setZeroFlag(uint8_t);
 
-    uint8_t readFromPc(Memory&);
+    uint8_t readFromPc();
 
-    void pushStack(Memory&, uint8_t);
-    uint8_t popStack(Memory&);
+    void pushStack(uint8_t);
+    uint8_t popStack();
 
     void incPc(int);
     Registers reg_;

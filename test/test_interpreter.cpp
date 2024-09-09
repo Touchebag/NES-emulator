@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "cpu.h"
-#include "memory.h"
+#include "system.h"
 
 #include "log.h"
 
@@ -9,10 +8,18 @@ using StatusFlag = Cpu::StatusFlag;
 
 class InterpreterTestFixture : public ::testing::Test {
   public:
+    InterpreterTestFixture() :
+        cpu_(System::getInstance().get<Cpu>()),
+        ppu_(System::getInstance().get<Ppu>()),
+        memory_(System::getInstance().get<Memory>()) {
+    }
+
     void SetUp() override {
-        cpu_ = Cpu{};
-        ppu_ = Ppu{};
-        memory_ = Memory{};
+        System::getInstance().reset();
+
+        cpu_    = System::getInstance().get<Cpu>();
+        ppu_    = System::getInstance().get<Ppu>();
+        memory_ = System::getInstance().get<Memory>();
 
         current_mem_byte_ = 0;
         setPc(0x00, 0x00);
@@ -46,7 +53,7 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     void executeNextInstruction() {
-        cpu_.executeInstruction(memory_);
+        cpu_.executeInstruction();
     }
 
     void setPc(uint8_t lo, uint8_t hi) {
@@ -66,9 +73,10 @@ class InterpreterTestFixture : public ::testing::Test {
         cpu_.reg_.sp = value;
     }
 
-    Cpu cpu_;
-    Ppu ppu_;
-    Memory memory_;
+    Cpu& cpu_;
+    Ppu& ppu_;
+    Memory& memory_;
+
     int current_mem_byte_ = 0x6000;
 };
 

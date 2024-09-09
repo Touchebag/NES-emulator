@@ -10,7 +10,10 @@
 
 class System {
   public:
-    System();
+    static System& getInstance();
+
+    template <typename T>
+    T& get();
 
     void loadRom(const std::string& rom_file);
 
@@ -18,6 +21,8 @@ class System {
     void run(sf::RenderWindow& window);
 
   private:
+    System();
+
     Cpu cpu_;
     Ppu ppu_;
     Memory memory_;

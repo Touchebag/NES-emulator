@@ -5,7 +5,7 @@ case 0xF0: { // BEQ
     uint8_t lo = reg_.pc[0];
     uint8_t hi = reg_.pc[1];
     incPc(1);
-    uint8_t tmp = readFromPc(memory);
+    uint8_t tmp = readFromPc();
     incPc(1);
 
     // If latest operation was zero
@@ -26,7 +26,7 @@ case 0xD0: { // BNE
     uint8_t lo = reg_.pc[0];
     uint8_t hi = reg_.pc[1];
     incPc(1);
-    uint8_t tmp = readFromPc(memory);
+    uint8_t tmp = readFromPc();
     incPc(1);
 
     // If latest operation was zero
@@ -52,9 +52,9 @@ case 0x00: { // BRK
     lo += 2;
     uint8_t status = reg_.p | static_cast<uint8_t>(StatusFlag::BREAK);
 
-    pushStack(memory, hi);
-    pushStack(memory, lo);
-    pushStack(memory, status);
+    pushStack(hi);
+    pushStack(lo);
+    pushStack(status);
 
     lo = memory.readAddress(0xFE, 0xFF);
     hi = memory.readAddress(0xFF, 0xFF);
@@ -92,9 +92,9 @@ case 0xE8: { // INX
 
 case 0x4C: { // JMP absolute
     incPc(1);
-    uint8_t lo = readFromPc(memory);
+    uint8_t lo = readFromPc();
     incPc(1);
-    uint8_t hi = readFromPc(memory);
+    uint8_t hi = readFromPc();
 
     setPc(lo, hi);
 
@@ -105,9 +105,9 @@ case 0x4C: { // JMP absolute
 }
 
 case 0x40: { // RTI
-    uint8_t p  = popStack(memory);
-    uint8_t lo = popStack(memory);
-    uint8_t hi = popStack(memory);
+    uint8_t p  = popStack();
+    uint8_t lo = popStack();
+    uint8_t hi = popStack();
 
     setPc(lo, hi);
     reg_.p = p & ~(static_cast<uint8_t>(StatusFlag::BREAK));

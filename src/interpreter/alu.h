@@ -1,6 +1,6 @@
 case 0xC9: { // CMP immediate
     incPc(1);
-    uint8_t c = readFromPc(memory);
+    uint8_t c = readFromPc();
     incPc(1);
 
     // Compare
@@ -22,7 +22,7 @@ case 0xC9: { // CMP immediate
 
 case 0xE0: { // CMX immediate
     incPc(1);
-    uint8_t c = readFromPc(memory);
+    uint8_t c = readFromPc();
     incPc(1);
 
     // Compare
@@ -44,9 +44,9 @@ case 0xE0: { // CMX immediate
 
 case 0x8D: { // STA absolute
     incPc(1);
-    uint8_t lo = readFromPc(memory);
+    uint8_t lo = readFromPc();
     incPc(1);
-    uint8_t hi = readFromPc(memory);
+    uint8_t hi = readFromPc();
     incPc(1);
 
     memory.writeAddress(lo, hi, reg_.a);
@@ -60,7 +60,7 @@ case 0x8D: { // STA absolute
 
 case 0xA9: { // LDA immediate
     incPc(1);
-    uint8_t c = readFromPc(memory);
+    uint8_t c = readFromPc();
     reg_.a = c;
     incPc(1);
 
@@ -80,13 +80,13 @@ case 0xBD: { // LDA absolute,X
     cycles = 4;
 
     incPc(1);
-    uint8_t lo = readFromPc(memory);
+    uint8_t lo = readFromPc();
     incPc(1);
-    uint8_t hi = readFromPc(memory);
+    uint8_t hi = readFromPc();
     incPc(1);
     uint8_t x = reg_.x;
 
-    auto [val, page_cross] = absoluteX(memory, lo, hi, x);
+    auto [val, page_cross] = absoluteX(lo, hi, x);
     reg_.a = val;
 
     if (page_cross) {
@@ -103,10 +103,10 @@ case 0xBD: { // LDA absolute,X
 
 case 0xE1: { // SBC (indirect,X)
     incPc(1);
-    uint8_t addr = readFromPc(memory);
+    uint8_t addr = readFromPc();
     incPc(1);
 
-    auto [val, _] = indirectX(memory, addr, reg_.x);
+    auto [val, _] = indirectX(addr, reg_.x);
 
     uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
 

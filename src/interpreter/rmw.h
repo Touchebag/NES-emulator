@@ -1,6 +1,6 @@
 case 0xA2: { // LDX immediate
     incPc(1);
-    uint8_t c = readFromPc(memory);
+    uint8_t c = readFromPc();
     reg_.x = c;
     incPc(1);
 

@@ -5,11 +5,10 @@
 int main(int argc, char *argv[]) {
     try {
         if (argc == 2) {
-            System emulator;
-            emulator.loadRom(argv[1]);
+            System::getInstance().loadRom(argv[1]);
 
             sf::RenderWindow window(sf::VideoMode(256, 244), "NES");
-            emulator.run(window);
+            System::getInstance().run(window);
         }
     } catch (std::exception& e) {
         exit(1);

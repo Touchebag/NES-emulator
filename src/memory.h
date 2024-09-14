@@ -16,8 +16,6 @@ class Memory {
     void loadRom(Rom rom);
 
   private:
-    uint8_t* getAddress(uint8_t lo, uint8_t hi);
-
     std::vector<uint8_t> memory_ = std::vector<uint8_t>(0x10000);
 
     std::optional<Rom> rom_ = std::nullopt;

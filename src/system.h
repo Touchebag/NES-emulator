@@ -21,6 +21,8 @@ class System {
     void resetComponents();
     void run(sf::RenderWindow& window);
 
+    static const int WINDOW_WIDTH  = 256;
+    static const int WINDOW_HEIGHT = 244;
   private:
     System();
 

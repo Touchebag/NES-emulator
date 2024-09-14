@@ -28,6 +28,12 @@ void System::reset() {
 void System::run(sf::RenderWindow& window) {
     reset();
 
+    sf::Image img;
+    img.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    sf::Texture tex;
+    tex.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+
     while (window.isOpen()) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             window.close();
@@ -46,6 +52,22 @@ void System::run(sf::RenderWindow& window) {
 
         int cycles = cpu_.executeInstruction();
         ppu_.advance(cycles);
+
+        const auto& framebuffer = ppu_.getFramebuffer();
+        auto it = framebuffer.begin();
+        for (auto x = 0; x < WINDOW_WIDTH; x++) {
+            for (auto y = 0; y < WINDOW_HEIGHT; y++) {
+                if (it != framebuffer.end()) {
+                    img.setPixel(x, y, {it->r, it->g, it->b});
+                    it++;
+                }
+            }
+        }
+
+        tex.update(img);
+        window.clear();
+        window.draw(sf::Sprite(tex));
+        window.display();
     };
 }
 

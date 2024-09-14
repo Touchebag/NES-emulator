@@ -34,11 +34,13 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     uint8_t peekMemoryAddress(uint8_t lo, uint8_t hi) {
-        return *(memory_.getAddress(lo, hi));
+        uint16_t address = (hi << 8) | lo;
+        return memory_.memory_[address];
     }
 
     void pokeMemoryAddress(uint8_t lo, uint8_t hi, uint8_t value) {
-        *(memory_.getAddress(lo, hi)) = value;
+        uint16_t address = (hi << 8) | lo;
+        memory_.memory_[address] = value;
     }
 
     void setStatusFlag(StatusFlag flag, bool value) {
@@ -97,23 +99,23 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x0014);
 
-    setPc(0xA9, 0x13);
+    setPc(0xA9, 0x83);
     // Manually add instructions at pc
-    pokeMemoryAddress(0xA9, 0x13, 0xF0);
-    pokeMemoryAddress(0xAA, 0x13, 0x72);
+    pokeMemoryAddress(0xA9, 0x83, 0xF0);
+    pokeMemoryAddress(0xAA, 0x83, 0x72);
 
     setStatusFlag(StatusFlag::ZERO, true);
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x141B);
+    EXPECT_EQ(getPc(), 0x841B);
 
-    setPc(0xAB, 0x13);
-    pokeMemoryAddress(0xAB, 0x13, 0xF0);
-    pokeMemoryAddress(0xAC, 0x13, 0xFC);
+    setPc(0xAB, 0x83);
+    pokeMemoryAddress(0xAB, 0x83, 0xF0);
+    pokeMemoryAddress(0xAC, 0x83, 0xFC);
     setStatusFlag(StatusFlag::ZERO, true);
 
     // Negative jump
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x13A7);
+    EXPECT_EQ(getPc(), 0x83A7);
 }
 
 // BNE
@@ -303,12 +305,12 @@ TEST_F(InterpreterTestFixture, text_0xBD) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);
 
-    pokeMemoryAddress(0x12, 0x34, 0x18);
-    pokeMemoryAddress(0x15, 0x34, 0x00);
+    pokeMemoryAddress(0x12, 0x54, 0x18);
+    pokeMemoryAddress(0x15, 0x54, 0x00);
     pokeMemoryAddress(0xA3, 0x59, 0xB9);
 
-    addInstruction({0xBD, 0x12, 0x34});
-    addInstruction({0xBD, 0x12, 0x34});
+    addInstruction({0xBD, 0x12, 0x54});
+    addInstruction({0xBD, 0x12, 0x54});
     addInstruction({0xBD, 0xA0, 0x59});
 
     executeNextInstruction();
@@ -376,8 +378,8 @@ TEST_F(InterpreterTestFixture, test_0x40) {
 // SBC (indirect, X)
 TEST_F(InterpreterTestFixture, test_0xE1) {
     pokeMemoryAddress(0x21, 0x00, 0x01);
-    pokeMemoryAddress(0x22, 0x00, 0x34);
-    pokeMemoryAddress(0x01, 0x34, 0x5C);
+    pokeMemoryAddress(0x22, 0x00, 0x74);
+    pokeMemoryAddress(0x01, 0x74, 0x5C);
     setRegisterX(0x07);
 
     addInstruction({0xE1, 0x1A});

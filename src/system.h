@@ -1,11 +1,13 @@
 #pragma once
 
 #include <string>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 #include "rom.h"
 #include "cpu.h"
 #include "ppu.h"
+#include "rom.h"
 #include "memory.h"
 
 class System {
@@ -29,5 +31,6 @@ class System {
     Cpu cpu_;
     Ppu ppu_;
     Memory memory_;
+    std::shared_ptr<Rom> rom_;
 };
 

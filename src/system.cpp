@@ -2,20 +2,24 @@
 
 #include <SFML/System.hpp>
 
+#include "log.h"
+
 System::System() :
     cpu_{Cpu()},
     ppu_{Ppu()},
     memory_{Memory()} {
+        rom_ = std::make_shared<Rom>();
 }
 
 void System::loadRom(const std::string& rom_file) {
-    memory_.loadRom(Rom::loadRomFromFile(rom_file));
+    rom_ = Rom::loadRomFromFile(rom_file);
 }
 
 void System::resetComponents() {
     cpu_ = Cpu();
     ppu_ = Ppu();
     memory_ = Memory();
+    rom_ = std::make_shared<Rom>();
 }
 
 void System::reset() {
@@ -90,4 +94,9 @@ Ppu& System::get<Ppu>() {
 template <>
 Memory& System::get<Memory>() {
     return getInstance().memory_;
+}
+
+template <>
+Rom& System::get<Rom>() {
+    return *(getInstance().rom_.get());
 }

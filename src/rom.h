@@ -2,27 +2,20 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+
+#include "rom_header.h"
 
 class Rom {
   public:
-    static Rom loadRomFromFile(const std::string& filepath);
+    Rom();
 
-    uint8_t* getAddress(uint16_t address);
+    static std::shared_ptr<Rom> loadRomFromFile(const std::string& filepath);
 
-  private:
+    virtual uint8_t readAddress(uint16_t address);
+    virtual void writeAddress(uint16_t address, uint8_t value);
+
+  protected:
+    RomHeader header_ = RomHeader{std::vector<uint8_t>{}};
     std::vector<uint8_t> rom_ = {};
-
-    uint8_t flags_6_  = 0;
-    uint8_t flags_7_  = 0;
-    uint8_t flags_8_  = 0;
-    uint8_t flags_9_  = 0;
-    uint8_t flags_10_ = 0;
-
-    uint8_t prg_rom_blocks_ = 0;
-    uint8_t chr_rom_blocks_ = 0;
-
-    void loadRom(const std::string& filepath);
-    bool parseRomHeader();
-
-    void printRomInfo();
 };

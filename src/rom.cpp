@@ -2,68 +2,44 @@
 
 #include <fstream>
 
+#include "mappers/mapper0.h"
+
 #include "log.h"
 
-Rom Rom::loadRomFromFile(const std::string& filepath) {
-    Rom rom;
-    rom.loadRom(filepath);
-    return rom;
+Rom::Rom() {
+    rom_ = std::vector<uint8_t>(0x8000, 0);
 }
 
-void Rom::loadRom(const std::string& filepath) {
+std::shared_ptr<Rom> Rom::loadRomFromFile(const std::string& filepath) {
     std::ifstream infile(filepath, std::ios_base::binary);
     if (infile.fail()) {
         throw std::invalid_argument(std::string("Could not open ROM file ") + filepath);
     }
-    rom_ = std::vector<uint8_t>(std::istreambuf_iterator<char>(infile), std::istreambuf_iterator<char>());
+    auto file_contents = std::vector<uint8_t>(std::istreambuf_iterator<char>(infile), std::istreambuf_iterator<char>());
     infile.close();
 
-    if (!parseRomHeader()) {
-        throw std::invalid_argument(std::string("Failed to parse ROM header"));
+    auto header = RomHeader(std::vector<uint8_t>(file_contents.begin(), file_contents.begin() + 0x10));
+
+    std::shared_ptr<Rom> rom = std::make_shared<Rom>();
+    if (header.mapper == 0x00) {
+        rom = std::make_shared<mappers::Mapper0>();
     }
+
+    rom->header_ = header;
+    rom->rom_ = std::vector<uint8_t>(file_contents.begin() + 0x10, file_contents.end());
 
     printf("ROM file %s loaded successfully\n", filepath.c_str());
-    printRomInfo();
+    rom->header_.printHeaderInfo();
+
+    return rom;
 }
 
-uint8_t* Rom::getAddress(uint16_t address) {
-    if (address < rom_.size()) {
-        return &(rom_[address + 0x10]); // Offset for header
-    } else {
-        LOGE("ROM address %x out of range", address);
-        throw std::out_of_range("");
-    }
+uint8_t Rom::readAddress(uint16_t address) {
+    address = address & 0x7FFF;
+    return rom_.at(address);
 }
 
-bool Rom::parseRomHeader() {
-    if (!((rom_[0] == 'N') &&
-          (rom_[1] == 'E') &&
-          (rom_[2] == 'S'))) {
-        return false;
-    };
-
-    if (rom_[3] != 0x1A) {
-        return false;
-    }
-    // TODO Add more checks
-    // iNES, NES 2.0 etc.
-
-    // Flags
-    flags_6_  = rom_[6];
-    flags_7_  = rom_[7];
-    flags_8_  = rom_[8];
-    flags_9_  = rom_[9];
-    flags_10_ = rom_[10];
-
-    prg_rom_blocks_ = rom_[4]; // 16KB units
-    chr_rom_blocks_ = rom_[5]; // 8KB units
-
-    return true;
-};
-
-void Rom::printRomInfo() {
-    printf("  Format: iNES\n");
-    printf("  PRG ROM size: 0x%x (%uKB)\n", prg_rom_blocks_, prg_rom_blocks_ * 16);
-    printf("  CHR ROM size: 0x%x (%uKB)\n", chr_rom_blocks_, chr_rom_blocks_ * 8);
-    printf("  Mapper: 0x%x\n", (flags_6_ & 0xF0) >> 4 | (flags_7_ & 0xF0));
+void Rom::writeAddress(uint16_t address, uint8_t value) {
+    address = address & 0x7FFF;
+    rom_.at(address) = value;
 }

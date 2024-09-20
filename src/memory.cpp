@@ -17,7 +17,7 @@ uint8_t Memory::readAddress(uint8_t address_low, uint8_t address_high) {
 
     if (address < RAM) {
         // First 0x2000 bytes are mirrors of 0x0000 - 0x07FF
-        return memory_[address & 0x7FF];
+        return memory_[address & 0x07FF];
     } else if (address < PPU) {
         return System::get<Ppu>().readRegister(address & 0x07);
     } else if (address < APU) {
@@ -26,15 +26,8 @@ uint8_t Memory::readAddress(uint8_t address_low, uint8_t address_high) {
         // Disabled
         // return &(memory_[address]);
     } else if (address <= ROM) {
-        // If rom is not loaded use direct memory (for testing)
-        // TODO Change to fake mapper instead
-        if (!rom_) {
-            return memory_[address];
-        }
-        // Otherwise get mapped address
-        if (address > 0x8000) {
-            return *(rom_.value().getAddress(address & 0x3FFF));
-        }
+        auto& rom = System::get<Rom>();
+        return rom.readAddress(address);
     } else {
         LOGE("Invalid memory address %x", address);
         throw std::runtime_error("");
@@ -48,7 +41,7 @@ void Memory::writeAddress(uint8_t address_low, uint8_t address_high, uint8_t val
 
     if (address < RAM) {
         // First 0x2000 bytes are mirrors of 0x0000 - 0x07FF
-        memory_[address & 0x7FF] = value;
+        memory_[address & 0x07FF] = value;
     } else if (address < PPU) {
         System::get<Ppu>().writeRegister(address & 0x07, value);
     } else if (address < APU) {
@@ -57,15 +50,8 @@ void Memory::writeAddress(uint8_t address_low, uint8_t address_high, uint8_t val
         // Disabled
         // return &(memory_[address]);
     } else if (address <= ROM) {
-        // If rom is not loaded use direct memory (for testing)
-        // TODO Change to fake mapper instead
-        if (!rom_) {
-            memory_[address] = value;
-        }
-        // Otherwise get mapped address
-        if (address > 0x8000) {
-            *(rom_.value().getAddress(address & 0x3FFF)) = value;
-        }
+        auto& rom = System::get<Rom>();
+        rom.writeAddress(address, value);
     } else {
         LOGE("Invalid memory address %x", address);
         throw std::runtime_error("");
@@ -75,7 +61,3 @@ void Memory::writeAddress(uint8_t address_low, uint8_t address_high, uint8_t val
 
     return;
 };
-
-void Memory::loadRom(Rom rom) {
-    rom_ = rom;
-}

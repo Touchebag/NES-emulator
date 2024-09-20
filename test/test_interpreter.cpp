@@ -34,13 +34,11 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     uint8_t peekMemoryAddress(uint8_t lo, uint8_t hi) {
-        uint16_t address = (hi << 8) | lo;
-        return memory_.memory_[address];
+        return memory_.readAddress(lo, hi);
     }
 
     void pokeMemoryAddress(uint8_t lo, uint8_t hi, uint8_t value) {
-        uint16_t address = (hi << 8) | lo;
-        memory_.memory_[address] = value;
+        memory_.writeAddress(lo, hi, value);
     }
 
     void setStatusFlag(StatusFlag flag, bool value) {
@@ -420,9 +418,9 @@ TEST_F(InterpreterTestFixture, test_0x8D) {
 
     setRegisterA(0x5C);
 
-    addInstruction({0x8D, 0x12, 0x34});
+    addInstruction({0x8D, 0x12, 0x14});
 
-    EXPECT_EQ(peekMemoryAddress(0x12, 0x34), 0x00);
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x14), 0x00);
     executeNextInstruction();
-    EXPECT_EQ(peekMemoryAddress(0x12, 0x34), 0x5C);
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x14), 0x5C);
 }

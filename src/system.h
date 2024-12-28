@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "rom.h"
-#include "cpu.h"
+#include "cpu/cpu.h"
 #include "ppu.h"
 #include "rom.h"
 #include "memory.h"

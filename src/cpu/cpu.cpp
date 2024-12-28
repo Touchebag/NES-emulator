@@ -115,9 +115,9 @@ int Cpu::executeInstruction() {
     int cycles = 0;
 
     switch (opcode) {
-    #include "interpreter/control.h"
-    #include "interpreter/alu.h"
-    #include "interpreter/rmw.h"
+    #include "control.h"
+    #include "alu.h"
+    #include "rmw.h"
     default:
         LOGE("Unknown opcode %x", opcode)
         throw std::invalid_argument("");

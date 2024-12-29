@@ -1,125 +1,71 @@
-case 0xC9: { // CMP immediate
-    incPc(1);
-    uint8_t c = readFromPc();
-    incPc(1);
+case InstructionType::CMP: {
+    uint8_t tmp = READ_ARGUMENT();
 
-    // Compare
     uint8_t a = reg_.a;
-    uint8_t tmp = a - c;
+
+    // 0 if tmp > a
+    setStatusFlag(StatusFlag::CARRY, tmp <= a);
+
+    a -= tmp;
 
     // Set flags
-    setNegativeFlag(tmp);
-    setZeroFlag(tmp);
-    // 0 if c > a
-    setStatusFlag(StatusFlag::CARRY, c <= a);
-
-    // Set cycles
-    cycles = 2;
+    setNegativeFlag(a);
+    setZeroFlag(a);
 
     LOGV("%x CMP #%x", opcode, c)
     break;
 }
 
-case 0xE0: { // CMX immediate
-    incPc(1);
-    uint8_t c = readFromPc();
-    incPc(1);
+case InstructionType::CPX: {
+    uint8_t tmp = READ_ARGUMENT();
 
-    // Compare
     uint8_t x = reg_.x;
-    uint8_t tmp = x - c;
+
+    // 0 if tmp > a
+    setStatusFlag(StatusFlag::CARRY, tmp <= x);
+
+    x -= tmp;
 
     // Set flags
-    setNegativeFlag(tmp);
-    setZeroFlag(tmp);
-    // 0 if c > a
-    setStatusFlag(StatusFlag::CARRY, c <= x);
+    setNegativeFlag(x);
+    setZeroFlag(x);
 
-    // Set cycles
-    cycles = 2;
-
-    LOGV("%x CMP #%x", opcode, c)
+    LOGV("%x CPX #%x", opcode, c)
     break;
 }
 
-case 0x8D: { // STA absolute
-    incPc(1);
-    uint8_t lo = readFromPc();
-    incPc(1);
-    uint8_t hi = readFromPc();
-    incPc(1);
-
-    memory.writeAddress(lo, hi, reg_.a);
-
-    // Number of cycles
-    cycles = 3;
+case InstructionType::STA: {
+    WRITE_ARGUMENT(reg_.a);
 
     LOGV("%x STA %x %x %x", opcode, hi, lo, reg_.a)
     break;
 }
 
-case 0xA9: { // LDA immediate
-    incPc(1);
-    uint8_t c = readFromPc();
-    reg_.a = c;
-    incPc(1);
+case InstructionType::LDA: {
+    auto tmp = READ_ARGUMENT();
+    reg_.a = tmp;
 
     // Set status
-    setNegativeFlag(c);
-    setZeroFlag(c);
+    setNegativeFlag(tmp);
+    setZeroFlag(tmp);
 
-    // Number of cycles
-    cycles = 2;
-
-    LOGV("%x LDA #%x", opcode, c)
+    LOGV("%x LDA #%x", opcode, tmp)
     break;
 }
 
-case 0xBD: { // LDA absolute,X
-    // Cycles first for easier adding of potential page-crossing cycle
-    cycles = 4;
-
-    incPc(1);
-    uint8_t lo = readFromPc();
-    incPc(1);
-    uint8_t hi = readFromPc();
-    incPc(1);
-    uint8_t x = reg_.x;
-
-    auto [val, page_cross] = absoluteX(lo, hi, x);
-    reg_.a = val;
-
-    if (page_cross) {
-        cycles++;
-    }
-
-    // Set status
-    setNegativeFlag(val);
-    setZeroFlag(val);
-
-    LOGV("%x LDA %x %x %x", opcode, hi, lo, x)
-    break;
-}
-
-case 0xE1: { // SBC (indirect,X)
-    incPc(1);
-    uint8_t addr = readFromPc();
-    incPc(1);
-
-    auto [val, _] = indirectX(addr, reg_.x);
+case InstructionType::SBC: {
+    auto tmp = READ_ARGUMENT();
 
     uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
 
-    setStatusFlag(StatusFlag::CARRY, (val + c) > reg_.a);
+    setStatusFlag(StatusFlag::CARRY, (tmp + c) > reg_.a);
 
-    reg_.a = reg_.a - val + (c);
+    reg_.a = reg_.a - tmp + (c);
 
     uint8_t a = reg_.a;
 
     setNegativeFlag(a);
     setZeroFlag(a);
-
-    cycles = 6;
 
     LOGV("%x SBC %x", opcode, val);
     break;

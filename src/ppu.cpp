@@ -31,7 +31,7 @@ Ppu::Ppu() {
     }
 }
 
-void Ppu::advance(int cycles) {
+void Ppu::advance(int /* cycles */) {
 }
 
 void Ppu::incrementCurrentAddress(uint8_t bytes) {

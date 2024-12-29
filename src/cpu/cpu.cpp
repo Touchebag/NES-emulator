@@ -7,11 +7,13 @@
 
 #include "log.h"
 
+#define READ_ARGUMENT() readArgument(current_instruction_data, cycles)
+#define WRITE_ARGUMENT(x) writeArgument(current_instruction_data, cycles, x)
+
 namespace {
 
-std::tuple<uint8_t, uint8_t, int> relativeJump(uint8_t lo, uint8_t hi, uint8_t val) {
-    // Always add at least one cycle
-    int cycles = 1;
+std::tuple<uint8_t, uint8_t, bool> calculateRelativeJump(uint8_t lo, uint8_t hi, uint8_t val) {
+    bool page_cross = false;
 
     uint8_t new_lo = lo + val;
     // If relative is negative
@@ -19,40 +21,15 @@ std::tuple<uint8_t, uint8_t, int> relativeJump(uint8_t lo, uint8_t hi, uint8_t v
         if (new_lo > lo) {
             // Underflow, carry to hi;
             hi--;
-            cycles = 2;
+            page_cross = true;
         }
     } else if (new_lo < lo) {
         // Overflow, carry to hi;
         hi++;
-        cycles = 2;
-    }
-
-    return {new_lo, hi, cycles};
-}
-
-std::pair<uint8_t, bool> absoluteX(uint8_t lo, uint8_t hi, uint8_t x) {
-    uint8_t new_lo = lo + x;
-    bool page_cross = false;
-
-    if (new_lo < lo) {
-        // Overflow, carry to hi
-        hi++;
         page_cross = true;
     }
 
-    uint8_t val = System::get<Memory>().readAddress(new_lo, hi);
-
-    return {val, page_cross};
-}
-
-std::pair<uint8_t, bool> indirectX(uint8_t address, uint8_t x) {
-    auto& mem = System::get<Memory>();
-    uint8_t lo = mem.readAddress(address + x, 0x00);
-    uint8_t hi = mem.readAddress(address + x + 0x01, 0x00);
-
-    uint8_t val = mem.readAddress(lo, hi);
-
-    return {val, false};
+    return {new_lo, hi, page_cross};
 }
 
 } // namespace
@@ -110,22 +87,100 @@ uint8_t Cpu::popStack() {
 }
 
 int Cpu::executeInstruction() {
-    auto& memory = System::get<Memory>();
     uint8_t opcode = readFromPc();
-    int cycles = 0;
 
-    switch (opcode) {
-    #include "control.h"
-    #include "alu.h"
-    #include "rmw.h"
-    default:
-        LOGE("Unknown opcode %x", opcode)
-        throw std::invalid_argument("");
-        break;
-    };
+    try {
+        auto current_instruction_data = instruction_table.at(opcode);
+        unsigned int cycles = current_instruction_data.num_cycles;
 
-    return cycles;
+        switch (current_instruction_data.type) {
+        #include "control.h"
+        #include "alu.h"
+        #include "rmw.h"
+        default:
+            LOGE("Unknown opcode %x", opcode)
+            throw std::invalid_argument("");
+            break;
+        };
+
+        return cycles;
+    } catch (std::out_of_range& e) {
+        LOGE("Unknown opcode %x", opcode);
+        throw e;
+    }
 };
+
+uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int& cycles) {
+    uint8_t retval = 0;
+    incPc(1); // Skip instruction byte
+
+    switch (instruction_data.addr_mode) {
+        case AddressingMode::RELATIVE:
+            [[fallthrough]]; // Argument is treated identically
+        case AddressingMode::IMMEDIATE:
+            retval = readFromPc();
+            incPc(1);
+            break;
+        case AddressingMode::ABSOLUTE_X: {
+            uint8_t lo = readFromPc();
+            incPc(1);
+            uint8_t hi = readFromPc();
+            incPc(1);
+            uint8_t x = reg_.x;
+
+            uint8_t new_lo = lo + x;
+
+            if (new_lo < lo) {
+                // Overflow, carry to hi
+                hi++;
+                // Page cross, extra cycle
+                cycles++;
+            }
+
+            retval = System::get<Memory>().readAddress(new_lo, hi);
+            break;
+        }
+        case AddressingMode::INDIRECT_X: {
+            auto& mem = System::get<Memory>();
+            auto address = readFromPc();
+            incPc(1);
+
+            uint8_t lo = mem.readAddress(address + reg_.x, 0x00);
+            uint8_t hi = mem.readAddress(address + reg_.x + 0x01, 0x00);
+
+            retval = mem.readAddress(lo, hi);
+            break;
+        }
+        case AddressingMode::NONE:
+            // Ignore
+            break;
+        default:
+            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            break;
+    }
+
+    return retval;
+}
+
+void Cpu::writeArgument(const InstructionData& instruction_data, unsigned int& /* cycles */, uint8_t value) {
+    incPc(1); // Skip instruction byte
+    auto& memory = System::get<Memory>();
+
+    switch (instruction_data.addr_mode) {
+        case AddressingMode::ABSOLUTE: {
+            uint8_t lo = readFromPc();
+            incPc(1);
+            uint8_t hi = readFromPc();
+            incPc(1);
+
+            memory.writeAddress(lo, hi, value);
+            break;
+        }
+        default:
+            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            break;
+    }
+}
 
 Cpu::Registers Cpu::getRegisters() {
     return reg_;

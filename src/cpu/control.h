@@ -1,46 +1,44 @@
-case 0xF0: { // BEQ
-    // Cycles first to help with page crossing
-    cycles = 2;
-
+case InstructionType::BEQ: {
     uint8_t lo = reg_.pc[0];
     uint8_t hi = reg_.pc[1];
-    incPc(1);
-    uint8_t tmp = readFromPc();
-    incPc(1);
+
+    uint8_t tmp = READ_ARGUMENT();
 
     // If latest operation was zero
     if (getStatusFlag(StatusFlag::ZERO)) {
-        auto [new_lo, new_hi, page_cycles] = relativeJump(lo, hi, tmp);
+        // Add extra cycle if branch taken
+        cycles++;
+
+        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(lo, hi, tmp);
         setPc(new_lo, new_hi);
-        cycles += page_cycles;
+        if (page_cross) { cycles++; }
     };
 
     LOGV("%x BEQ %x", opcode, tmp)
     break;
 }
 
-case 0xD0: { // BNE
-    // Cycles first to help with page crossing
-    cycles = 2;
-
+case InstructionType::BNE: {
     uint8_t lo = reg_.pc[0];
     uint8_t hi = reg_.pc[1];
-    incPc(1);
-    uint8_t tmp = readFromPc();
-    incPc(1);
 
-    // If latest operation was zero
+    uint8_t tmp = READ_ARGUMENT();
+
+    // If latest operation was non-zero
     if (!getStatusFlag(StatusFlag::ZERO)) {
-        auto [new_lo, new_hi, page_cycles] = relativeJump(lo, hi, tmp);
+        // Add extra cycle if branch taken
+        cycles++;
+
+        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(lo, hi, tmp);
         setPc(new_lo, new_hi);
-        cycles += page_cycles;
+        if (page_cross) { cycles++; }
     };
 
     LOGV("%x BNE %x", opcode, tmp)
     break;
 }
 
-case 0x00: { // BRK
+case InstructionType::BRK: {
     uint8_t hi = reg_.pc[1];
     uint8_t lo = reg_.pc[0];
 
@@ -56,26 +54,24 @@ case 0x00: { // BRK
     pushStack(lo);
     pushStack(status);
 
+    auto& memory = System::get<Memory>();
     lo = memory.readAddress(0xFE, 0xFF);
     hi = memory.readAddress(0xFF, 0xFF);
     setPc(lo, hi);
-
-    cycles = 7;
 
     LOGV("%x BRK", opcode)
     break;
 }
 
-case 0x18: { // CLC
+case InstructionType::CLC: {
     incPc(1);
 
     setStatusFlag(StatusFlag::CARRY, false);
 
-    cycles = 2;
     break;
 }
 
-case 0xE8: { // INX
+case InstructionType::INX: {
     incPc(1);
     reg_.x = (reg_.x + 1) % 256;
 
@@ -83,14 +79,11 @@ case 0xE8: { // INX
     setNegativeFlag(reg_.x);
     setZeroFlag(reg_.x);
 
-    // Number of cycles
-    cycles = 2;
-
     LOGV("%x INX", opcode)
     break;
 }
 
-case 0x4C: { // JMP absolute
+case InstructionType::JMP: {
     incPc(1);
     uint8_t lo = readFromPc();
     incPc(1);
@@ -98,21 +91,17 @@ case 0x4C: { // JMP absolute
 
     setPc(lo, hi);
 
-    cycles = 3;
-
     LOGV("%x JMP %x %x", opcode, lo, hi)
     break;
 }
 
-case 0x40: { // RTI
+case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();
     uint8_t hi = popStack();
 
     setPc(lo, hi);
     reg_.p = p & ~(static_cast<uint8_t>(StatusFlag::BREAK));
-
-    cycles = 6;
 
     LOGV("%x RTI", opcode)
     break;

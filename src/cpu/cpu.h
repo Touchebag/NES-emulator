@@ -1,6 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
+#include <utility>
+
+#include "instruction_table.h"
 
 class InterpreterTestFixture;
 
@@ -45,6 +49,9 @@ class Cpu {
 
     void incPc(int);
     Registers reg_;
+
+    uint8_t readArgument(const InstructionData&, unsigned int& cycles);
+    void writeArgument(const InstructionData&, unsigned int& cycles, uint8_t value);
 
     friend InterpreterTestFixture;
 };

@@ -1,15 +1,10 @@
-case 0xA2: { // LDX immediate
-    incPc(1);
-    uint8_t c = readFromPc();
-    reg_.x = c;
-    incPc(1);
+case InstructionType::LDX: {
+    auto tmp = READ_ARGUMENT();
+    reg_.x = tmp;
 
     // Set status
-    setNegativeFlag(c);
-    setZeroFlag(c);
-
-    // Number of cycles
-    cycles = 2;
+    setNegativeFlag(tmp);
+    setZeroFlag(tmp);
 
     LOGV("%x LDX #%x", opcode, c)
     break;

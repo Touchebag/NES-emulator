@@ -21,10 +21,13 @@ class System {
 
     void reset();
     void resetComponents();
-    void run(sf::RenderWindow& window);
+    void run(std::shared_ptr<sf::RenderWindow> window);
 
     static const int WINDOW_WIDTH  = 256;
     static const int WINDOW_HEIGHT = 244;
+
+    void onVsyncTriggered();
+
   private:
     System();
 
@@ -32,5 +35,12 @@ class System {
     Ppu ppu_;
     Memory memory_;
     std::shared_ptr<Rom> rom_;
+
+    unsigned int num_frames_ = 0;
+
+    // Render stuff
+    std::weak_ptr<sf::RenderWindow> window_;
+    sf::Image img_;
+    sf::Texture tex_;
 };
 

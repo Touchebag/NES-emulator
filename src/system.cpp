@@ -5,10 +5,13 @@
 #include "log.h"
 
 System::System() :
-    cpu_{Cpu()},
-    ppu_{Ppu()},
-    memory_{Memory()} {
-        rom_ = std::make_shared<Rom>();
+        cpu_{Cpu()},
+        ppu_{Ppu()},
+        memory_{Memory()} {
+    rom_ = std::make_shared<Rom>();
+
+    img_.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+    tex_.create(WINDOW_WIDTH, WINDOW_HEIGHT);
 }
 
 void System::loadRom(const std::string& rom_file) {
@@ -29,25 +32,24 @@ void System::reset() {
     cpu_.setPc(pc_low, pc_high);
 }
 
-void System::run(sf::RenderWindow& window) {
+void System::run(std::shared_ptr<sf::RenderWindow> window) {
     reset();
+    window_ = window;
 
-    sf::Image img;
-    img.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+    unsigned int cycles_since_reset = 0;
 
-    sf::Texture tex;
-    tex.create(WINDOW_WIDTH, WINDOW_HEIGHT);
+    sf::Clock clock;
 
-    while (window.isOpen()) {
+    while (window->isOpen()) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            window.close();
+            window->close();
         }
 
         sf::Event event;
-        while (window.pollEvent(event)) {
+        while (window->pollEvent(event)) {
             switch (event.type) {
                 case sf::Event::Closed:
-                    window.close();
+                    window->close();
                     break;
                 default:
                     break;
@@ -56,23 +58,40 @@ void System::run(sf::RenderWindow& window) {
 
         int cycles = cpu_.executeInstruction();
         ppu_.advance(cycles);
+        cycles_since_reset += cycles;
 
+        if (clock.getElapsedTime().asMilliseconds() >= 1000) {
+            LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 178977.30 );
+            cycles_since_reset = 0;
+
+            LOGD("Fps %i", num_frames_);
+            num_frames_ = 0;
+
+            clock.restart();
+        }
+    };
+}
+
+void System::onVsyncTriggered() {
+    num_frames_++;
+
+    if (auto window = window_.lock()) {
         const auto& framebuffer = ppu_.getFramebuffer();
         auto it = framebuffer.begin();
         for (auto x = 0; x < WINDOW_WIDTH; x++) {
             for (auto y = 0; y < WINDOW_HEIGHT; y++) {
                 if (it != framebuffer.end()) {
-                    img.setPixel(x, y, {it->r, it->g, it->b});
+                    img_.setPixel(x, y, {it->r, it->g, it->b});
                     it++;
                 }
             }
         }
 
-        tex.update(img);
-        window.clear();
-        window.draw(sf::Sprite(tex));
-        window.display();
-    };
+        tex_.update(img_);
+        window->clear();
+        window->draw(sf::Sprite(tex_));
+        window->display();
+    }
 }
 
 System& System::getInstance() {

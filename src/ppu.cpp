@@ -4,6 +4,8 @@
 #include <iostream>
 #include <random>
 
+#include "system.h"
+
 #include "log.h"
 
 namespace {
@@ -14,7 +16,7 @@ palettes::RGB lookupRgbValue(uint8_t index) {
         throw std::runtime_error("");
     }
 
-    return (palettes::def.at(index));
+    return (palettes::def[index]);
 }
 
 } // namespace
@@ -26,12 +28,36 @@ Ppu::Ppu() {
 
     for (auto x = 0; x < 244; x++) {
         for (auto y = 0; y < 256; y++) {
-            framebuffer_.push_back(lookupRgbValue(distr(rnd_gen)));
+            framebuffer_.push_back(lookupRgbValue(1));
         }
     }
 }
 
-void Ppu::advance(int /* cycles */) {
+void Ppu::advance(int cycles) {
+    // Add leftover cycles from previous call
+    cycles += byte_cycle_count_;
+
+    while (cycles > 7) {
+        cycles -= 8;
+
+        for (auto i = 0; i < 7; i++) {
+            auto current_nametable_index = (current_scanline_ / 8) * 32 + current_nametable_column_;
+            framebuffer_.at(current_nametable_index) = lookupRgbValue(vram_.at(0x2000 + current_nametable_index));
+            // printf("%x ", vram_.at(0x2000 + current_nametable_index_));
+        }
+
+        if (++current_nametable_column_ >= 32) {
+            current_nametable_column_ = 0;
+
+            if (++current_scanline_ >= 240) {
+                System::getInstance().onVsyncTriggered();
+                current_scanline_ = 0;
+            }
+        }
+    }
+
+    // Store leftovers
+    byte_cycle_count_ = cycles;
 }
 
 void Ppu::incrementCurrentAddress(uint8_t bytes) {
@@ -107,7 +133,7 @@ uint8_t Ppu::readRegister(uint16_t address) {
             LOGD("R OAMDATA");
             return OAMDATA;
         case 0x5:
-            LOGD("R PPUSCROL");
+            LOGD("R PPUSCROLL");
             return PPUSCROLL;
         case 0x6:
             LOGE("PPUADDR not readable");

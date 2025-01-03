@@ -40,9 +40,32 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
 
     sf::Clock clock;
 
-    while (window->isOpen()) {
+    if (auto w = window_.lock()) {
+        while (w->isOpen()) {
+            int cycles = cpu_.executeInstruction();
+            ppu_.advance(cycles);
+            cycles_since_reset += cycles;
+
+            if (clock.getElapsedTime().asMilliseconds() >= 1000) {
+                LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 17897.73 );
+                cycles_since_reset = 0;
+
+                LOGD("Fps %i", num_frames_);
+                num_frames_ = 0;
+
+                clock.restart();
+            }
+        }
+    } else {
+        LOGE("Could not lock render window");
+    }
+}
+
+void System::onVsyncTriggered() {
+    if (auto window = window_.lock()) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
             window->close();
+            return;
         }
 
         sf::Event event;
@@ -55,24 +78,8 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
                     break;
             }
         }
+    }
 
-        int cycles = cpu_.executeInstruction();
-        ppu_.advance(cycles);
-        cycles_since_reset += cycles;
-
-        if (clock.getElapsedTime().asMilliseconds() >= 1000) {
-            LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 178977.30 );
-            cycles_since_reset = 0;
-
-            LOGD("Fps %i", num_frames_);
-            num_frames_ = 0;
-
-            clock.restart();
-        }
-    };
-}
-
-void System::onVsyncTriggered() {
     num_frames_++;
 
     if (auto window = window_.lock()) {

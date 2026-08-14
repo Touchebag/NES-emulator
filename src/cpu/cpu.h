@@ -10,6 +10,8 @@ class InterpreterTestFixture;
 
 class Cpu {
   public:
+    Cpu();
+
     int executeInstruction();
 
     void setPc(uint8_t pc_low, uint8_t pc_high);
@@ -29,11 +31,11 @@ class Cpu {
 
     struct Registers {
       uint8_t pc[2];
-      uint8_t sp = 0xFF;
-      uint8_t p;
-      uint8_t a;
-      uint8_t x;
-      uint8_t y;
+      uint8_t sp = 0;
+      uint8_t p = 0;
+      uint8_t a = 0;
+      uint8_t x = 0;
+      uint8_t y = 0;
     };
     Registers getRegisters();
 

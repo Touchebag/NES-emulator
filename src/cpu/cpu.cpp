@@ -34,6 +34,12 @@ std::tuple<uint8_t, uint8_t, bool> calculateRelativeJump(uint8_t lo, uint8_t hi,
 
 } // namespace
 
+Cpu::Cpu() {
+    setStatusFlag(StatusFlag::INTERRUPT, true);
+    setPc(0xFC, 0xFF);
+    reg_.sp = 0xFD;
+}
+
 bool Cpu::getStatusFlag(Cpu::StatusFlag flag) {
     return reg_.p & static_cast<uint8_t>(flag);
 }

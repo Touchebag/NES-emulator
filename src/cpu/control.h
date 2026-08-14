@@ -48,11 +48,14 @@ case InstructionType::BRK: {
     }
 
     lo += 2;
-    uint8_t status = reg_.p | static_cast<uint8_t>(StatusFlag::BREAK);
 
     pushStack(hi);
     pushStack(lo);
-    pushStack(status);
+    // Break only exists in the pushed flags
+    pushStack(reg_.p | static_cast<uint8_t>(StatusFlag::BREAK));
+
+    // Interrupt is not pushed
+    setStatusFlag(StatusFlag::INTERRUPT, true);
 
     auto& memory = System::get<Memory>();
     lo = memory.readAddress(0xFE, 0xFF);

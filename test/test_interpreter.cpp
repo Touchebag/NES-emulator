@@ -146,14 +146,20 @@ TEST_F(InterpreterTestFixture, test_0x00) {
 
     uint8_t status = static_cast<uint8_t>(StatusFlag::ZERO)  |
                      static_cast<uint8_t>(StatusFlag::CARRY) |
+                     static_cast<uint8_t>(StatusFlag::INTERRUPT) |
                      static_cast<uint8_t>(StatusFlag::BREAK);
 
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x7D05);
-    EXPECT_EQ(getStackPointer(), 0xFC);
-    EXPECT_EQ(peekMemoryAddress(0xFF, 0x01), 0x12);
-    EXPECT_EQ(peekMemoryAddress(0xFE, 0x01), 0x36);
-    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), status);
+    EXPECT_EQ(getStackPointer(), 0xFA);
+    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), 0x12);
+    EXPECT_EQ(peekMemoryAddress(0xFC, 0x01), 0x36);
+    EXPECT_EQ(peekMemoryAddress(0xFB, 0x01), status);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::INTERRUPT), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::BREAK), false);
 }
 
 // CLC

@@ -6,6 +6,6 @@ case InstructionType::LDX: {
     setNegativeFlag(tmp);
     setZeroFlag(tmp);
 
-    PRINT_INSTRUCTION("%x LDX #%x", opcode, tmp)
+    PRINT_INSTRUCTION("%x %s #%x", opcode, InstructionStringMap.at(current_instruction_data.type).c_str(), tmp)
     break;
 }

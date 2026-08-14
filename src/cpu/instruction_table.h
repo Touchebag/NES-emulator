@@ -1,5 +1,6 @@
 #include <unordered_map>
 #include <cstdint>
+#include <string>
 
 enum class AddressingMode {
     NONE,
@@ -10,21 +11,32 @@ enum class AddressingMode {
     INDIRECT_X,
 };
 
+#define INSTRUCTION_SET \
+    GENERATE_ENUM(NONE),\
+    GENERATE_ENUM(BEQ),\
+    GENERATE_ENUM(BNE),\
+    GENERATE_ENUM(BRK),\
+    GENERATE_ENUM(CLC),\
+    GENERATE_ENUM(CMP),\
+    GENERATE_ENUM(CPX),\
+    GENERATE_ENUM(INX),\
+    GENERATE_ENUM(LDA),\
+    GENERATE_ENUM(LDX),\
+    GENERATE_ENUM(JMP),\
+    GENERATE_ENUM(RTI),\
+    GENERATE_ENUM(SBC),\
+    GENERATE_ENUM(STA)
+
 enum class InstructionType {
-    NONE,
-    BEQ,
-    BNE,
-    BRK,
-    CLC,
-    CMP,
-    CPX,
-    INX,
-    LDA,
-    LDX,
-    JMP,
-    RTI,
-    SBC,
-    STA,
+#define GENERATE_ENUM(x) x
+INSTRUCTION_SET
+#undef GENERATE_ENUM
+};
+
+inline std::unordered_map<InstructionType, std::string> InstructionStringMap {
+#define GENERATE_ENUM(x) {InstructionType::x, #x}
+INSTRUCTION_SET
+#undef GENERATE_ENUM
 };
 
 struct InstructionData {

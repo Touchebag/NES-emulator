@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <string>
 
 /*
  * LOG_LEVEL
@@ -58,6 +59,7 @@
 struct NestestData {
     uint8_t pc_lo, pc_hi;
     uint8_t opcode;
+    std::string name = "";
     std::optional<uint8_t> arg1 = std::nullopt;
     std::optional<uint8_t> arg2 = std::nullopt;
 };
@@ -80,6 +82,7 @@ inline void print_nestest_output(NestestData data) {
     }
     fprintf(stderr, "  ");
 
+    fprintf(stderr, "%s", data.name.c_str());
 
     fprintf(stderr, "\n");
     fflush(stderr);

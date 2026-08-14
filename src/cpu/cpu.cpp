@@ -102,6 +102,7 @@ int Cpu::executeInstruction() {
         prev_instruction_data_.pc_hi = getRegisters().pc[1];
         prev_instruction_data_.pc_lo = getRegisters().pc[0];
         prev_instruction_data_.opcode = opcode;
+        prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
 #endif
 
         switch (current_instruction_data.type) {

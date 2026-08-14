@@ -47,3 +47,41 @@
 #define LOGV(...) ((void)0);
 #endif
 
+// ---- Verbose instrcution output ----
+#if LOG_LEVEL > 3
+#define PRINT_INSTRUCTION(...) fprintf(stderr, "OP : " __VA_ARGS__); fprintf(stderr, "\n"); fflush(stderr);
+#else
+#define PRINT_INSTRUCTION(...) ((void)0);
+#endif
+
+#ifdef NESTEST_OUTPUT
+struct NestestData {
+    uint8_t pc_lo, pc_hi;
+    uint8_t opcode;
+    std::optional<uint8_t> arg1 = std::nullopt;
+    std::optional<uint8_t> arg2 = std::nullopt;
+};
+
+inline void print_nestest_output(NestestData data) {
+    fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
+    fprintf(stderr, "%02X ", data.opcode);
+
+    // Optional arguments
+    if (data.arg1) {
+        fprintf(stderr, "%02X ", data.arg1.value());
+
+        if (data.arg2) {
+            fprintf(stderr, "%02X ", data.arg2.value());
+        } else {
+            fprintf(stderr, "  ");
+        }
+    } else {
+        fprintf(stderr, "  ");
+    }
+    fprintf(stderr, "  ");
+
+
+    fprintf(stderr, "\n");
+    fflush(stderr);
+}
+#endif

@@ -14,7 +14,7 @@ case InstructionType::BEQ: {
         if (page_cross) { cycles++; }
     };
 
-    LOGV("%x BEQ %x", opcode, tmp)
+    PRINT_INSTRUCTION("%x BEQ %x", opcode, tmp)
     break;
 }
 
@@ -34,7 +34,7 @@ case InstructionType::BNE: {
         if (page_cross) { cycles++; }
     };
 
-    LOGV("%x BNE %x", opcode, tmp)
+    PRINT_INSTRUCTION("%x BNE %x", opcode, tmp)
     break;
 }
 
@@ -62,7 +62,7 @@ case InstructionType::BRK: {
     hi = memory.readAddress(0xFF, 0xFF);
     setPc(lo, hi);
 
-    LOGV("%x BRK", opcode)
+    PRINT_INSTRUCTION("%x BRK", opcode)
     break;
 }
 
@@ -82,7 +82,7 @@ case InstructionType::INX: {
     setNegativeFlag(reg_.x);
     setZeroFlag(reg_.x);
 
-    LOGV("%x INX", opcode)
+    PRINT_INSTRUCTION("%x INX", opcode)
     break;
 }
 
@@ -94,7 +94,7 @@ case InstructionType::JMP: {
 
     setPc(lo, hi);
 
-    LOGV("%x JMP %x %x", opcode, lo, hi)
+    PRINT_INSTRUCTION("%x JMP %x %x", opcode, lo, hi)
     break;
 }
 
@@ -106,6 +106,6 @@ case InstructionType::RTI: {
     setPc(lo, hi);
     reg_.p = p & ~(static_cast<uint8_t>(StatusFlag::BREAK));
 
-    LOGV("%x RTI", opcode)
+    PRINT_INSTRUCTION("%x RTI", opcode)
     break;
 }

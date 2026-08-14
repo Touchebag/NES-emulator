@@ -46,6 +46,10 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
             ppu_.advance(cycles);
             cycles_since_reset += cycles;
 
+#ifdef NESTEST_OUTPUT
+            print_nestest_output(cpu_.getPrevInstructionData());
+#endif
+
             if (clock.getElapsedTime().asMilliseconds() >= 1000) {
                 LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 17897.73 );
                 cycles_since_reset = 0;

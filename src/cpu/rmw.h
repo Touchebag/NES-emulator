@@ -6,6 +6,6 @@ case InstructionType::LDX: {
     setNegativeFlag(tmp);
     setZeroFlag(tmp);
 
-    LOGV("%x LDX #%x", opcode, c)
+    PRINT_INSTRUCTION("%x LDX #%x", opcode, tmp)
     break;
 }

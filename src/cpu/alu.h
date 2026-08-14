@@ -12,7 +12,7 @@ case InstructionType::CMP: {
     setNegativeFlag(a);
     setZeroFlag(a);
 
-    LOGV("%x CMP #%x", opcode, c)
+    PRINT_INSTRUCTION("%x CMP #%x", opcode, tmp)
     break;
 }
 
@@ -30,14 +30,18 @@ case InstructionType::CPX: {
     setNegativeFlag(x);
     setZeroFlag(x);
 
-    LOGV("%x CPX #%x", opcode, c)
+    PRINT_INSTRUCTION("%x CPX #%x", opcode, tmp)
     break;
 }
 
 case InstructionType::STA: {
     WRITE_ARGUMENT(reg_.a);
 
-    LOGV("%x STA %x %x %x", opcode, hi, lo, reg_.a)
+    PRINT_INSTRUCTION("%x STA %x %x %x",
+            opcode,
+            System::get<Memory>().readAddress(reg_.pc[0] - 1, reg_.pc[1]), // Hi
+            System::get<Memory>().readAddress(reg_.pc[0] - 2, reg_.pc[1]), // Lo
+            reg_.a)
     break;
 }
 
@@ -49,7 +53,7 @@ case InstructionType::LDA: {
     setNegativeFlag(tmp);
     setZeroFlag(tmp);
 
-    LOGV("%x LDA #%x", opcode, tmp)
+    PRINT_INSTRUCTION("%x LDA #%x", opcode, tmp)
     break;
 }
 
@@ -67,6 +71,6 @@ case InstructionType::SBC: {
     setNegativeFlag(a);
     setZeroFlag(a);
 
-    LOGV("%x SBC %x", opcode, val);
+    PRINT_INSTRUCTION("%x SBC %x", opcode, tmp);
     break;
 }

@@ -31,7 +31,7 @@ RomHeader::RomHeader(std::vector<uint8_t> header) {
 
     prg_rom_blocks = header[4]; // 16KB units
     chr_rom_blocks = header[5]; // 8KB units
-                                //
+
     mapper = (flags_6 & 0xF0) >> 4 | (flags_7 & 0xF0);
 }
 
@@ -39,5 +39,5 @@ void RomHeader::printHeaderInfo() {
     printf("  Format: iNES\n");
     printf("  PRG ROM size: 0x%x (%uKB)\n", prg_rom_blocks, prg_rom_blocks * 16);
     printf("  CHR ROM size: 0x%x (%uKB)\n", chr_rom_blocks, chr_rom_blocks * 8);
-    printf("  Mapper: 0x%x\n", mapper);
+    printf("  Mapper: %i\n", mapper);
 }

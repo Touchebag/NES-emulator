@@ -21,8 +21,10 @@ std::shared_ptr<Rom> Rom::loadRomFromFile(const std::string& filepath) {
     auto header = RomHeader(std::vector<uint8_t>(file_contents.begin(), file_contents.begin() + 0x10));
 
     std::shared_ptr<Rom> rom = std::make_shared<Rom>();
-    if (header.mapper == 0x00) {
+    if (header.mapper == 0) {
         rom = std::make_shared<mappers::Mapper0>();
+    } else {
+        throw std::invalid_argument(std::string("Invalid mapper: ") + std::to_string(header.mapper));
     }
 
     rom->header_ = header;

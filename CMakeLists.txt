@@ -6,7 +6,7 @@ set (CC_OPTIONS -Wall -DLOG_LEVEL=3)
 set (EMULATOR_TARGET "NES_emulator")
 set (TEST_TARGET "tests")
 
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 set(SFML_LIBS sfml-graphics sfml-window sfml-system)
 
 file (GLOB_RECURSE SOURCES src/*.cpp)

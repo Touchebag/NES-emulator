@@ -47,7 +47,9 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
             cycles_since_reset += cycles;
 
             // nestest
-            print_nestest_output(cpu_.getPrevInstructionData());
+            if (nestest_output_) {
+                printNestestOutput(cpu_.getPrevInstructionData());
+            }
 
             if (clock.getElapsedTime().asMilliseconds() >= 1000) {
                 LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 17897.73 );
@@ -102,6 +104,15 @@ void System::onVsyncTriggered() {
         window->draw(sf::Sprite(tex_));
         window->display();
     }
+}
+
+void System::enableNestestOutput(bool enable) {
+    if (enable) {
+        LOGI("Enabling nestest output");
+    } else {
+        LOGI("Disabling nestest output");
+    }
+    nestest_output_ = enable;
 }
 
 System& System::getInstance() {

@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-void print_nestest_output(NestestData data) {
+void printNestestOutput(NestestData data) {
     fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
     fprintf(stderr, "%02X ", data.opcode);
 

@@ -39,15 +39,15 @@
 #endif
 
 #if LOG_LEVEL > 2
-#define LOGD(...) LOG("DEBUG", __VA_ARGS__)
+#define LOGI(...) LOG("INFO", __VA_ARGS__)
 #else
-#define LOGD(...) ((void)0);
+#define LOGI(...) ((void)0);
 #endif
 
 #if LOG_LEVEL > 3
-#define LOGV(...) LOG("VERBOSE", __VA_ARGS__)
+#define LOGD(...) LOG("DEBUG", __VA_ARGS__)
 #else
-#define LOGV(...) ((void)0);
+#define LOGD(...) ((void)0);
 #endif
 
 // ---- Verbose instrcution output ----

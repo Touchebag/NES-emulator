@@ -26,6 +26,8 @@ class System {
     static const int WINDOW_WIDTH  = 256;
     static const int WINDOW_HEIGHT = 244;
 
+    void enableNestestOutput(bool);
+
     void onVsyncTriggered();
 
   private:
@@ -37,6 +39,8 @@ class System {
     std::shared_ptr<Rom> rom_;
 
     unsigned int num_frames_ = 0;
+
+    bool nestest_output_ = false;
 
     // Render stuff
     std::weak_ptr<sf::RenderWindow> window_;

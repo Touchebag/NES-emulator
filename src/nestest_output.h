@@ -27,6 +27,6 @@ struct NestestData {
     uint8_t address_val;
 };
 
-void print_nestest_output(NestestData);
+void printNestestOutput(NestestData);
 
 #endif

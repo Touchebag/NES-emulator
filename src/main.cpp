@@ -2,14 +2,44 @@
 
 #include <SFML/Graphics.hpp>
 
-int main(int argc, char *argv[]) {
-    if (argc == 2) {
-        System::getInstance().loadRom(argv[1]);
+bool parseCommandLineArgs(int argc, char *argv[]) {
+    using namespace std::literals;
+    auto &system = System::getInstance();
+    bool rom_loaded = false;
 
-        auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(System::WINDOW_WIDTH, System::WINDOW_HEIGHT), "NES");
+    // Skip first argument (name of binary)
+    for (auto i = 1; i < argc; i++) {
+        auto current_arg = argv[i];
 
-        System::getInstance().run(window);
+        if (current_arg == "--nestest"sv) {
+            system.enableNestestOutput(true);
+        } else {
+            if (!rom_loaded) {
+                system.loadRom(current_arg);
+                rom_loaded = true;
+            } else {
+                LOGE("Multiple ROMs specified");
+                return false;
+            }
+        }
     }
+
+    if (!rom_loaded) {
+        LOGW("No ROM loaded");
+    }
+
+    return true;
+}
+
+int main(int argc, char *argv[]) {
+    if (!parseCommandLineArgs(argc, argv)) {
+        LOGE("Failed to parse command line argument, exiting");
+        return 1;
+    }
+
+    auto window = std::make_shared<sf::RenderWindow>(sf::VideoMode(System::WINDOW_WIDTH, System::WINDOW_HEIGHT), "NES");
+
+    System::getInstance().run(window);
 
     return 0;
 };

@@ -98,12 +98,12 @@ int Cpu::executeInstruction() {
     try {
         auto current_instruction_data = instruction_table.at(opcode);
         unsigned int cycles = current_instruction_data.num_cycles;
-#ifdef NESTEST_OUTPUT
+
+        // nestest
         prev_instruction_data_.pc_hi = getRegisters().pc[1];
         prev_instruction_data_.pc_lo = getRegisters().pc[0];
         prev_instruction_data_.opcode = opcode;
         prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
-#endif
 
         switch (current_instruction_data.type) {
         #include "control.h"
@@ -115,13 +115,12 @@ int Cpu::executeInstruction() {
             break;
         };
 
-#ifdef NESTEST_OUTPUT
+        // nestest
         prev_instruction_data_.reg_a = reg_.a;
         prev_instruction_data_.reg_x = reg_.x;
         prev_instruction_data_.reg_y = reg_.y;
         prev_instruction_data_.reg_p = reg_.p;
         prev_instruction_data_.sp = reg_.sp;
-#endif
 
         return cycles;
     } catch (std::out_of_range& e) {
@@ -134,9 +133,8 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
     uint8_t retval = 0;
     incPc(1); // Skip instruction byte
 
-#ifdef NESTEST_OUTPUT
+    // nestest
     prev_instruction_data_.mode = instruction_data.addr_mode;
-#endif
 
     switch (instruction_data.addr_mode) {
         case AddressingMode::RELATIVE:
@@ -144,9 +142,10 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
         case AddressingMode::IMMEDIATE:
             retval = readFromPc();
             incPc(1);
-#ifdef NESTEST_OUTPUT
+
+            // nestest
             prev_instruction_data_.arg1 = retval;
-#endif
+
             break;
         case AddressingMode::ABSOLUTE_X: {
             uint8_t lo = readFromPc();
@@ -155,10 +154,9 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             incPc(1);
             uint8_t x = reg_.x;
 
-#ifdef NESTEST_OUTPUT
+            // nestest
             prev_instruction_data_.arg1 = lo;
             prev_instruction_data_.arg2 = hi;
-#endif
 
             uint8_t new_lo = lo + x;
 
@@ -171,11 +169,11 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
 
             retval = System::get<Memory>().readAddress(new_lo, hi);
 
-#ifdef NESTEST_OUTPUT
+            // nestest
             prev_instruction_data_.address_lo = new_lo;
             prev_instruction_data_.address_hi = hi;
             prev_instruction_data_.address_val = retval;
-#endif
+
             break;
         }
         case AddressingMode::INDIRECT_X: {
@@ -183,9 +181,8 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             auto address = readFromPc();
             incPc(1);
 
-#ifdef NESTEST_OUTPUT
+            // nestest
             prev_instruction_data_.arg1 = address;
-#endif
 
             uint8_t lo = mem.readAddress(address + reg_.x, 0x00);
             uint8_t hi = mem.readAddress(address + reg_.x + 0x01, 0x00);
@@ -228,8 +225,7 @@ Cpu::Registers Cpu::getRegisters() {
     return reg_;
 }
 
-#ifdef NESTEST_OUTPUT
+// nestest
 NestestData Cpu::getPrevInstructionData() {
     return prev_instruction_data_;
 }
-#endif

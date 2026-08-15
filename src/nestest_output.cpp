@@ -1,10 +1,9 @@
-#include "log.h"
+#include "nestest_output.h"
 
 #include "cpu/instruction_table.h"
 
 #include <stdexcept>
 
-#ifdef NESTEST_OUTPUT
 void print_nestest_output(NestestData data) {
     fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
     fprintf(stderr, "%02X ", data.opcode);
@@ -62,4 +61,3 @@ void print_nestest_output(NestestData data) {
     fprintf(stderr, "\n");
     fflush(stderr);
 }
-#endif

@@ -27,6 +27,6 @@ struct NestestData {
     uint8_t address_val;
 };
 
-void printNestestOutput(NestestData);
+void printNestestOutput(NestestData, int total_cycles);
 
 #endif

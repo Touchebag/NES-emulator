@@ -42,6 +42,8 @@ class System {
 
     bool nestest_output_ = false;
 
+    bool running_ = false;
+
     // Render stuff
     std::weak_ptr<sf::RenderWindow> window_;
     sf::Image img_;

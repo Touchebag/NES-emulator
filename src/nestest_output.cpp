@@ -4,7 +4,7 @@
 
 #include <stdexcept>
 
-void printNestestOutput(NestestData data) {
+void printNestestOutput(NestestData data, int total_cycles) {
     fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
     fprintf(stderr, "%02X ", data.opcode);
 
@@ -56,7 +56,7 @@ void printNestestOutput(NestestData data) {
     fprintf(stderr, "A:%02X X:%02X Y:%02X P:%02X SP:%02X ", data.reg_a, data.reg_x, data.reg_y, data.reg_p, data.sp);
 
     fprintf(stderr, "PPU:YYY,XXX ");
-    fprintf(stderr, "CYC:%i", data.cycles);
+    fprintf(stderr, "CYC:%i", total_cycles);
 
     fprintf(stderr, "\n");
     fflush(stderr);

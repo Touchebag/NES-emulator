@@ -36,29 +36,60 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
     reset();
     window_ = window;
 
+    unsigned int cycles_current_second = 0;
     unsigned int cycles_since_reset = 0;
 
     sf::Clock clock;
 
     if (auto w = window_.lock()) {
         while (w->isOpen()) {
-            int cycles = cpu_.executeInstruction();
-            ppu_.advance(cycles);
-            cycles_since_reset += cycles;
+            bool run_single_instruction = false;
 
-            // nestest
-            if (nestest_output_) {
-                printNestestOutput(cpu_.getPrevInstructionData());
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                switch (event.type) {
+                    case sf::Event::Closed:
+                        window->close();
+                        break;
+                    case sf::Event::KeyPressed:
+                        switch (event.key.code) {
+                            case sf::Keyboard::Escape:
+                                window->close();
+                                break;
+                            case sf::Keyboard::R:
+                                running_ = !running_;
+                                break;
+                            case sf::Keyboard::N:
+                                run_single_instruction = true;
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
             }
 
-            if (clock.getElapsedTime().asMilliseconds() >= 1000) {
-                LOGD("Cycles/s %i (%.1f%%)", cycles_since_reset, static_cast<float>(cycles_since_reset) / 17897.73 );
-                cycles_since_reset = 0;
+            if (running_ || run_single_instruction) {
+                int cycles = cpu_.executeInstruction();
+                ppu_.advance(cycles);
+                cycles_current_second += cycles;
+                cycles_since_reset += cycles;
 
-                LOGD("Fps %i", num_frames_);
-                num_frames_ = 0;
+                // nestest
+                if (nestest_output_) {
+                    printNestestOutput(cpu_.getPrevInstructionData(), cycles_since_reset);
+                }
 
-                clock.restart();
+                if (clock.getElapsedTime().asMilliseconds() >= 1000) {
+                    LOGD("Cycles/s %i (%.1f%%)", cycles_current_second, static_cast<float>(cycles_current_second) / 17897.73 );
+                    cycles_current_second = 0;
+
+                    LOGD("Fps %i", num_frames_);
+                    num_frames_ = 0;
+
+                    clock.restart();
+                }
             }
         }
     } else {
@@ -67,24 +98,6 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
 }
 
 void System::onVsyncTriggered() {
-    if (auto window = window_.lock()) {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-            window->close();
-            return;
-        }
-
-        sf::Event event;
-        while (window->pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window->close();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
     num_frames_++;
 
     if (auto window = window_.lock()) {

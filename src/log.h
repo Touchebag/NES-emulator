@@ -19,7 +19,7 @@
 // ---- Main log ----
 
 #if LOG_LEVEL > 0
-#define LOG(level, ...) fprintf(stderr, level " : " __VA_ARGS__); fprintf(stderr, "\n"); fflush(stderr);
+#define LOG(level, output, ...) fprintf(output, level " : " __VA_ARGS__); fprintf(output, "\n"); fflush(output);
 #else
 #define LOG(...) ((void)0);
 #endif
@@ -27,32 +27,32 @@
 // ---- Levels ----
 
 #if LOG_LEVEL > 0
-#define LOGE(...) LOG("ERROR", __VA_ARGS__)
+#define LOGE(...) LOG("ERROR", stderr, __VA_ARGS__)
 #else
 #define LOGE(...) ((void)0);
 #endif
 
 #if LOG_LEVEL > 1
-#define LOGW(...) LOG("WARNING", __VA_ARGS__)
+#define LOGW(...) LOG("WARNING",  stderr,__VA_ARGS__)
 #else
 #define LOGW(...) ((void)0);
 #endif
 
 #if LOG_LEVEL > 2
-#define LOGI(...) LOG("INFO", __VA_ARGS__)
+#define LOGI(...) LOG("INFO", stdout, __VA_ARGS__)
 #else
 #define LOGI(...) ((void)0);
 #endif
 
 #if LOG_LEVEL > 3
-#define LOGD(...) LOG("DEBUG", __VA_ARGS__)
+#define LOGD(...) LOG("DEBUG", stdout, __VA_ARGS__)
 #else
 #define LOGD(...) ((void)0);
 #endif
 
 // ---- Verbose instrcution output ----
 #if LOG_LEVEL > 3
-#define PRINT_INSTRUCTION(...) fprintf(stderr, "OP : " __VA_ARGS__); fprintf(stderr, "\n"); fflush(stderr);
+#define PRINT_INSTRUCTION(...) fprintf(stdout, "OP : " __VA_ARGS__); fprintf(stdout, "\n"); fflush(stdout);
 #else
 #define PRINT_INSTRUCTION(...) ((void)0);
 #endif

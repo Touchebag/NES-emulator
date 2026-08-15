@@ -115,6 +115,14 @@ int Cpu::executeInstruction() {
             break;
         };
 
+#ifdef NESTEST_OUTPUT
+        prev_instruction_data_.reg_a = reg_.a;
+        prev_instruction_data_.reg_x = reg_.x;
+        prev_instruction_data_.reg_y = reg_.y;
+        prev_instruction_data_.reg_p = reg_.p;
+        prev_instruction_data_.sp = reg_.sp;
+#endif
+
         return cycles;
     } catch (std::out_of_range& e) {
         LOGE("Unknown opcode %x", opcode);
@@ -125,6 +133,10 @@ int Cpu::executeInstruction() {
 uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int& cycles) {
     uint8_t retval = 0;
     incPc(1); // Skip instruction byte
+
+#ifdef NESTEST_OUTPUT
+    prev_instruction_data_.mode = instruction_data.addr_mode;
+#endif
 
     switch (instruction_data.addr_mode) {
         case AddressingMode::RELATIVE:
@@ -158,6 +170,12 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             }
 
             retval = System::get<Memory>().readAddress(new_lo, hi);
+
+#ifdef NESTEST_OUTPUT
+            prev_instruction_data_.address_lo = new_lo;
+            prev_instruction_data_.address_hi = hi;
+            prev_instruction_data_.address_val = retval;
+#endif
             break;
         }
         case AddressingMode::INDIRECT_X: {

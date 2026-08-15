@@ -2,6 +2,8 @@
 
 #include <cstdio>
 #include <string>
+#include <optional>
+#include <cstdint>
 
 /*
  * LOG_LEVEL
@@ -56,35 +58,25 @@
 #endif
 
 #ifdef NESTEST_OUTPUT
+// Forward declaration
+enum class AddressingMode;
+
 struct NestestData {
     uint8_t pc_lo, pc_hi;
     uint8_t opcode;
     std::string name = "";
     std::optional<uint8_t> arg1 = std::nullopt;
     std::optional<uint8_t> arg2 = std::nullopt;
+    AddressingMode mode;
+    uint8_t reg_a, reg_x, reg_y, reg_p;
+    uint8_t sp;
+    int cycles;
+    // Only used during special addressing modes
+    uint8_t address_lo;
+    uint8_t address_hi;
+    uint8_t address_val;
 };
 
-inline void print_nestest_output(NestestData data) {
-    fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
-    fprintf(stderr, "%02X ", data.opcode);
+void print_nestest_output(NestestData);
 
-    // Optional arguments
-    if (data.arg1) {
-        fprintf(stderr, "%02X ", data.arg1.value());
-
-        if (data.arg2) {
-            fprintf(stderr, "%02X ", data.arg2.value());
-        } else {
-            fprintf(stderr, "  ");
-        }
-    } else {
-        fprintf(stderr, "  ");
-    }
-    fprintf(stderr, "  ");
-
-    fprintf(stderr, "%s", data.name.c_str());
-
-    fprintf(stderr, "\n");
-    fflush(stderr);
-}
 #endif

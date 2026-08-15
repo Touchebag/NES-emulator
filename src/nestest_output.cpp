@@ -46,7 +46,7 @@ void printNestestOutput(NestestData data, int total_cycles) {
             fprintf(stderr, "INDIRECT_X");
             break;
         case AddressingMode::NONE:
-            fprintf(stderr, "NONE");
+            fprintf(stderr, "                             ");
             break;
         default:
             throw std::invalid_argument("Unknown addressing mode. This should never happen");

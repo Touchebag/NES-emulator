@@ -109,3 +109,8 @@ case InstructionType::RTI: {
     PRINT_INSTRUCTION("%x %s", opcode, InstructionStringMap.at(current_instruction_data.type).c_str())
     break;
 }
+
+case InstructionType::SEI: {
+    setStatusFlag(StatusFlag::INTERRUPT, true);
+    break;
+}

@@ -418,6 +418,19 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// SEI
+TEST_F(InterpreterTestFixture, test_0x78) {
+    setStatusFlag(Cpu::StatusFlag::INTERRUPT, false);
+    auto status_before = cpu_.getRegisters().p | static_cast<uint8_t>(Cpu::StatusFlag::INTERRUPT);
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::INTERRUPT), false);
+
+    addInstruction({0x78});
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::INTERRUPT), true);
+    EXPECT_EQ(status_before, cpu_.getRegisters().p);
+}
+
 // STA absolute
 TEST_F(InterpreterTestFixture, test_0x8D) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);

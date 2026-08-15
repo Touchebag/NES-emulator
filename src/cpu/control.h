@@ -42,6 +42,10 @@ case InstructionType::BRK: {
     uint8_t hi = reg_.pc[1];
     uint8_t lo = reg_.pc[0];
 
+    // nestest
+    prev_instruction_data_.arg1 = lo;
+    prev_instruction_data_.arg2 = hi;
+
     // In case of lo overflow
     if (lo >= 0xFE) {
         hi++;
@@ -93,6 +97,10 @@ case InstructionType::JMP: {
     uint8_t hi = readFromPc();
 
     setPc(lo, hi);
+
+    // nestest
+    prev_instruction_data_.arg1 = lo;
+    prev_instruction_data_.arg2 = hi;
 
     PRINT_INSTRUCTION("%x %s %x %x", opcode, InstructionStringMap.at(current_instruction_data.type).c_str(), lo, hi)
     break;

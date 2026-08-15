@@ -95,6 +95,8 @@ uint8_t Cpu::popStack() {
 int Cpu::executeInstruction() {
     uint8_t opcode = readFromPc();
 
+    prev_instruction_data_ = NestestData{};
+
     try {
         auto current_instruction_data = instruction_table.at(opcode);
         unsigned int cycles = current_instruction_data.num_cycles;
@@ -103,7 +105,6 @@ int Cpu::executeInstruction() {
         prev_instruction_data_.pc_hi = getRegisters().pc[1];
         prev_instruction_data_.pc_lo = getRegisters().pc[0];
         prev_instruction_data_.opcode = opcode;
-        prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
 
         switch (current_instruction_data.type) {
         #include "control.h"
@@ -121,6 +122,8 @@ int Cpu::executeInstruction() {
         prev_instruction_data_.reg_y = reg_.y;
         prev_instruction_data_.reg_p = reg_.p;
         prev_instruction_data_.sp = reg_.sp;
+        prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
+        prev_instruction_data_.mode = current_instruction_data.addr_mode;
 
         return cycles;
     } catch (std::out_of_range& e) {
@@ -132,9 +135,6 @@ int Cpu::executeInstruction() {
 uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int& cycles) {
     uint8_t retval = 0;
     incPc(1); // Skip instruction byte
-
-    // nestest
-    prev_instruction_data_.mode = instruction_data.addr_mode;
 
     switch (instruction_data.addr_mode) {
         case AddressingMode::RELATIVE:
@@ -211,6 +211,10 @@ void Cpu::writeArgument(const InstructionData& instruction_data, unsigned int& /
             incPc(1);
             uint8_t hi = readFromPc();
             incPc(1);
+
+            // nestest
+            prev_instruction_data_.arg1 = lo;
+            prev_instruction_data_.arg2 = hi;
 
             memory.writeAddress(lo, hi, value);
             break;

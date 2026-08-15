@@ -13,14 +13,14 @@ void printNestestOutput(NestestData data, int total_cycles) {
         fprintf(stderr, "%02X ", data.arg1.value());
 
         if (data.arg2) {
-            fprintf(stderr, "%02X", data.arg2.value());
+            fprintf(stderr, "%02X ", data.arg2.value());
         } else {
-            fprintf(stderr, "  ");
+            fprintf(stderr, "   ");
         }
     } else {
-        fprintf(stderr, "  ");
+        fprintf(stderr, "   ");
     }
-    fprintf(stderr, "  ");
+    fprintf(stderr, " ");
 
     fprintf(stderr, "%s ", data.name.c_str());
 
@@ -29,7 +29,7 @@ void printNestestOutput(NestestData data, int total_cycles) {
             fprintf(stderr, "RELATIVE");
             break;
         case AddressingMode::IMMEDIATE:
-            fprintf(stderr, "#$%02X                       ", data.arg1.value());
+            fprintf(stderr, "#$%02X                        ", data.arg1.value());
             break;
         case AddressingMode::ABSOLUTE:
             fprintf(stderr, "$%02X%02X                       ", data.arg2.value(), data.arg1.value());

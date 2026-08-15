@@ -41,6 +41,10 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
 
     sf::Clock clock;
 
+    if (nestest_output_) {
+        cpu_.setPc(0x00, 0xC0);
+    }
+
     if (auto w = window_.lock()) {
         while (w->isOpen()) {
             bool run_single_instruction = false;

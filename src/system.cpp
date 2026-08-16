@@ -42,7 +42,7 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
 
     sf::Clock clock;
 
-    if (nestest_output_) {
+    if (rom_->name() == "nestest.nes") {
         cpu_.setPc(0x00, 0xC0);
     }
 

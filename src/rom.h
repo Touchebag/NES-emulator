@@ -12,10 +12,14 @@ class Rom {
 
     static std::shared_ptr<Rom> loadRomFromFile(const std::string& filepath);
 
+    std::string name();
+
     virtual uint8_t readAddress(uint16_t address);
     virtual void writeAddress(uint16_t address, uint8_t value);
 
   protected:
     RomHeader header_ = RomHeader{std::vector<uint8_t>{}};
     std::vector<uint8_t> rom_ = {};
+
+    std::string name_;
 };

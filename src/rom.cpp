@@ -45,3 +45,7 @@ void Rom::writeAddress(uint16_t address, uint8_t value) {
     address = address & 0x7FFF;
     rom_.at(address) = value;
 }
+
+std::string Rom::name() {
+    return name_;
+}

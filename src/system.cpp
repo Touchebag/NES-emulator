@@ -37,7 +37,8 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
     window_ = window;
 
     unsigned int cycles_current_second = 0;
-    unsigned int cycles_since_reset = 0;
+    // Accounting for bootup cycles
+    unsigned int cycles_since_reset = 7;
 
     sf::Clock clock;
 
@@ -77,13 +78,14 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
             if (running_ || run_single_instruction) {
                 int cycles = cpu_.executeInstruction();
                 ppu_.advance(cycles);
-                cycles_current_second += cycles;
-                cycles_since_reset += cycles;
 
                 // nestest
                 if (nestest_output_) {
                     printNestestOutput(cpu_.getPrevInstructionData(), cycles_since_reset);
                 }
+
+                cycles_current_second += cycles;
+                cycles_since_reset += cycles;
 
                 if (clock.getElapsedTime().asMilliseconds() >= 1000) {
                     LOGD("Cycles/s %i (%.1f%%)", cycles_current_second, static_cast<float>(cycles_current_second) / 17897.73 );

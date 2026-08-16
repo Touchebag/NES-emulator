@@ -35,9 +35,16 @@ std::tuple<uint8_t, uint8_t, bool> calculateRelativeJump(uint8_t lo, uint8_t hi,
 } // namespace
 
 Cpu::Cpu() {
-    setStatusFlag(StatusFlag::INTERRUPT, true);
     setPc(0xFC, 0xFF);
     reg_.sp = 0xFD;
+
+    reg_.a = 0;
+    reg_.x = 0;
+    reg_.y = 0;
+
+    reg_.p = 0;
+    setStatusFlag(StatusFlag::INTERRUPT, true);
+    setStatusFlag(StatusFlag::UNUSED, true);
 }
 
 bool Cpu::getStatusFlag(Cpu::StatusFlag flag) {
@@ -105,6 +112,11 @@ int Cpu::executeInstruction() {
         prev_instruction_data_.pc_hi = getRegisters().pc[1];
         prev_instruction_data_.pc_lo = getRegisters().pc[0];
         prev_instruction_data_.opcode = opcode;
+        prev_instruction_data_.reg_a = reg_.a;
+        prev_instruction_data_.reg_x = reg_.x;
+        prev_instruction_data_.reg_y = reg_.y;
+        prev_instruction_data_.reg_p = reg_.p;
+        prev_instruction_data_.sp = reg_.sp;
 
         switch (current_instruction_data.type) {
         #include "control.h"
@@ -117,11 +129,6 @@ int Cpu::executeInstruction() {
         };
 
         // nestest
-        prev_instruction_data_.reg_a = reg_.a;
-        prev_instruction_data_.reg_x = reg_.x;
-        prev_instruction_data_.reg_y = reg_.y;
-        prev_instruction_data_.reg_p = reg_.p;
-        prev_instruction_data_.sp = reg_.sp;
         prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
         prev_instruction_data_.mode = current_instruction_data.addr_mode;
 

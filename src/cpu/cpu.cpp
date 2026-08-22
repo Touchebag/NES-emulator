@@ -101,9 +101,7 @@ int Cpu::executeInstruction(ParsedInstruction current_instruction) {
 
     try {
         switch (current_instruction.type_) {
-        #include "control.h"
-        #include "alu.h"
-        #include "rmw.h"
+        #include "instructions.h"
         default:
             LOGE("Unknown opcode %x", current_instruction.opcode_)
             throw std::invalid_argument("");

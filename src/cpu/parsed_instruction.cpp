@@ -146,7 +146,7 @@ void ParsedInstruction::print(int extra_cycles) const {
             fprintf(stderr, "   ");
         }
     } else {
-        fprintf(stderr, "   ");
+        fprintf(stderr, "      ");
     }
     fprintf(stderr, " ");
 
@@ -177,7 +177,7 @@ void ParsedInstruction::print(int extra_cycles) const {
             fprintf(stderr, "$%02X = %02X                    ", adjusted_lo_, val1_.value());
             break;
         case AddressingMode::IMPLIED:
-            fprintf(stderr, "                             ");
+            fprintf(stderr, "                            ");
             break;
         default:
             throw std::invalid_argument("PARSED_INSTRUCTION_PRINT: Unknown addressing mode. This should never happen");

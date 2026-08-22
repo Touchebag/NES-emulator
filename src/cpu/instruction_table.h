@@ -29,6 +29,7 @@ enum class AddressingMode {
     GENERATE_ENUM(LDX),\
     GENERATE_ENUM(JMP),\
     GENERATE_ENUM(JSR),\
+    GENERATE_ENUM(NOP),\
     GENERATE_ENUM(RTI),\
     GENERATE_ENUM(SBC),\
     GENERATE_ENUM(SEI),\
@@ -76,6 +77,8 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0xBD, { 4, AddressingMode::ABSOLUTE_X, InstructionType::LDA }},
 
     { 0xA2, { 2, AddressingMode::IMMEDIATE, InstructionType::LDX }},
+
+    { 0xEA, { 2, AddressingMode::IMPLIED, InstructionType::NOP }},
 
     { 0x40, { 6, AddressingMode::IMPLIED, InstructionType::RTI }},
 

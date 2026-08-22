@@ -7,9 +7,6 @@
 
 #include "log.h"
 
-#define READ_ARGUMENT() readArgument(current_instruction_data, cycles)
-#define WRITE_ARGUMENT(x) writeArgument(current_instruction_data, cycles, x)
-
 namespace {
 
 std::tuple<uint8_t, uint8_t, bool> calculateRelativeJump(uint8_t lo, uint8_t hi, uint8_t val) {
@@ -122,80 +119,6 @@ int Cpu::executeInstruction() {
         throw e;
     }
 };
-
-uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int& cycles) {
-    uint8_t retval = 0;
-    incPc(1); // Skip instruction byte
-
-    switch (instruction_data.addr_mode) {
-        case AddressingMode::RELATIVE:
-            [[fallthrough]]; // Argument is treated identically
-        case AddressingMode::IMMEDIATE:
-            retval = readFromPc();
-            incPc(1);
-
-            break;
-        case AddressingMode::ABSOLUTE_X: {
-            uint8_t lo = readFromPc();
-            incPc(1);
-            uint8_t hi = readFromPc();
-            incPc(1);
-            uint8_t x = reg_.x;
-
-            uint8_t new_lo = lo + x;
-
-            if (new_lo < lo) {
-                // Overflow, carry to hi
-                hi++;
-                // Page cross, extra cycle
-                cycles++;
-            }
-
-            retval = System::get<Memory>().readAddress(new_lo, hi);
-
-            break;
-        }
-        case AddressingMode::INDIRECT_X: {
-            auto& mem = System::get<Memory>();
-            auto address = readFromPc();
-            incPc(1);
-
-            uint8_t lo = mem.readAddress(address + reg_.x, 0x00);
-            uint8_t hi = mem.readAddress(address + reg_.x + 0x01, 0x00);
-
-            retval = mem.readAddress(lo, hi);
-            break;
-        }
-        case AddressingMode::NONE:
-            // Ignore
-            break;
-        default:
-            throw std::invalid_argument("READ: Unknown addressing mode. This should never happen");
-            break;
-    }
-
-    return retval;
-}
-
-void Cpu::writeArgument(const InstructionData& instruction_data, unsigned int& /* cycles */, uint8_t value) {
-    incPc(1); // Skip instruction byte
-    auto& memory = System::get<Memory>();
-
-    switch (instruction_data.addr_mode) {
-        case AddressingMode::ABSOLUTE: {
-            uint8_t lo = readFromPc();
-            incPc(1);
-            uint8_t hi = readFromPc();
-            incPc(1);
-
-            memory.writeAddress(lo, hi, value);
-            break;
-        }
-        default:
-            throw std::invalid_argument("WRITE: Unknown addressing mode. This should never happen");
-            break;
-    }
-}
 
 Cpu::Registers Cpu::getRegisters() {
     return reg_;

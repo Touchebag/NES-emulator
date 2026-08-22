@@ -164,7 +164,7 @@ TEST_F(InterpreterTestFixture, test_0x00) {
 }
 
 // CLC
-TEST_F(InterpreterTestFixture, text_0x18) {
+TEST_F(InterpreterTestFixture, test_0x18) {
     setStatusFlag(StatusFlag::CARRY, true);
 
     addInstruction({0x18});
@@ -306,7 +306,7 @@ TEST_F(InterpreterTestFixture, test_0xA9) {
 }
 
 // LDA absolute,X
-TEST_F(InterpreterTestFixture, text_0xBD) {
+TEST_F(InterpreterTestFixture, test_0xBD) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);
 

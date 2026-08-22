@@ -100,28 +100,25 @@ uint8_t Cpu::popStack() {
 }
 
 int Cpu::executeInstruction() {
-    auto instruction = ParsedInstruction(reg_.pc[0], reg_.pc[1]);
-    instruction.print(0);
+    auto current_instruction = ParsedInstruction(reg_.pc[0], reg_.pc[1]);
+    current_instruction.print(0);
 
-    uint8_t opcode = readFromPc();
+    incPc(current_instruction.num_args_);
 
     try {
-        auto current_instruction_data = instruction_table.at(opcode);
-        unsigned int cycles = current_instruction_data.num_cycles;
-
-        switch (current_instruction_data.type) {
+        switch (current_instruction.type_) {
         #include "control.h"
         #include "alu.h"
         #include "rmw.h"
         default:
-            LOGE("Unknown opcode %x", opcode)
+            LOGE("Unknown opcode %x", current_instruction.opcode_)
             throw std::invalid_argument("");
             break;
         };
 
-        return cycles;
+        return current_instruction.cycles_;
     } catch (std::out_of_range& e) {
-        LOGE("Unknown opcode %x", opcode);
+        LOGE("Unknown opcode %x", current_instruction.opcode_);
         throw e;
     }
 };

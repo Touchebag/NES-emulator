@@ -11,9 +11,8 @@ class ParsedInstruction {
   public:
     ParsedInstruction(uint8_t lo, uint8_t hi);
 
-    std::string print(int current_total_cycles);
+    void print(int current_total_cycles) const;
 
-  private:
     uint8_t pc_lo_;
     uint8_t pc_hi_;
 
@@ -42,6 +41,7 @@ class ParsedInstruction {
     uint8_t adjusted_lo_;
     uint8_t adjusted_hi_;
 
+  private:
     void calcualateAdjustedMemoryAddresses();
 };
 

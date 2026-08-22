@@ -74,7 +74,12 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
 
     switch (addressing_mode_) {
         case AddressingMode::RELATIVE:
-            [[fallthrough]]; // Argument is treated identically
+            adjusted_lo_ = pc_lo_;
+            adjusted_hi_ = pc_hi_;
+
+            val1_ = arg1_;
+
+            break;
         case AddressingMode::IMMEDIATE:
             val1_ = arg1_;
 
@@ -84,9 +89,10 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             val2_ = arg2_;
             break;
         case AddressingMode::ABSOLUTE_X: {
-            uint8_t adjusted_lo_ = pc_lo_ + reg_x_;
+            adjusted_lo_ = arg1_.value() + reg_x_;
+            adjusted_hi_ = arg2_.value();
 
-            if (adjusted_lo_ < pc_lo_) {
+            if (adjusted_lo_ < arg1_.value()) {
                 // Overflow, carry to hi
                 adjusted_hi_++;
                 // Page cross, extra cycle
@@ -100,8 +106,8 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
         case AddressingMode::INDIRECT_X: {
             auto& mem = System::get<Memory>();
 
-            uint8_t adjusted_lo_ = mem.readAddress(arg1_.value() + reg_x_, 0x00);
-            uint8_t adjusted_hi_ = mem.readAddress(arg1_.value() + reg_x_ + 0x01, 0x00);
+            adjusted_lo_ = mem.readAddress(arg1_.value() + reg_x_, 0x00);
+            adjusted_hi_ = mem.readAddress(arg1_.value() + reg_x_ + 0x01, 0x00);
 
             val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);
             break;
@@ -115,67 +121,60 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
     }
 }
 
-std::string ParsedInstruction::print(int extra_cycles) {
-    printf("%s 0x%2X\n", name_.c_str(), opcode_);
-    return "";
-}
+void ParsedInstruction::print(int extra_cycles) const {
+    fprintf(stderr, "%02X%02X  ", pc_hi_, pc_lo_);
+    fprintf(stderr, "%02X ", opcode_);
 
-// void printNestestOutput(NestestData data, int total_cycles) {
-//     fprintf(stderr, "%02X%02X  ", data.pc_hi, data.pc_lo);
-//     fprintf(stderr, "%02X ", data.opcode);
-//
-//     // Optional arguments
-//     if (data.arg1) {
-//         fprintf(stderr, "%02X ", data.arg1.value());
-//
-//         if (data.arg2) {
-//             fprintf(stderr, "%02X ", data.arg2.value());
-//         } else {
-//             fprintf(stderr, "   ");
-//         }
-//     } else {
-//         fprintf(stderr, "   ");
-//     }
-//     fprintf(stderr, " ");
-//
-//     fprintf(stderr, "%s ", data.name.c_str());
-//
-//     switch (data.mode) {
-//         case AddressingMode::RELATIVE:
-//             fprintf(stderr, "RELATIVE");
-//             break;
-//         case AddressingMode::IMMEDIATE:
-//             fprintf(stderr, "#$%02X                        ", data.arg1.value());
-//             break;
-//         case AddressingMode::ABSOLUTE:
-//             fprintf(stderr, "$%02X%02X                       ", data.arg2.value(), data.arg1.value());
-//             break;
-//         case AddressingMode::ABSOLUTE_X:
-//             fprintf(stderr, "$%02X%02X,X @ %02X%02X = %02X        ",
-//                     data.arg2.value(),
-//                     data.arg1.value(),
-//                     data.address_hi,
-//                     data.address_lo,
-//                     data.address_val);
-//             break;
-//         case AddressingMode::INDIRECT_X:
-//             fprintf(stderr, "INDIRECT_X");
-//             break;
-//         case AddressingMode::IMPLIED:
-//             [[fallthrough]]; // Argument is treated identically
-//         case AddressingMode::NONE:
-//             fprintf(stderr, "                             ");
-//             break;
-//         default:
-//             throw std::invalid_argument("Unknown addressing mode. This should never happen");
-//             break;
-//     }
-//
-//     fprintf(stderr, "A:%02X X:%02X Y:%02X P:%02X SP:%02X ", data.reg_a, data.reg_x, data.reg_y, data.reg_p, data.sp);
-//
-//     fprintf(stderr, "PPU:YYY,XXX ");
-//     fprintf(stderr, "CYC:%i", total_cycles);
-//
-//     fprintf(stderr, "\n");
-//     fflush(stderr);
-// }
+    // Optional arguments
+    if (arg1_) {
+        fprintf(stderr, "%02X ", arg1_.value());
+
+        if (arg2_) {
+            fprintf(stderr, "%02X ", arg2_.value());
+        } else {
+            fprintf(stderr, "   ");
+        }
+    } else {
+        fprintf(stderr, "   ");
+    }
+    fprintf(stderr, " ");
+
+    fprintf(stderr, "%s ", name_.c_str());
+
+    switch (addressing_mode_) {
+        case AddressingMode::RELATIVE:
+            fprintf(stderr, "RELATIVE");
+            break;
+        case AddressingMode::IMMEDIATE:
+            fprintf(stderr, "#$%02X                        ", arg1_.value());
+            break;
+        case AddressingMode::ABSOLUTE:
+            fprintf(stderr, "$%02X%02X                       ", arg2_.value(), arg1_.value());
+            break;
+        case AddressingMode::ABSOLUTE_X:
+            fprintf(stderr, "$%02X%02X,X @ %02X%02X = %02X        ",
+                    arg2_.value(),
+                    arg1_.value(),
+                    adjusted_hi_,
+                    adjusted_lo_,
+                    val1_.value());
+            break;
+        case AddressingMode::INDIRECT_X:
+            fprintf(stderr, "INDIRECT_X");
+            break;
+        case AddressingMode::IMPLIED:
+            fprintf(stderr, "                             ");
+            break;
+        default:
+            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            break;
+    }
+
+    fprintf(stderr, "A:%02X X:%02X Y:%02X P:%02X SP:%02X ", reg_a_, reg_x_, reg_y_, reg_p_, sp_);
+
+    fprintf(stderr, "PPU:YYY,XXX ");
+    fprintf(stderr, "CYC:%i", cycles_ + extra_cycles);
+
+    fprintf(stderr, "\n");
+    fflush(stderr);
+}

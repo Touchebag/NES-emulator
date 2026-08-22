@@ -79,11 +79,6 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
                 int cycles = cpu_.executeInstruction();
                 ppu_.advance(cycles);
 
-                // nestest
-                if (nestest_output_) {
-                    printNestestOutput(cpu_.getPrevInstructionData(), cycles_since_reset);
-                }
-
                 cycles_current_second += cycles;
                 cycles_since_reset += cycles;
 

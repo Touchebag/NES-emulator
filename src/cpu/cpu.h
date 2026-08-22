@@ -5,8 +5,9 @@
 #include <utility>
 
 #include "instruction_table.h"
+#include "parsed_instruction.h"
+
 #include "log.h"
-#include "nestest_output.h"
 
 class InterpreterTestFixture;
 
@@ -41,9 +42,6 @@ class Cpu {
     };
     Registers getRegisters();
 
-    // nestest
-    NestestData getPrevInstructionData();
-
   private:
     void setStatusFlag(StatusFlag, bool);
     void setNegativeFlag(uint8_t);
@@ -59,9 +57,6 @@ class Cpu {
 
     uint8_t readArgument(const InstructionData&, unsigned int& cycles);
     void writeArgument(const InstructionData&, unsigned int& cycles, uint8_t value);
-
-    // nestest
-    NestestData prev_instruction_data_;
 
     friend InterpreterTestFixture;
 };

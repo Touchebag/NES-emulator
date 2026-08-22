@@ -147,7 +147,8 @@ TEST_F(InterpreterTestFixture, test_0x00) {
     uint8_t status = static_cast<uint8_t>(StatusFlag::ZERO)  |
                      static_cast<uint8_t>(StatusFlag::CARRY) |
                      static_cast<uint8_t>(StatusFlag::INTERRUPT) |
-                     static_cast<uint8_t>(StatusFlag::BREAK);
+                     static_cast<uint8_t>(StatusFlag::BREAK) |
+                     static_cast<uint8_t>(StatusFlag::UNUSED);
 
     executeNextInstruction();
     EXPECT_EQ(getPc(), 0x7D05);

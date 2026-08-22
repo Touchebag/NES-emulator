@@ -1,3 +1,6 @@
+#ifndef INSTRUCTION_TABLE
+#define INSTRUCTION_TABLE
+
 #include <unordered_map>
 #include <cstdint>
 #include <string>
@@ -52,15 +55,15 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0xD0, { 2, AddressingMode::RELATIVE, InstructionType::BNE }},
 
-    { 0x00, { 2, AddressingMode::NONE, InstructionType::BRK }},
+    { 0x00, { 2, AddressingMode::IMPLIED, InstructionType::BRK }},
 
-    { 0x18, { 2, AddressingMode::NONE, InstructionType::CLC }},
+    { 0x18, { 2, AddressingMode::IMPLIED, InstructionType::CLC }},
 
     { 0xC9, { 2, AddressingMode::IMMEDIATE, InstructionType::CMP }},
 
     { 0xE0, { 2, AddressingMode::IMMEDIATE, InstructionType::CPX }},
 
-    { 0xE8, { 2, AddressingMode::NONE, InstructionType::INX }},
+    { 0xE8, { 2, AddressingMode::IMPLIED, InstructionType::INX }},
 
     { 0x4C, { 3, AddressingMode::ABSOLUTE, InstructionType::JMP }},
 
@@ -69,7 +72,7 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0xA2, { 2, AddressingMode::IMMEDIATE, InstructionType::LDX }},
 
-    { 0x40, { 6, AddressingMode::NONE, InstructionType::RTI }},
+    { 0x40, { 6, AddressingMode::IMPLIED, InstructionType::RTI }},
 
     { 0xE1, { 6, AddressingMode::INDIRECT_X, InstructionType::SBC }},
 
@@ -77,3 +80,5 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0x8D, { 4, AddressingMode::ABSOLUTE, InstructionType::STA }},
 };
+
+#endif

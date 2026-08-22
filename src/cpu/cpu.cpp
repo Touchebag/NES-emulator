@@ -100,23 +100,14 @@ uint8_t Cpu::popStack() {
 }
 
 int Cpu::executeInstruction() {
-    uint8_t opcode = readFromPc();
+    auto instruction = ParsedInstruction(reg_.pc[0], reg_.pc[1]);
+    instruction.print(0);
 
-    prev_instruction_data_ = NestestData{};
+    uint8_t opcode = readFromPc();
 
     try {
         auto current_instruction_data = instruction_table.at(opcode);
         unsigned int cycles = current_instruction_data.num_cycles;
-
-        // nestest
-        prev_instruction_data_.pc_hi = getRegisters().pc[1];
-        prev_instruction_data_.pc_lo = getRegisters().pc[0];
-        prev_instruction_data_.opcode = opcode;
-        prev_instruction_data_.reg_a = reg_.a;
-        prev_instruction_data_.reg_x = reg_.x;
-        prev_instruction_data_.reg_y = reg_.y;
-        prev_instruction_data_.reg_p = reg_.p;
-        prev_instruction_data_.sp = reg_.sp;
 
         switch (current_instruction_data.type) {
         #include "control.h"
@@ -127,10 +118,6 @@ int Cpu::executeInstruction() {
             throw std::invalid_argument("");
             break;
         };
-
-        // nestest
-        prev_instruction_data_.name = InstructionStringMap.at(current_instruction_data.type);
-        prev_instruction_data_.mode = current_instruction_data.addr_mode;
 
         return cycles;
     } catch (std::out_of_range& e) {
@@ -150,9 +137,6 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             retval = readFromPc();
             incPc(1);
 
-            // nestest
-            prev_instruction_data_.arg1 = retval;
-
             break;
         case AddressingMode::ABSOLUTE_X: {
             uint8_t lo = readFromPc();
@@ -160,10 +144,6 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             uint8_t hi = readFromPc();
             incPc(1);
             uint8_t x = reg_.x;
-
-            // nestest
-            prev_instruction_data_.arg1 = lo;
-            prev_instruction_data_.arg2 = hi;
 
             uint8_t new_lo = lo + x;
 
@@ -176,20 +156,12 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
 
             retval = System::get<Memory>().readAddress(new_lo, hi);
 
-            // nestest
-            prev_instruction_data_.address_lo = new_lo;
-            prev_instruction_data_.address_hi = hi;
-            prev_instruction_data_.address_val = retval;
-
             break;
         }
         case AddressingMode::INDIRECT_X: {
             auto& mem = System::get<Memory>();
             auto address = readFromPc();
             incPc(1);
-
-            // nestest
-            prev_instruction_data_.arg1 = address;
 
             uint8_t lo = mem.readAddress(address + reg_.x, 0x00);
             uint8_t hi = mem.readAddress(address + reg_.x + 0x01, 0x00);
@@ -201,7 +173,7 @@ uint8_t Cpu::readArgument(const InstructionData& instruction_data, unsigned int&
             // Ignore
             break;
         default:
-            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            throw std::invalid_argument("READ: Unknown addressing mode. This should never happen");
             break;
     }
 
@@ -219,24 +191,15 @@ void Cpu::writeArgument(const InstructionData& instruction_data, unsigned int& /
             uint8_t hi = readFromPc();
             incPc(1);
 
-            // nestest
-            prev_instruction_data_.arg1 = lo;
-            prev_instruction_data_.arg2 = hi;
-
             memory.writeAddress(lo, hi, value);
             break;
         }
         default:
-            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            throw std::invalid_argument("WRITE: Unknown addressing mode. This should never happen");
             break;
     }
 }
 
 Cpu::Registers Cpu::getRegisters() {
     return reg_;
-}
-
-// nestest
-NestestData Cpu::getPrevInstructionData() {
-    return prev_instruction_data_;
 }

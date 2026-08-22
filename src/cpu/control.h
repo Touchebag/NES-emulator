@@ -87,6 +87,14 @@ case InstructionType::JMP: {
     break;
 }
 
+case InstructionType::JSR: {
+    pushStack(reg_.pc[1]);
+    pushStack(reg_.pc[0]);
+    setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+
+    break;
+}
+
 case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();

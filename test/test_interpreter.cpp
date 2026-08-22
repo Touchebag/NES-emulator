@@ -279,6 +279,17 @@ TEST_F(InterpreterTestFixture, test_0x4C) {
     EXPECT_EQ(getPc(), 0x1234);
 }
 
+// JSR absolute
+TEST_F(InterpreterTestFixture, test_0x20) {
+    EXPECT_EQ(getPc(), 0x00);
+
+    addInstruction({0x20, 0xA5, 0x94});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(getPc(), 0x94A5);
+}
+
 // LDA immediate
 TEST_F(InterpreterTestFixture, test_0xA9) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);

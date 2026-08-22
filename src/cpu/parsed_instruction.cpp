@@ -174,7 +174,7 @@ void ParsedInstruction::print(int extra_cycles) const {
             fprintf(stderr, "INDIRECT_X");
             break;
         case AddressingMode::ZERO_PAGE:
-            fprintf(stderr, "$%02X = %02X                      ", adjusted_lo_, val1_.value());
+            fprintf(stderr, "$%02X = %02X                    ", adjusted_lo_, val1_.value());
             break;
         case AddressingMode::IMPLIED:
             fprintf(stderr, "                             ");

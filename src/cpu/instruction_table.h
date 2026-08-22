@@ -12,6 +12,7 @@ enum class AddressingMode {
     ABSOLUTE,
     ABSOLUTE_X,
     INDIRECT_X,
+    ZERO_PAGE,
     IMPLIED,
 };
 
@@ -30,7 +31,8 @@ enum class AddressingMode {
     GENERATE_ENUM(RTI),\
     GENERATE_ENUM(SBC),\
     GENERATE_ENUM(SEI),\
-    GENERATE_ENUM(STA)
+    GENERATE_ENUM(STA),\
+    GENERATE_ENUM(STX)
 
 enum class InstructionType {
 #define GENERATE_ENUM(x) x
@@ -79,6 +81,8 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0x78, { 2, AddressingMode::IMPLIED, InstructionType::SEI }},
 
     { 0x8D, { 4, AddressingMode::ABSOLUTE, InstructionType::STA }},
+
+    { 0x86, { 3, AddressingMode::ZERO_PAGE, InstructionType::STX }},
 };
 
 #endif

@@ -82,7 +82,7 @@ case InstructionType::INX: {
 }
 
 case InstructionType::JMP: {
-    setPc(current_instruction.val1_.value(), current_instruction.val2_.value());
+    setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
 
     break;
 }

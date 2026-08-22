@@ -29,7 +29,13 @@ case InstructionType::CPX: {
 }
 
 case InstructionType::STA: {
-    System::get<Memory>().writeAddress(current_instruction.val1_.value(), current_instruction.val2_.value(), reg_.a);
+    System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.a);
+
+    break;
+}
+
+case InstructionType::STX: {
+    System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.x);
 
     break;
 }

@@ -24,6 +24,7 @@ std::unordered_map<AddressingMode, int> addressing_mode_args_map {
     {AddressingMode::ABSOLUTE, 3},
     {AddressingMode::ABSOLUTE_X, 3},
     {AddressingMode::INDIRECT_X, 2},
+    {AddressingMode::ZERO_PAGE, 2},
     {AddressingMode::IMPLIED, 1},
 };
 
@@ -85,8 +86,8 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
 
             break;
         case AddressingMode::ABSOLUTE:
-            val1_ = arg1_;
-            val2_ = arg2_;
+            adjusted_lo_ = arg1_.value();
+            adjusted_hi_ = arg2_.value();
             break;
         case AddressingMode::ABSOLUTE_X: {
             adjusted_lo_ = arg1_.value() + reg_x_;
@@ -112,10 +113,20 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);
             break;
         }
+        case AddressingMode::ZERO_PAGE: {
+            auto& mem = System::get<Memory>();
+
+            adjusted_lo_ = arg1_.value();
+            adjusted_hi_ = 0x00;
+
+            val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);
+            break;
+        }
         case AddressingMode::IMPLIED:
             // Do nothing
             break;
         default:
+            LOGE("Adressing mode %i", static_cast<int>(addressing_mode_));
             throw std::invalid_argument("PARSED_INSTRUCTION_READ: Unknown addressing mode. This should never happen");
             break;
     }
@@ -162,11 +173,14 @@ void ParsedInstruction::print(int extra_cycles) const {
         case AddressingMode::INDIRECT_X:
             fprintf(stderr, "INDIRECT_X");
             break;
+        case AddressingMode::ZERO_PAGE:
+            fprintf(stderr, "$%02X = %02X                      ", adjusted_lo_, val1_.value());
+            break;
         case AddressingMode::IMPLIED:
             fprintf(stderr, "                             ");
             break;
         default:
-            throw std::invalid_argument("Unknown addressing mode. This should never happen");
+            throw std::invalid_argument("PARSED_INSTRUCTION_PRINT: Unknown addressing mode. This should never happen");
             break;
     }
 

@@ -445,3 +445,16 @@ TEST_F(InterpreterTestFixture, test_0x8D) {
     executeNextInstruction();
     EXPECT_EQ(peekMemoryAddress(0x12, 0x14), 0x5C);
 }
+
+// STX zero page
+TEST_F(InterpreterTestFixture, test_0x86) {
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+
+    setRegisterX(0x73);
+
+    addInstruction({0x86, 0x25});
+
+    EXPECT_EQ(peekMemoryAddress(0x25, 0x00), 0x00);
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x25, 0x00), 0x73);
+}

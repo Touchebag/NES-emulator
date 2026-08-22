@@ -54,7 +54,8 @@ class InterpreterTestFixture : public ::testing::Test {
     }
 
     void executeNextInstruction() {
-        cpu_.executeInstruction();
+        auto pc = cpu_.getRegisters().pc;
+        cpu_.executeInstruction(ParsedInstruction(pc[0], pc[1]));
     }
 
     void setPc(uint8_t lo, uint8_t hi) {

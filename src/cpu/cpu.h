@@ -15,7 +15,7 @@ class Cpu {
   public:
     Cpu();
 
-    int executeInstruction();
+    int executeInstruction(ParsedInstruction);
 
     void setPc(uint8_t pc_low, uint8_t pc_high);
 

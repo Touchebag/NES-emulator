@@ -76,7 +76,15 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
             }
 
             if (running_ || run_single_instruction) {
-                int cycles = cpu_.executeInstruction();
+                auto pc = cpu_.getRegisters().pc;
+                auto current_instruction = ParsedInstruction(pc[0], pc[1]);
+
+                int cycles = cpu_.executeInstruction(current_instruction);
+
+                if (nestest_output_) {
+                    current_instruction.print(cycles_since_reset);
+                }
+
                 ppu_.advance(cycles);
 
                 cycles_current_second += cycles;

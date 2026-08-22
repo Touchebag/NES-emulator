@@ -173,7 +173,7 @@ void ParsedInstruction::print(int extra_cycles) const {
     fprintf(stderr, "A:%02X X:%02X Y:%02X P:%02X SP:%02X ", reg_a_, reg_x_, reg_y_, reg_p_, sp_);
 
     fprintf(stderr, "PPU:YYY,XXX ");
-    fprintf(stderr, "CYC:%i", cycles_ + extra_cycles);
+    fprintf(stderr, "CYC:%i", extra_cycles);
 
     fprintf(stderr, "\n");
     fflush(stderr);

@@ -31,6 +31,8 @@ std::shared_ptr<Rom> Rom::loadRomFromFile(const std::string& filepath) {
     rom->rom_ = std::vector<uint8_t>(file_contents.begin() + 0x10, file_contents.end());
 
     printf("ROM file %s loaded successfully\n", filepath.c_str());
+    rom->name_ = filepath;
+
     rom->header_.printHeaderInfo();
 
     return rom;

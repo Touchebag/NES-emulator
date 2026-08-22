@@ -96,10 +96,7 @@ uint8_t Cpu::popStack() {
     return System::get<Memory>().readAddress(++reg_.sp, 0x01);
 }
 
-int Cpu::executeInstruction() {
-    auto current_instruction = ParsedInstruction(reg_.pc[0], reg_.pc[1]);
-    current_instruction.print(0);
-
+int Cpu::executeInstruction(ParsedInstruction current_instruction) {
     incPc(current_instruction.num_args_);
 
     try {

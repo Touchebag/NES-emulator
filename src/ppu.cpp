@@ -71,6 +71,10 @@ void Ppu::incrementCurrentAddress(uint8_t bytes) {
     }
 }
 
+std::pair<uint8_t, uint8_t> Ppu::getCurrentPosition() {
+    return {current_scanline_, current_nametable_column_ * 8 + byte_cycle_count_};
+}
+
 void Ppu::writeRegister(uint16_t address, uint8_t value) {
     switch (address) {
         case 0x0:

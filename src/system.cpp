@@ -34,6 +34,8 @@ void System::reset() {
 
 void System::run(std::shared_ptr<sf::RenderWindow> window) {
     reset();
+    ppu_.advance(7 * 3);
+
     window_ = window;
 
     unsigned int cycles_current_second = 0;
@@ -85,7 +87,7 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
                     current_instruction.print(cycles_since_reset);
                 }
 
-                ppu_.advance(cycles);
+                ppu_.advance(cycles * 3);
 
                 cycles_current_second += cycles;
                 cycles_since_reset += cycles;

@@ -16,6 +16,8 @@ class Ppu {
 
     const std::vector<palettes::RGB>& getFramebuffer();
 
+    std::pair<uint8_t, uint8_t> getCurrentPosition();
+
   private:
     void incrementCurrentAddress(uint8_t);
 
@@ -32,7 +34,6 @@ class Ppu {
     // 1 = high
     int write_address_byte_ = 1;
     uint8_t current_address_[2] = {0x00, 0x00};
-
 
     unsigned int current_scanline_ = 0;
     unsigned int current_nametable_column_ = 0;

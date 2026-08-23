@@ -1140,6 +1140,34 @@ TEST_F(InterpreterTestFixture, test_0x28) {
                                      static_cast<uint8_t>(StatusFlag::OVERFLOW));
 }
 
+// ROL
+TEST_F(InterpreterTestFixture, test_0x2A) {
+    setRegisterA(0x8E);
+
+    addInstruction({0x2A});
+    addInstruction({0x2A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x1D);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x3A);
+}
+
+// ROR
+TEST_F(InterpreterTestFixture, test_0x6A) {
+    setRegisterA(0x8E);
+
+    addInstruction({0x6A});
+    addInstruction({0x6A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x47);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xA3);
+}
+
 // RTI
 TEST_F(InterpreterTestFixture, test_0x40) {
     pokeMemoryAddress(0xFF, 0x01, 0x23);

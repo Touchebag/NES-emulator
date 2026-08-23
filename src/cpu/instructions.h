@@ -464,6 +464,46 @@ case InstructionType::PLP: {
     break;
 }
 
+case InstructionType::ROL: {
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x80);
+
+    uint8_t result = current_instruction.val1_.value() << 1;
+    result = result | (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
+
+    if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
+        reg_.a = result;
+    } else {
+        // Double write causes extra write of old value
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, current_instruction.val1_.value());
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
+    }
+
+    setZeroFlag(result);
+    setNegativeFlag(result);
+
+    break;
+}
+
+case InstructionType::ROR: {
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x01);
+
+    uint8_t result = current_instruction.val1_.value() >> 1;
+    result = result | ((getStatusFlag(StatusFlag::CARRY) ? 1 : 0) << 7);
+
+    if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
+        reg_.a = result;
+    } else {
+        // Double write causes extra write of old value
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, current_instruction.val1_.value());
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
+    }
+
+    setZeroFlag(result);
+    setNegativeFlag(result);
+
+    break;
+}
+
 case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();

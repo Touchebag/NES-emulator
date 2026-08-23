@@ -251,6 +251,23 @@ case InstructionType::CPY: {
     break;
 }
 
+case InstructionType::DEC: {
+    uint8_t tmp = System::get<Memory>().readAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+
+    // Double write causes extra write of old value
+    System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, tmp);
+
+    tmp--;
+
+    System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, tmp);
+
+    // Set flags
+    setNegativeFlag(tmp);
+    setZeroFlag(tmp);
+
+    break;
+}
+
 case InstructionType::DEX: {
     reg_.x = (reg_.x - 1) % 256;
 

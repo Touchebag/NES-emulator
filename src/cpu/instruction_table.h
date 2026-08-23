@@ -170,6 +170,11 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0xC4, { 3, AddressingMode::ZERO_PAGE, InstructionType::CPY }},
     { 0xCC, { 4, AddressingMode::ABSOLUTE, InstructionType::CPY }},
 
+    { 0xC6, { 5, AddressingMode::ZERO_PAGE, InstructionType::DEC }},
+    { 0xD6, { 6, AddressingMode::ZERO_PAGE_X, InstructionType::DEC }},
+    { 0xCE, { 6, AddressingMode::ABSOLUTE, InstructionType::DEC }},
+    { 0xDE, { 7, AddressingMode::ABSOLUTE_X, InstructionType::DEC }},
+
     { 0xCA, { 2, AddressingMode::IMPLIED, InstructionType::DEX }},
 
     { 0x88, { 2, AddressingMode::IMPLIED, InstructionType::DEY }},

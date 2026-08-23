@@ -280,6 +280,18 @@ case InstructionType::LDX: {
     break;
 }
 
+case InstructionType::LDY: {
+    reg_.y = current_instruction.val1_.value();
+
+    // Set status
+    setNegativeFlag(reg_.y);
+    setZeroFlag(reg_.y);
+
+    current_instruction.handlePageCross();
+
+    break;
+}
+
 case InstructionType::LSR: {
     reg_.a = current_instruction.val1_.value() >> 1;
 

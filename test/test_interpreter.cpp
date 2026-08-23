@@ -756,6 +756,33 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// LDY immediate
+TEST_F(InterpreterTestFixture, test_0xA0) {
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+
+    addInstruction({0xA0, 0xA9});
+    addInstruction({0xA0, 0x00});
+    addInstruction({0xA0, 0x63});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0xA9);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x63);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // LSR accumulator
 TEST_F(InterpreterTestFixture, test_0x4A) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);

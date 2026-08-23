@@ -581,6 +581,19 @@ TEST_F(InterpreterTestFixture, test_0x38) {
     EXPECT_EQ(status_before, cpu_.getRegisters().p);
 }
 
+// SED
+TEST_F(InterpreterTestFixture, test_0xF8) {
+    setStatusFlag(Cpu::StatusFlag::DECIMAL, false);
+    auto status_before = cpu_.getRegisters().p | static_cast<uint8_t>(Cpu::StatusFlag::DECIMAL);
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::DECIMAL), false);
+
+    addInstruction({0xF8});
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::DECIMAL), true);
+    EXPECT_EQ(status_before, cpu_.getRegisters().p);
+}
+
 // SEI
 TEST_F(InterpreterTestFixture, test_0x78) {
     setStatusFlag(Cpu::StatusFlag::INTERRUPT, false);

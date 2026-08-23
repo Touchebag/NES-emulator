@@ -247,6 +247,11 @@ case InstructionType::SEC: {
     break;
 }
 
+case InstructionType::SED: {
+    setStatusFlag(StatusFlag::DECIMAL, true);
+    break;
+}
+
 case InstructionType::SEI: {
     setStatusFlag(StatusFlag::INTERRUPT, true);
     break;

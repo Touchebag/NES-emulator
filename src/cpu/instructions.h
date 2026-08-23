@@ -3,16 +3,7 @@ case InstructionType::BCC: {
     if (!getStatusFlag(StatusFlag::CARRY)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
-
-        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(
-                current_instruction.adjusted_lo_,
-                current_instruction.adjusted_hi_,
-                current_instruction.val1_.value());
-
-        setPc(new_lo, new_hi);
-        if (page_cross) {
-            current_instruction.cycles_++;
-        }
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
     break;
@@ -23,16 +14,7 @@ case InstructionType::BCS: {
     if (getStatusFlag(StatusFlag::CARRY)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
-
-        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(
-                current_instruction.adjusted_lo_,
-                current_instruction.adjusted_hi_,
-                current_instruction.val1_.value());
-
-        setPc(new_lo, new_hi);
-        if (page_cross) {
-            current_instruction.cycles_++;
-        }
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
     break;
@@ -43,16 +25,7 @@ case InstructionType::BEQ: {
     if (getStatusFlag(StatusFlag::ZERO)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
-
-        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(
-                current_instruction.adjusted_lo_,
-                current_instruction.adjusted_hi_,
-                current_instruction.val1_.value());
-
-        setPc(new_lo, new_hi);
-        if (page_cross) {
-            current_instruction.cycles_++;
-        }
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
     break;
@@ -63,16 +36,7 @@ case InstructionType::BNE: {
     if (!getStatusFlag(StatusFlag::ZERO)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
-
-        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(
-                current_instruction.adjusted_lo_,
-                current_instruction.adjusted_hi_,
-                current_instruction.val1_.value());
-
-        setPc(new_lo, new_hi);
-        if (page_cross) {
-            current_instruction.cycles_++;
-        }
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
     break;

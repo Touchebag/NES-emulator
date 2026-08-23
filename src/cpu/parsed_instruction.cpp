@@ -75,8 +75,21 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
 
     switch (addressing_mode_) {
         case AddressingMode::RELATIVE:
-            adjusted_lo_ = pc_lo_;
             adjusted_hi_ = pc_hi_;
+
+            adjusted_lo_ = pc_lo_ + 2 + arg1_.value();
+            // If relative is negative
+            if (arg1_.value() & 128) {
+                if (adjusted_lo_ > pc_lo_) {
+                    // Underflow, carry to hi;
+                    adjusted_hi_--;
+                    cycles_++;
+                }
+            } else if (adjusted_lo_ < pc_lo_) {
+                // Overflow, carry to hi;
+                adjusted_hi_++;
+                cycles_++;
+            }
 
             val1_ = arg1_;
 
@@ -154,7 +167,7 @@ void ParsedInstruction::print(int extra_cycles) const {
 
     switch (addressing_mode_) {
         case AddressingMode::RELATIVE:
-            fprintf(stderr, "RELATIVE");
+            fprintf(stderr, "$%02X%02X                       ", adjusted_hi_, adjusted_lo_);
             break;
         case AddressingMode::IMMEDIATE:
             fprintf(stderr, "#$%02X                        ", arg1_.value());

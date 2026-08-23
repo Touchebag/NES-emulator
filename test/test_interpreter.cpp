@@ -504,6 +504,23 @@ TEST_F(InterpreterTestFixture, test_0x40) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
 }
 
+// RTS
+TEST_F(InterpreterTestFixture, test_0x60) {
+    auto flags = cpu_.getRegisters().p;
+
+    pokeMemoryAddress(0xFF, 0x01, 0x13);
+    pokeMemoryAddress(0xFE, 0x01, 0x55);
+    setStackPointer(0xFD);
+
+    addInstruction({0x60});
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x1356);
+    EXPECT_EQ(getStackPointer(), 0xFF);
+
+    EXPECT_EQ(cpu_.getRegisters().p, flags);
+}
+
 // SBC (indirect, X)
 TEST_F(InterpreterTestFixture, test_0xE1) {
     pokeMemoryAddress(0x21, 0x00, 0x01);

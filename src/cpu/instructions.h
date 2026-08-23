@@ -207,6 +207,16 @@ case InstructionType::RTI: {
     break;
 }
 
+case InstructionType::RTS: {
+    uint8_t lo = popStack();
+    uint8_t hi = popStack();
+
+    setPc(lo, hi);
+    incPc(1);
+
+    break;
+}
+
 case InstructionType::SBC: {
     uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
 

@@ -418,8 +418,16 @@ case InstructionType::RTI: {
     uint8_t lo = popStack();
     uint8_t hi = popStack();
 
+    // Save unnaffected bits
+    bool brk = getStatusFlag(StatusFlag::BREAK);
+    bool uns = getStatusFlag(StatusFlag::UNUSED);
+
     setPc(lo, hi);
-    reg_.p = p & ~(static_cast<uint8_t>(StatusFlag::BREAK));
+    reg_.p = p;
+
+    // Restore untouched flags
+    setStatusFlag(StatusFlag::BREAK, brk);
+    setStatusFlag(StatusFlag::UNUSED, uns);
 
     break;
 }

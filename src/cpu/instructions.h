@@ -31,6 +31,16 @@ case InstructionType::BEQ: {
     break;
 }
 
+case InstructionType::BIT: {
+    // ZERO is reasult of comparison with A
+    setStatusFlag(StatusFlag::ZERO, (reg_.a & current_instruction.val1_.value()) == 0);
+
+    // OVERFLOW and NEGATIVE is directly set from memory address
+    setStatusFlag(StatusFlag::OVERFLOW, ((1 << 6) & current_instruction.val1_.value()) == (1 << 6));
+    setStatusFlag(StatusFlag::NEGATIVE, ((1 << 7) & current_instruction.val1_.value()) == (1 << 7));
+    break;
+}
+
 case InstructionType::BNE: {
     // If latest operation was non-zero
     if (!getStatusFlag(StatusFlag::ZERO)) {
@@ -39,16 +49,6 @@ case InstructionType::BNE: {
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
-    break;
-}
-
-case InstructionType::BIT: {
-    // ZERO is reasult of comparison with A
-    setStatusFlag(StatusFlag::ZERO, (reg_.a & current_instruction.val1_.value()) == 0);
-
-    // OVERFLOR and NEGATIVE is directly set from memory address
-    setStatusFlag(StatusFlag::OVERFLOW, ((1 << 6) & current_instruction.val1_.value()) == (1 << 6));
-    setStatusFlag(StatusFlag::NEGATIVE, ((1 << 7) & current_instruction.val1_.value()) == (1 << 7));
     break;
 }
 
@@ -75,6 +75,17 @@ case InstructionType::BRK: {
     lo = memory.readAddress(0xFE, 0xFF);
     hi = memory.readAddress(0xFF, 0xFF);
     setPc(lo, hi);
+
+    break;
+}
+
+case InstructionType::BVS: {
+    // If latest operation overflowed
+    if (getStatusFlag(StatusFlag::OVERFLOW)) {
+        // Add extra cycle if branch taken
+        current_instruction.cycles_++;
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+    };
 
     break;
 }

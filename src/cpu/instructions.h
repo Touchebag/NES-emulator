@@ -52,6 +52,17 @@ case InstructionType::BNE: {
     break;
 }
 
+case InstructionType::BPL: {
+    // If latest operation was positive
+    if (!getStatusFlag(StatusFlag::NEGATIVE)) {
+        // Add extra cycle if branch taken
+        current_instruction.cycles_++;
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+    };
+
+    break;
+}
+
 case InstructionType::BRK: {
     uint8_t hi = current_instruction.pc_hi_;
     uint8_t lo = current_instruction.pc_lo_;

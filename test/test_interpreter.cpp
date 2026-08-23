@@ -195,6 +195,23 @@ TEST_F(InterpreterTestFixture, test_0xD0) {
     EXPECT_EQ(getPc(), 0x0041);
 }
 
+// BPL
+TEST_F(InterpreterTestFixture, test_0x10) {
+    setStatusFlag(StatusFlag::NEGATIVE, true);
+
+    addInstruction({0x10, 0x26});
+    addInstruction({0x10, 0x26});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x002A);
+}
+
 // BRK
 TEST_F(InterpreterTestFixture, test_0x00) {
     setStatusFlag(StatusFlag::ZERO, true);

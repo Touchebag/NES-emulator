@@ -100,6 +100,15 @@ struct InstructionData {
 };
 
 const std::unordered_map<uint8_t, InstructionData> instruction_table = {
+    { 0x69, { 2, AddressingMode::IMMEDIATE, InstructionType::ADC }},
+    { 0x65, { 3, AddressingMode::ZERO_PAGE, InstructionType::ADC }},
+    { 0x75, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::ADC }},
+    { 0x6D, { 4, AddressingMode::ABSOLUTE, InstructionType::ADC }},
+    { 0x7D, { 4, AddressingMode::ABSOLUTE_X, InstructionType::ADC }},
+    { 0x79, { 4, AddressingMode::ABSOLUTE_Y, InstructionType::ADC }},
+    { 0x61, { 6, AddressingMode::INDIRECT_X, InstructionType::ADC }},
+    { 0x71, { 5, AddressingMode::INDIRECT_Y, InstructionType::ADC }},
+
     { 0x29, { 2, AddressingMode::IMMEDIATE, InstructionType::AND }},
 
     { 0x90, { 2, AddressingMode::RELATIVE, InstructionType::BCC }},

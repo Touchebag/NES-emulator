@@ -94,6 +94,61 @@ class InterpreterTestFixture : public ::testing::Test {
     int current_mem_byte_ = 0x6000;
 };
 
+// ADC
+TEST_F(InterpreterTestFixture, test_0x69) {
+    setStatusFlag(StatusFlag::ZERO, false);
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+    setStatusFlag(StatusFlag::OVERFLOW, false);
+
+    setRegisterA(0x00);
+
+    addInstruction({0x69, 0x08});
+    addInstruction({0x69, 0x18});
+    addInstruction({0x69, 0x78});
+    addInstruction({0x69, 0x07});
+    addInstruction({0x69, 0x5E});
+
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x08);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+
+    setStatusFlag(StatusFlag::CARRY, true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x21);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+
+    setStatusFlag(StatusFlag::CARRY, true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x9A);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), true);
+
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xA1);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+
+    setStatusFlag(StatusFlag::CARRY, true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+}
+
 // AND
 TEST_F(InterpreterTestFixture, test_0x29) {
     setStatusFlag(StatusFlag::ZERO, false);

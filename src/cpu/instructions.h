@@ -1,3 +1,15 @@
+case InstructionType::ADC: {
+    auto a = reg_.a;
+    reg_.a = reg_.a + current_instruction.val1_.value() + (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
+
+    setZeroFlag(reg_.a);
+    setNegativeFlag(reg_.a);
+
+    setStatusFlag(StatusFlag::OVERFLOW, (reg_.a ^ a) & (reg_.a ^ current_instruction.val1_.value()) & 0x80);
+
+    break;
+}
+
 case InstructionType::AND: {
     reg_.a = reg_.a & current_instruction.val1_.value();
 

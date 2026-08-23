@@ -842,6 +842,20 @@ TEST_F(InterpreterTestFixture, test_0x86) {
     EXPECT_EQ(peekMemoryAddress(0x25, 0x00), 0x73);
 }
 
+// STX zero page, y
+TEST_F(InterpreterTestFixture, test_0x96) {
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+
+    setRegisterX(0x12);
+    setRegisterY(0x19);
+
+    addInstruction({0x96, 0x27});
+
+    EXPECT_EQ(peekMemoryAddress(0x40, 0x00), 0x00);
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x40, 0x00), 0x12);
+}
+
 // STY zero page, X
 TEST_F(InterpreterTestFixture, test_0x94) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);

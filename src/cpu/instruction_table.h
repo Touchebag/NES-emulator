@@ -14,6 +14,7 @@ enum class AddressingMode {
     INDIRECT_X,
     ZERO_PAGE,
     ZERO_PAGE_X,
+    ZERO_PAGE_Y,
     IMPLIED,
 };
 
@@ -164,6 +165,7 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0x85, { 3, AddressingMode::ZERO_PAGE, InstructionType::STA }},
 
     { 0x86, { 3, AddressingMode::ZERO_PAGE, InstructionType::STX }},
+    { 0x96, { 4, AddressingMode::ZERO_PAGE_Y, InstructionType::STX }},
 
     { 0x94, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::STY }},
 };

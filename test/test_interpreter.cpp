@@ -485,6 +485,23 @@ TEST_F(InterpreterTestFixture, test_0xD8) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::DECIMAL), false);
 }
 
+// CLI
+TEST_F(InterpreterTestFixture, test_0x58) {
+    setStatusFlag(StatusFlag::INTERRUPT, true);
+
+    addInstruction({0x58});
+    addInstruction({0x58});
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::INTERRUPT), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::INTERRUPT), false);
+
+    // Ensure it doesn't change already cleared flag
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::INTERRUPT), false);
+}
+
 // CLV
 TEST_F(InterpreterTestFixture, test_0xB8) {
     setStatusFlag(StatusFlag::OVERFLOW, true);

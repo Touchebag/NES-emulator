@@ -188,6 +188,12 @@ case InstructionType::CLD: {
     break;
 }
 
+case InstructionType::CLI: {
+    setStatusFlag(StatusFlag::INTERRUPT, false);
+
+    break;
+}
+
 case InstructionType::CLV: {
     setStatusFlag(StatusFlag::OVERFLOW, false);
 

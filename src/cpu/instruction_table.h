@@ -132,6 +132,15 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0xE0, { 2, AddressingMode::IMMEDIATE, InstructionType::CPX }},
 
+    { 0x49, { 2, AddressingMode::IMMEDIATE, InstructionType::EOR }},
+    { 0x45, { 3, AddressingMode::ZERO_PAGE, InstructionType::EOR }},
+    { 0x55, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::EOR }},
+    { 0x4D, { 4, AddressingMode::ABSOLUTE, InstructionType::EOR }},
+    { 0x5D, { 4, AddressingMode::ABSOLUTE_X, InstructionType::EOR }},
+    { 0x59, { 4, AddressingMode::ABSOLUTE_Y, InstructionType::EOR }},
+    { 0x41, { 6, AddressingMode::INDIRECT_X, InstructionType::EOR }},
+    { 0x51, { 5, AddressingMode::INDIRECT_Y, InstructionType::EOR }},
+
     { 0xE8, { 2, AddressingMode::IMPLIED, InstructionType::INX }},
 
     { 0x4C, { 3, AddressingMode::ABSOLUTE, InstructionType::JMP }},

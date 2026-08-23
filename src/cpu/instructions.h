@@ -180,6 +180,16 @@ case InstructionType::CPX: {
     break;
 }
 
+case InstructionType::EOR: {
+    reg_.a = reg_.a ^ current_instruction.val1_.value();
+
+    // Set flags
+    setNegativeFlag(reg_.a);
+    setZeroFlag(reg_.a);
+
+    break;
+}
+
 case InstructionType::INX: {
     reg_.x = (reg_.x + 1) % 256;
 

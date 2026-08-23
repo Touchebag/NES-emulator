@@ -364,7 +364,18 @@ case InstructionType::LDY: {
 }
 
 case InstructionType::LSR: {
-    reg_.a = current_instruction.val1_.value() >> 1;
+    setStatusFlag(StatusFlag::CARRY, reg_.a & 1);
+
+    uint8_t result = current_instruction.val1_.value() >> 1;
+
+    if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
+        reg_.a = result;
+    } else {
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
+    }
+
+    setZeroFlag(result);
+    setNegativeFlag(result);
 
     break;
 }

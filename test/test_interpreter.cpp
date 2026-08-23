@@ -41,6 +41,10 @@ class InterpreterTestFixture : public ::testing::Test {
         memory_.writeAddress(lo, hi, value);
     }
 
+    void setStatusRegister(uint8_t value) {
+        cpu_.reg_.p = value;
+    }
+
     void setStatusFlag(StatusFlag flag, bool value) {
         cpu_.setStatusFlag(flag, value);
     }
@@ -495,6 +499,24 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x59);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// PHP absolute
+TEST_F(InterpreterTestFixture, test_0x08) {
+    setStatusRegister(0x00);
+    EXPECT_EQ(cpu_.getRegisters().p, 0x00);
+
+    setStatusFlag(StatusFlag::BREAK, true);
+    setStatusFlag(StatusFlag::DECIMAL, true);
+    setStatusFlag(StatusFlag::ZERO, true);
+
+    addInstruction({0x08});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), static_cast<uint8_t>(StatusFlag::BREAK) |
+                                             static_cast<uint8_t>(StatusFlag::DECIMAL) |
+                                             static_cast<uint8_t>(StatusFlag::ZERO));
 }
 
 // RTI

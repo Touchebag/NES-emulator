@@ -206,6 +206,11 @@ case InstructionType::NOP: {
     break;
 }
 
+case InstructionType::PHP: {
+    pushStack(reg_.p);
+    break;
+}
+
 case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();

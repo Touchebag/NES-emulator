@@ -227,6 +227,16 @@ case InstructionType::CPY: {
     break;
 }
 
+case InstructionType::DEY: {
+    reg_.y = (reg_.y - 1) % 256;
+
+    // Set flags
+    setNegativeFlag(reg_.y);
+    setZeroFlag(reg_.y);
+
+    break;
+}
+
 case InstructionType::EOR: {
     reg_.a = reg_.a ^ current_instruction.val1_.value();
 

@@ -650,6 +650,18 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// LSR accumulator
+TEST_F(InterpreterTestFixture, test_0x4A) {
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+
+    setRegisterA(0x59);
+
+    addInstruction({0x4A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x2C);
+}
+
 // ORA
 TEST_F(InterpreterTestFixture, test_0x09) {
     setStatusFlag(StatusFlag::ZERO, false);

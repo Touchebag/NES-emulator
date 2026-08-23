@@ -32,6 +32,7 @@ std::unordered_map<AddressingMode, int> addressing_mode_args_map {
     {AddressingMode::ZERO_PAGE_X, 2},
     {AddressingMode::ZERO_PAGE_Y, 2},
     {AddressingMode::IMPLIED, 1},
+    {AddressingMode::ACCUMULATOR, 1},
 };
 
 } // namespace
@@ -218,6 +219,9 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
         case AddressingMode::IMPLIED:
             // Do nothing
             break;
+        case AddressingMode::ACCUMULATOR:
+            val1_ = reg_a_;
+            break;
         default:
             LOGE("Adressing mode %i", static_cast<int>(addressing_mode_));
             throw std::invalid_argument("PARSED_INSTRUCTION_READ: Unknown addressing mode. This should never happen");
@@ -308,6 +312,9 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
             break;
         case AddressingMode::IMPLIED:
             output += format("                            ");
+            break;
+        case AddressingMode::ACCUMULATOR:
+            output += format("A                           ");
             break;
         default:
             throw std::invalid_argument("PARSED_INSTRUCTION_PRINT: Unknown addressing mode. This should never happen");

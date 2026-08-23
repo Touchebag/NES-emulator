@@ -228,6 +228,12 @@ case InstructionType::LDX: {
     break;
 }
 
+case InstructionType::LSR: {
+    reg_.a = current_instruction.val1_.value() >> 1;
+
+    break;
+}
+
 case InstructionType::NOP: {
     break;
 }

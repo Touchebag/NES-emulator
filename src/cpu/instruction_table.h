@@ -19,6 +19,7 @@ enum class AddressingMode {
     ZERO_PAGE_X,
     ZERO_PAGE_Y,
     IMPLIED,
+    ACCUMULATOR,
 };
 
 #define INSTRUCTION_SET \
@@ -142,6 +143,8 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0xB1, { 5, AddressingMode::INDIRECT_Y, InstructionType::LDA }},
 
     { 0xA2, { 2, AddressingMode::IMMEDIATE, InstructionType::LDX }},
+
+    { 0x4A, { 2, AddressingMode::ACCUMULATOR, InstructionType::LSR }},
 
     { 0xEA, { 2, AddressingMode::IMPLIED, InstructionType::NOP }},
 

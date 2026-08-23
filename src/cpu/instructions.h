@@ -481,3 +481,43 @@ case InstructionType::TAY: {
 
     break;
 }
+
+case InstructionType::TSX: {
+    reg_.x = reg_.sp;
+
+    // Set flags
+    setNegativeFlag(reg_.x);
+    setZeroFlag(reg_.x);
+
+    break;
+}
+
+case InstructionType::TXA: {
+    reg_.a = reg_.x;
+
+    // Set flags
+    setNegativeFlag(reg_.a);
+    setZeroFlag(reg_.a);
+
+    break;
+}
+
+case InstructionType::TXS: {
+    reg_.sp = reg_.x;
+
+    // Set flags
+    setNegativeFlag(reg_.sp);
+    setZeroFlag(reg_.sp);
+
+    break;
+}
+
+case InstructionType::TYA: {
+    reg_.a = reg_.y;
+
+    // Set flags
+    setNegativeFlag(reg_.a);
+    setZeroFlag(reg_.a);
+
+    break;
+}

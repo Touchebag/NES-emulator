@@ -1271,3 +1271,131 @@ TEST_F(InterpreterTestFixture, test_0xA8) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
+
+// TSX
+TEST_F(InterpreterTestFixture, test_0xBA) {
+    setStackPointer(0x45);
+    setRegisterX(0x00);
+
+    addInstruction({0xBA});
+    addInstruction({0xBA});
+    addInstruction({0xBA});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setStackPointer(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setStackPointer(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// TXA
+TEST_F(InterpreterTestFixture, test_0x8A) {
+    setRegisterX(0x45);
+    setRegisterA(0x00);
+
+    addInstruction({0x8A});
+    addInstruction({0x8A});
+    addInstruction({0x8A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterX(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterX(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// TXS
+TEST_F(InterpreterTestFixture, test_0x9A) {
+    setRegisterX(0x45);
+    setStackPointer(0x00);
+
+    addInstruction({0x9A});
+    addInstruction({0x9A});
+    addInstruction({0x9A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().sp, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterX(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().sp, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterX(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().sp, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// TYA
+TEST_F(InterpreterTestFixture, test_0x98) {
+    setRegisterY(0x45);
+    setRegisterA(0x00);
+
+    addInstruction({0x98});
+    addInstruction({0x98});
+    addInstruction({0x98});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterY(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterY(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}

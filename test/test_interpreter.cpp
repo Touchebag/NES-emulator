@@ -579,6 +579,36 @@ TEST_F(InterpreterTestFixture, test_0xB9) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
 }
 
+// LDA indirect,Y
+TEST_F(InterpreterTestFixture, test_0xB1) {
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+
+    pokeMemoryAddress(0x12, 0x00, 0x18);
+    pokeMemoryAddress(0x13, 0x00, 0x24);
+    pokeMemoryAddress(0x18, 0x24, 0x59);
+
+    pokeMemoryAddress(0xA0, 0x00, 0x28);
+    pokeMemoryAddress(0xA1, 0x00, 0x95);
+    pokeMemoryAddress(0x2D, 0x95, 0xC7);
+
+    addInstruction({0xB1, 0x12});
+    addInstruction({0xB1, 0xA0});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x59);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterY(0x05);
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0xC7);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+}
+
 // LDX immediate
 TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);

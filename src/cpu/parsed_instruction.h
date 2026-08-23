@@ -13,6 +13,8 @@ class ParsedInstruction {
 
     std::string toString(int current_total_cycles = 0) const;
 
+    void handlePageCross();
+
     uint8_t pc_lo_;
     uint8_t pc_hi_;
 
@@ -43,6 +45,8 @@ class ParsedInstruction {
 
   private:
     void calcualateAdjustedMemoryAddresses();
+
+    bool page_cross_ = false;
 };
 
 void printNestestOutput(ParsedInstruction, int total_cycles);

@@ -9,6 +9,8 @@ case InstructionType::ADC: {
     // If wrapped around, set carry
     setStatusFlag(StatusFlag::CARRY, reg_.a < a);
 
+    current_instruction.handlePageCross();
+
     break;
 }
 
@@ -18,6 +20,8 @@ case InstructionType::AND: {
     setZeroFlag(reg_.a);
     setNegativeFlag(reg_.a);
 
+    current_instruction.handlePageCross();
+
     break;
 }
 
@@ -26,6 +30,7 @@ case InstructionType::BCC: {
     if (!getStatusFlag(StatusFlag::CARRY)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -37,6 +42,7 @@ case InstructionType::BCS: {
     if (getStatusFlag(StatusFlag::CARRY)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -48,6 +54,7 @@ case InstructionType::BEQ: {
     if (getStatusFlag(StatusFlag::ZERO)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -69,6 +76,7 @@ case InstructionType::BMI: {
     if (getStatusFlag(StatusFlag::NEGATIVE)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -80,6 +88,7 @@ case InstructionType::BNE: {
     if (!getStatusFlag(StatusFlag::ZERO)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -91,6 +100,7 @@ case InstructionType::BPL: {
     if (!getStatusFlag(StatusFlag::NEGATIVE)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -129,6 +139,7 @@ case InstructionType::BVC: {
     if (!getStatusFlag(StatusFlag::OVERFLOW)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -140,6 +151,7 @@ case InstructionType::BVS: {
     if (getStatusFlag(StatusFlag::OVERFLOW)) {
         // Add extra cycle if branch taken
         current_instruction.cycles_++;
+        current_instruction.handlePageCross();
         setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
     };
 
@@ -176,6 +188,8 @@ case InstructionType::CMP: {
     setNegativeFlag(a);
     setZeroFlag(a);
 
+    current_instruction.handlePageCross();
+
     break;
 }
 
@@ -191,6 +205,8 @@ case InstructionType::CPX: {
     setNegativeFlag(x);
     setZeroFlag(x);
 
+    current_instruction.handlePageCross();
+
     break;
 }
 
@@ -200,6 +216,8 @@ case InstructionType::EOR: {
     // Set flags
     setNegativeFlag(reg_.a);
     setZeroFlag(reg_.a);
+
+    current_instruction.handlePageCross();
 
     break;
 }
@@ -245,6 +263,8 @@ case InstructionType::LDA: {
     setNegativeFlag(reg_.a);
     setZeroFlag(reg_.a);
 
+    current_instruction.handlePageCross();
+
     break;
 }
 
@@ -254,6 +274,8 @@ case InstructionType::LDX: {
     // Set status
     setNegativeFlag(current_instruction.val1_.value());
     setZeroFlag(current_instruction.val1_.value());
+
+    current_instruction.handlePageCross();
 
     break;
 }
@@ -273,6 +295,8 @@ case InstructionType::ORA: {
 
     setZeroFlag(reg_.a);
     setNegativeFlag(reg_.a);
+
+    current_instruction.handlePageCross();
 
     break;
 }
@@ -338,6 +362,8 @@ case InstructionType::SBC: {
 
     setNegativeFlag(a);
     setZeroFlag(a);
+
+    current_instruction.handlePageCross();
 
     break;
 }

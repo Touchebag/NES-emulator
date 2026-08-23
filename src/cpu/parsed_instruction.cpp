@@ -76,6 +76,12 @@ ParsedInstruction::ParsedInstruction(uint8_t lo, uint8_t hi) {
     calcualateAdjustedMemoryAddresses();
 }
 
+void ParsedInstruction::handlePageCross() {
+    if (page_cross_) {
+        cycles_++;
+    }
+}
+
 void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
     adjusted_lo_ = 0x00;
     adjusted_hi_ = 0x00;
@@ -90,12 +96,12 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
                 if (adjusted_lo_ > pc_lo_) {
                     // Underflow, carry to hi;
                     adjusted_hi_--;
-                    cycles_++;
+                    page_cross_ = true;
                 }
             } else if (adjusted_lo_ < pc_lo_) {
                 // Overflow, carry to hi;
                 adjusted_hi_++;
-                cycles_++;
+                page_cross_ = true;
             }
 
             val1_ = arg1_;
@@ -117,7 +123,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
                 // Overflow, carry to hi
                 adjusted_hi_++;
                 // Page cross, extra cycle
-                cycles_++;
+                page_cross_ = true;
             }
 
             val1_ = System::get<Memory>().readAddress(adjusted_lo_, adjusted_hi_);
@@ -132,7 +138,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
                 // Overflow, carry to hi
                 adjusted_hi_++;
                 // Page cross, extra cycle
-                cycles_++;
+                page_cross_ = true;
             }
 
             val1_ = System::get<Memory>().readAddress(adjusted_lo_, adjusted_hi_);
@@ -151,7 +157,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
                 // Overflow, carry to hi
                 tmp_hi++;
                 // Page cross, extra cycle
-                cycles_++;
+                page_cross_ = true;
             }
 
             adjusted_hi_ = mem.readAddress(tmp_lo, tmp_hi);
@@ -179,7 +185,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
                 // Overflow, carry to hi
                 adjusted_hi_++;
                 // Page cross, extra cycle
-                cycles_++;
+                page_cross_ = true;
             }
 
             val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);

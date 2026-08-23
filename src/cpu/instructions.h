@@ -221,6 +221,11 @@ case InstructionType::NOP: {
     break;
 }
 
+case InstructionType::PHA: {
+    pushStack(reg_.a);
+    break;
+}
+
 case InstructionType::PHP: {
     // BREAK is pushed as 1
     pushStack(reg_.p | static_cast<uint8_t>(StatusFlag::BREAK));
@@ -295,4 +300,3 @@ case InstructionType::STX: {
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.x);
     break;
 }
-

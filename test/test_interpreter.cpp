@@ -572,6 +572,22 @@ TEST_F(InterpreterTestFixture, test_0x08) {
                                              static_cast<uint8_t>(StatusFlag::ZERO));
 }
 
+// PHA
+TEST_F(InterpreterTestFixture, test_0x48) {
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+
+    setRegisterA(0xE3);
+
+    addInstruction({0x48});
+    addInstruction({0x48});
+
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0xFE, 0x01), 0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), 0xE3);
+}
+
 // PLA
 TEST_F(InterpreterTestFixture, test_0x68) {
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);

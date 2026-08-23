@@ -232,6 +232,13 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0xEA, { 2, AddressingMode::IMPLIED, InstructionType::NOP }},
 
     { 0x09, { 2, AddressingMode::IMMEDIATE, InstructionType::ORA }},
+    { 0x05, { 3, AddressingMode::ZERO_PAGE, InstructionType::ORA }},
+    { 0x15, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::ORA }},
+    { 0x0D, { 4, AddressingMode::ABSOLUTE, InstructionType::ORA }},
+    { 0x1D, { 4, AddressingMode::ABSOLUTE_X, InstructionType::ORA }},
+    { 0x19, { 4, AddressingMode::ABSOLUTE_Y, InstructionType::ORA }},
+    { 0x01, { 6, AddressingMode::INDIRECT_X, InstructionType::ORA }},
+    { 0x11, { 5, AddressingMode::INDIRECT_Y, InstructionType::ORA }},
 
     { 0x48, { 3, AddressingMode::IMPLIED, InstructionType::PHA }},
 

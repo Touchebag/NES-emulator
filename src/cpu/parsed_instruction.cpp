@@ -235,7 +235,12 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
                     val1_.value());
             break;
         case AddressingMode::INDIRECT_X:
-            output += format("INDIRECT_X");
+            output += format("(${:02X},X) @ {:02X} = {:02X}{:02X} = {:02X}    ",
+                    arg1_.value(),
+                    arg1_.value() + reg_x_,
+                    adjusted_hi_,
+                    adjusted_lo_,
+                    val1_.value());
             break;
         case AddressingMode::ZERO_PAGE:
             output += format("${:02X} = {:02X}                    ", adjusted_lo_, val1_.value());

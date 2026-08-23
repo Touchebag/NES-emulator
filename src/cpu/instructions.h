@@ -25,6 +25,24 @@ case InstructionType::AND: {
     break;
 }
 
+case InstructionType::ASL: {
+    // Save MSB in carry
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x80);
+
+    uint8_t result = current_instruction.val1_.value() << 1;
+
+    if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
+        reg_.a = result;
+    } else {
+        System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
+    }
+
+    setZeroFlag(result);
+    setNegativeFlag(result);
+
+    break;
+}
+
 case InstructionType::BCC: {
     // If carry is not set
     if (!getStatusFlag(StatusFlag::CARRY)) {

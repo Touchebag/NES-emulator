@@ -111,6 +111,12 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0x29, { 2, AddressingMode::IMMEDIATE, InstructionType::AND }},
 
+    { 0x0A, { 2, AddressingMode::ACCUMULATOR, InstructionType::ASL }},
+    { 0x06, { 5, AddressingMode::ZERO_PAGE, InstructionType::ASL }},
+    { 0x16, { 6, AddressingMode::ZERO_PAGE_X, InstructionType::ASL }},
+    { 0x0E, { 6, AddressingMode::ABSOLUTE, InstructionType::ASL }},
+    { 0x1E, { 7, AddressingMode::ABSOLUTE_X, InstructionType::ASL }},
+
     { 0x90, { 2, AddressingMode::RELATIVE, InstructionType::BCC }},
 
     { 0xB0, { 2, AddressingMode::RELATIVE, InstructionType::BCS }},

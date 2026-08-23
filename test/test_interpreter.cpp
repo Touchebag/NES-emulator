@@ -183,6 +183,63 @@ TEST_F(InterpreterTestFixture, test_0x29) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
 }
 
+// ASR accumulator
+TEST_F(InterpreterTestFixture, test_0x0A) {
+    setRegisterA(0x08);
+
+    addInstruction({0x0A});
+    addInstruction({0x0A});
+    addInstruction({0x0A});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x10);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x40);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x80);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
+// ASR absolute
+TEST_F(InterpreterTestFixture, test_0x0E) {
+    pokeMemoryAddress(0x12, 0x56, 0x08);
+
+    addInstruction({0x0E, 0x12, 0x56});
+    addInstruction({0x0E, 0x12, 0x56});
+    addInstruction({0x0E, 0x12, 0x56});
+
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x56), 0x10);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    pokeMemoryAddress(0x12, 0x56, 0x40);
+
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x56), 0x80);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x56), 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // BCC
 TEST_F(InterpreterTestFixture, test_0x90) {
     setStatusFlag(StatusFlag::CARRY, true);

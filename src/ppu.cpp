@@ -35,12 +35,9 @@ Ppu::Ppu() {
 
 void Ppu::advance(int cycles) {
     for (auto i = 0; i < cycles; i++) {
-        current_x_cycle++;
-
-
         framebuffer_.at(current_x_cycle) = lookupRgbValue(vram_.at(0x2000 + current_x_cycle));
 
-        if (current_x_cycle >= 340) {
+        if (++current_x_cycle > 340) {
             current_x_cycle = 0;
 
             if (++current_scanline_ > 260) {

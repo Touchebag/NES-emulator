@@ -12,7 +12,7 @@ namespace {
 std::tuple<uint8_t, uint8_t, bool> calculateRelativeJump(uint8_t lo, uint8_t hi, uint8_t val) {
     bool page_cross = false;
 
-    uint8_t new_lo = lo + val;
+    uint8_t new_lo = lo + 2 + val;
     // If relative is negative
     if (val & 128) {
         if (new_lo > lo) {

@@ -96,7 +96,7 @@ TEST_F(InterpreterTestFixture, test_0xB0) {
 
     setStatusFlag(StatusFlag::CARRY, true);
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x0071);
+    EXPECT_EQ(getPc(), 0x0073);
 }
 
 // BEQ
@@ -113,7 +113,7 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
 
     setStatusFlag(StatusFlag::ZERO, true);
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x0014);
+    EXPECT_EQ(getPc(), 0x0016);
 
     setPc(0xA9, 0x83);
     // Manually add instructions at pc
@@ -122,7 +122,7 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
 
     setStatusFlag(StatusFlag::ZERO, true);
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x841B);
+    EXPECT_EQ(getPc(), 0x841D);
 
     setPc(0xAB, 0x83);
     pokeMemoryAddress(0xAB, 0x83, 0xF0);
@@ -131,7 +131,7 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
 
     // Negative jump
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x83A7);
+    EXPECT_EQ(getPc(), 0x83A9);
 }
 
 // BNE
@@ -148,7 +148,7 @@ TEST_F(InterpreterTestFixture, test_0xD0) {
 
     setStatusFlag(StatusFlag::ZERO, false);
     executeNextInstruction();
-    EXPECT_EQ(getPc(), 0x003F);
+    EXPECT_EQ(getPc(), 0x0041);
 }
 
 // BRK

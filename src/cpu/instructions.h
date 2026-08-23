@@ -232,6 +232,15 @@ case InstructionType::NOP: {
     break;
 }
 
+case InstructionType::ORA: {
+    reg_.a = reg_.a | current_instruction.val1_.value();
+
+    setZeroFlag(reg_.a);
+    setNegativeFlag(reg_.a);
+
+    break;
+}
+
 case InstructionType::PHA: {
     pushStack(reg_.a);
     break;

@@ -569,6 +569,40 @@ TEST_F(InterpreterTestFixture, test_0xA2) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// ORA
+TEST_F(InterpreterTestFixture, test_0x09) {
+    setStatusFlag(StatusFlag::ZERO, false);
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+
+    setRegisterA(0x00);
+
+    addInstruction({0x09, 0x09});
+    addInstruction({0x09, 0xE7});
+    addInstruction({0x09, 0x00});
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x02);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x0B);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x00);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xE7);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterA(0x00);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // PHP absolute
 TEST_F(InterpreterTestFixture, test_0x08) {
     setStatusRegister(0x00);

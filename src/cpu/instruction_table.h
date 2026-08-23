@@ -137,6 +137,8 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0xEA, { 2, AddressingMode::IMPLIED, InstructionType::NOP }},
 
+    { 0x09, { 2, AddressingMode::IMMEDIATE, InstructionType::ORA }},
+
     { 0x08, { 3, AddressingMode::IMPLIED, InstructionType::PHP }},
 
     { 0x68, { 4, AddressingMode::IMPLIED, InstructionType::PLA }},

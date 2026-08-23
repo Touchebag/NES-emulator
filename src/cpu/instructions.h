@@ -144,6 +144,12 @@ case InstructionType::CLD: {
     break;
 }
 
+case InstructionType::CLV: {
+    setStatusFlag(StatusFlag::OVERFLOW, false);
+
+    break;
+}
+
 case InstructionType::CMP: {
     uint8_t a = reg_.a;
 

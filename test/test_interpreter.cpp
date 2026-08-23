@@ -65,7 +65,7 @@ class InterpreterTestFixture : public ::testing::Test {
         auto pc = cpu_.getRegisters().pc;
         auto current_instruction = ParsedInstruction(pc[0], pc[1]);
 
-        // current_instruction.print();
+        // fprintf(stderr, "%s\n", current_instruction.toString().c_str());
 
         cpu_.executeInstruction(current_instruction);
     }
@@ -371,6 +371,23 @@ TEST_F(InterpreterTestFixture, test_0xD8) {
     // Ensure it doesn't change already cleared flag
     executeNextInstruction();
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::DECIMAL), false);
+}
+
+// CLV
+TEST_F(InterpreterTestFixture, test_0xB8) {
+    setStatusFlag(StatusFlag::OVERFLOW, true);
+
+    addInstruction({0xB8});
+    addInstruction({0xB8});
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+
+    // Ensure it doesn't change already cleared flag
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
 }
 
 // CMP immediate

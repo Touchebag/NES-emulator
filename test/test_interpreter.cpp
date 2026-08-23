@@ -220,6 +220,23 @@ TEST_F(InterpreterTestFixture, test_0x24) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
 }
 
+// BMI
+TEST_F(InterpreterTestFixture, test_0x30) {
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+
+    addInstruction({0x30, 0x49});
+    addInstruction({0x30, 0x49});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::NEGATIVE, true);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x004D);
+}
+
 // BNE
 TEST_F(InterpreterTestFixture, test_0xD0) {
     setStatusFlag(StatusFlag::ZERO, true);

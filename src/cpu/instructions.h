@@ -50,6 +50,17 @@ case InstructionType::BIT: {
     break;
 }
 
+case InstructionType::BMI: {
+    // If latest operation was negative
+    if (getStatusFlag(StatusFlag::NEGATIVE)) {
+        // Add extra cycle if branch taken
+        current_instruction.cycles_++;
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+    };
+
+    break;
+}
+
 case InstructionType::BNE: {
     // If latest operation was non-zero
     if (!getStatusFlag(StatusFlag::ZERO)) {

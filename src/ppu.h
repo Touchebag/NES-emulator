@@ -16,7 +16,7 @@ class Ppu {
 
     const std::vector<palettes::RGB>& getFramebuffer();
 
-    std::pair<uint8_t, uint8_t> getCurrentPosition();
+    std::pair<unsigned int, unsigned int> getCurrentPosition();
 
   private:
     void incrementCurrentAddress(uint8_t);
@@ -36,9 +36,7 @@ class Ppu {
     uint8_t current_address_[2] = {0x00, 0x00};
 
     unsigned int current_scanline_ = 0;
-    unsigned int current_nametable_column_ = 0;
-
-    unsigned int byte_cycle_count_ = 0;
+    unsigned int current_x_cycle = 0;
 
     std::vector<uint8_t> vram_ = std::vector<uint8_t>(0x4000);
 

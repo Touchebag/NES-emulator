@@ -34,30 +34,21 @@ Ppu::Ppu() {
 }
 
 void Ppu::advance(int cycles) {
-    // Add leftover cycles from previous call
-    cycles += byte_cycle_count_;
+    for (auto i = 0; i < cycles; i++) {
+        current_x_cycle++;
 
-    while (cycles > 7) {
-        cycles -= 8;
 
-        for (auto i = 0; i < 7; i++) {
-            auto current_nametable_index = (current_scanline_ / 8) * 32 + current_nametable_column_;
-            framebuffer_.at(current_nametable_index) = lookupRgbValue(vram_.at(0x2000 + current_nametable_index));
-            // printf("%x ", vram_.at(0x2000 + current_nametable_index_));
-        }
+        framebuffer_.at(current_x_cycle) = lookupRgbValue(vram_.at(0x2000 + current_x_cycle));
 
-        if (++current_nametable_column_ >= 32) {
-            current_nametable_column_ = 0;
+        if (current_x_cycle >= 340) {
+            current_x_cycle = 0;
 
-            if (++current_scanline_ >= 240) {
+            if (++current_scanline_ > 260) {
                 System::getInstance().onVsyncTriggered();
                 current_scanline_ = 0;
             }
         }
     }
-
-    // Store leftovers
-    byte_cycle_count_ = cycles;
 }
 
 void Ppu::incrementCurrentAddress(uint8_t bytes) {
@@ -71,8 +62,8 @@ void Ppu::incrementCurrentAddress(uint8_t bytes) {
     }
 }
 
-std::pair<uint8_t, uint8_t> Ppu::getCurrentPosition() {
-    return {current_scanline_, current_nametable_column_ * 8 + byte_cycle_count_};
+std::pair<unsigned int, unsigned int> Ppu::getCurrentPosition() {
+    return {current_scanline_, current_x_cycle};
 }
 
 void Ppu::writeRegister(uint16_t address, uint8_t value) {

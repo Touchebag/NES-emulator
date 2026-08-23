@@ -151,6 +151,33 @@ TEST_F(InterpreterTestFixture, test_0xF0) {
     EXPECT_EQ(getPc(), 0x83A9);
 }
 
+// BIT
+TEST_F(InterpreterTestFixture, test_0x24) {
+    setStatusFlag(StatusFlag::ZERO, false);
+    setStatusFlag(StatusFlag::OVERFLOW, false);
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+
+    pokeMemoryAddress(0x39, 0x00, 0x40);
+    pokeMemoryAddress(0x46, 0x00, 0x82);
+
+    addInstruction({0x24, 0x39});
+    addInstruction({0x24, 0x46});
+
+    setRegisterA(0x02);
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x02);
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::OVERFLOW), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+}
+
 // BNE
 TEST_F(InterpreterTestFixture, test_0xD0) {
     setStatusFlag(StatusFlag::ZERO, true);

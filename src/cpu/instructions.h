@@ -42,6 +42,16 @@ case InstructionType::BNE: {
     break;
 }
 
+case InstructionType::BIT: {
+    // ZERO is reasult of comparison with A
+    setStatusFlag(StatusFlag::ZERO, (reg_.a & current_instruction.val1_.value()) == 0);
+
+    // OVERFLOR and NEGATIVE is directly set from memory address
+    setStatusFlag(StatusFlag::OVERFLOW, ((1 << 6) & current_instruction.val1_.value()) == (1 << 6));
+    setStatusFlag(StatusFlag::NEGATIVE, ((1 << 7) & current_instruction.val1_.value()) == (1 << 7));
+    break;
+}
+
 case InstructionType::BRK: {
     uint8_t hi = current_instruction.pc_hi_;
     uint8_t lo = current_instruction.pc_lo_;

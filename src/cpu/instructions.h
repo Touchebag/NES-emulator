@@ -127,6 +127,12 @@ case InstructionType::CLC: {
     break;
 }
 
+case InstructionType::CLD: {
+    setStatusFlag(StatusFlag::DECIMAL, false);
+
+    break;
+}
+
 case InstructionType::CMP: {
     uint8_t a = reg_.a;
 

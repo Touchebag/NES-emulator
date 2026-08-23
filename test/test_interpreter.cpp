@@ -335,6 +335,23 @@ TEST_F(InterpreterTestFixture, test_0x18) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// CLD
+TEST_F(InterpreterTestFixture, test_0xD8) {
+    setStatusFlag(StatusFlag::DECIMAL, true);
+
+    addInstruction({0xD8});
+    addInstruction({0xD8});
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::DECIMAL), true);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::DECIMAL), false);
+
+    // Ensure it doesn't change already cleared flag
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::DECIMAL), false);
+}
+
 // CMP immediate
 TEST_F(InterpreterTestFixture, test_0xC9) {
     setRegisterA(0x59);

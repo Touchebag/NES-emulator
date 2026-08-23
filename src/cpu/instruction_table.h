@@ -110,6 +110,13 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0x71, { 5, AddressingMode::INDIRECT_Y, InstructionType::ADC }},
 
     { 0x29, { 2, AddressingMode::IMMEDIATE, InstructionType::AND }},
+    { 0x25, { 3, AddressingMode::ZERO_PAGE, InstructionType::AND }},
+    { 0x35, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::AND }},
+    { 0x2D, { 4, AddressingMode::ABSOLUTE, InstructionType::AND }},
+    { 0x3D, { 4, AddressingMode::ABSOLUTE_X, InstructionType::AND }},
+    { 0x39, { 4, AddressingMode::ABSOLUTE_Y, InstructionType::AND }},
+    { 0x21, { 6, AddressingMode::INDIRECT_X, InstructionType::AND }},
+    { 0x31, { 5, AddressingMode::INDIRECT_Y, InstructionType::AND }},
 
     { 0x0A, { 2, AddressingMode::ACCUMULATOR, InstructionType::ASL }},
     { 0x06, { 5, AddressingMode::ZERO_PAGE, InstructionType::ASL }},
@@ -204,13 +211,13 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
 
     { 0x09, { 2, AddressingMode::IMMEDIATE, InstructionType::ORA }},
 
+    { 0x48, { 3, AddressingMode::IMPLIED, InstructionType::PHA }},
+
     { 0x08, { 3, AddressingMode::IMPLIED, InstructionType::PHP }},
 
     { 0x68, { 4, AddressingMode::IMPLIED, InstructionType::PLA }},
 
     { 0x28, { 4, AddressingMode::IMPLIED, InstructionType::PLP }},
-
-    { 0x48, { 3, AddressingMode::IMPLIED, InstructionType::PHA }},
 
     { 0x40, { 6, AddressingMode::IMPLIED, InstructionType::RTI }},
 

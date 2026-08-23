@@ -195,6 +195,11 @@ case InstructionType::SBC: {
     break;
 }
 
+case InstructionType::SEC: {
+    setStatusFlag(StatusFlag::CARRY, true);
+    break;
+}
+
 case InstructionType::SEI: {
     setStatusFlag(StatusFlag::INTERRUPT, true);
     break;

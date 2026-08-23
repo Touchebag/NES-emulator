@@ -448,6 +448,19 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// SEC
+TEST_F(InterpreterTestFixture, test_0x38) {
+    setStatusFlag(Cpu::StatusFlag::CARRY, false);
+    auto status_before = cpu_.getRegisters().p | static_cast<uint8_t>(Cpu::StatusFlag::CARRY);
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::CARRY), false);
+
+    addInstruction({0x38});
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getStatusFlag(Cpu::StatusFlag::CARRY), true);
+    EXPECT_EQ(status_before, cpu_.getRegisters().p);
+}
+
 // SEI
 TEST_F(InterpreterTestFixture, test_0x78) {
     setStatusFlag(Cpu::StatusFlag::INTERRUPT, false);

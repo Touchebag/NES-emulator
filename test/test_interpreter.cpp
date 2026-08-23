@@ -503,6 +503,35 @@ TEST_F(InterpreterTestFixture, test_0xE0) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// CPY immediate
+TEST_F(InterpreterTestFixture, test_0xC0) {
+    setRegisterY(0x95);
+    addInstruction({0xC0, 0x22});
+    addInstruction({0xC0, 0x95});
+    addInstruction({0xC0, 0xA9});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x95);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x95);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x95);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+}
+
 // EOR
 TEST_F(InterpreterTestFixture, test_0x49) {
     setStatusFlag(StatusFlag::ZERO, false);

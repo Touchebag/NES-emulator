@@ -210,6 +210,23 @@ case InstructionType::CPX: {
     break;
 }
 
+case InstructionType::CPY: {
+    uint8_t y = reg_.y;
+
+    // 0 if current_instruction.val1_.value() > a
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() <= y);
+
+    y -= current_instruction.val1_.value();
+
+    // Set flags
+    setNegativeFlag(y);
+    setZeroFlag(y);
+
+    current_instruction.handlePageCross();
+
+    break;
+}
+
 case InstructionType::EOR: {
     reg_.a = reg_.a ^ current_instruction.val1_.value();
 

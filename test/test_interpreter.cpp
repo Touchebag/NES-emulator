@@ -620,6 +620,37 @@ TEST_F(InterpreterTestFixture, test_0x68) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// PLP
+TEST_F(InterpreterTestFixture, test_0x28) {
+    setStatusRegister(static_cast<uint8_t>(StatusFlag::BREAK));
+    EXPECT_EQ(cpu_.getRegisters().p, static_cast<uint8_t>(StatusFlag::BREAK));
+
+    pokeMemoryAddress(0xFE, 0x01, static_cast<uint8_t>(StatusFlag::INTERRUPT) |
+                                  static_cast<uint8_t>(StatusFlag::OVERFLOW));
+
+    pokeMemoryAddress(0xFD, 0x01, static_cast<uint8_t>(StatusFlag::NEGATIVE) |
+                                  static_cast<uint8_t>(StatusFlag::DECIMAL) |
+                                  static_cast<uint8_t>(StatusFlag::ZERO));
+    setStackPointer(0xFC);
+
+    addInstruction({0x28});
+    addInstruction({0x28});
+
+    executeNextInstruction();
+    // BREAK should be untouched
+    EXPECT_EQ(cpu_.getRegisters().p, static_cast<uint8_t>(StatusFlag::BREAK) |
+                                     static_cast<uint8_t>(StatusFlag::NEGATIVE) |
+                                     static_cast<uint8_t>(StatusFlag::DECIMAL) |
+                                     static_cast<uint8_t>(StatusFlag::ZERO));
+
+    setStatusRegister(static_cast<uint8_t>(StatusFlag::UNUSED));
+    executeNextInstruction();
+    // UNUSED should be untouched
+    EXPECT_EQ(cpu_.getRegisters().p, static_cast<uint8_t>(StatusFlag::UNUSED) |
+                                     static_cast<uint8_t>(StatusFlag::INTERRUPT) |
+                                     static_cast<uint8_t>(StatusFlag::OVERFLOW));
+}
+
 // RTI
 TEST_F(InterpreterTestFixture, test_0x40) {
     pokeMemoryAddress(0xFF, 0x01, 0x23);

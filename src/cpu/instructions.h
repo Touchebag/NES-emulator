@@ -240,6 +240,16 @@ case InstructionType::PLA: {
     break;
 }
 
+case InstructionType::PLP: {
+    auto prev_p = reg_.p;
+    reg_.p = popStack();
+
+    // Restore untouched flags
+    setStatusFlag(StatusFlag::UNUSED, prev_p & static_cast<uint8_t>(StatusFlag::UNUSED));
+    setStatusFlag(StatusFlag::BREAK, prev_p & static_cast<uint8_t>(StatusFlag::BREAK));
+    break;
+}
+
 case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();

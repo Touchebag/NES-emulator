@@ -511,10 +511,6 @@ case InstructionType::TXA: {
 case InstructionType::TXS: {
     reg_.sp = reg_.x;
 
-    // Set flags
-    setNegativeFlag(reg_.sp);
-    setZeroFlag(reg_.sp);
-
     break;
 }
 

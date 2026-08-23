@@ -207,7 +207,8 @@ case InstructionType::NOP: {
 }
 
 case InstructionType::PHP: {
-    pushStack(reg_.p);
+    // BREAK is pushed as 1
+    pushStack(reg_.p | static_cast<uint8_t>(StatusFlag::BREAK));
     break;
 }
 

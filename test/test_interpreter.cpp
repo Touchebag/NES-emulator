@@ -506,7 +506,7 @@ TEST_F(InterpreterTestFixture, test_0x08) {
     setStatusRegister(0x00);
     EXPECT_EQ(cpu_.getRegisters().p, 0x00);
 
-    setStatusFlag(StatusFlag::BREAK, true);
+    setStatusFlag(StatusFlag::NEGATIVE, true);
     setStatusFlag(StatusFlag::DECIMAL, true);
     setStatusFlag(StatusFlag::ZERO, true);
 
@@ -514,7 +514,9 @@ TEST_F(InterpreterTestFixture, test_0x08) {
 
     executeNextInstruction();
 
+    // BREAK should always be pushed as 1
     EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), static_cast<uint8_t>(StatusFlag::BREAK) |
+                                             static_cast<uint8_t>(StatusFlag::NEGATIVE) |
                                              static_cast<uint8_t>(StatusFlag::DECIMAL) |
                                              static_cast<uint8_t>(StatusFlag::ZERO));
 }

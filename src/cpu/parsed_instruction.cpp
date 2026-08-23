@@ -25,6 +25,7 @@ std::unordered_map<AddressingMode, int> addressing_mode_args_map {
     {AddressingMode::ABSOLUTE, 3},
     {AddressingMode::ABSOLUTE_X, 3},
     {AddressingMode::ABSOLUTE_Y, 3},
+    {AddressingMode::INDIRECT, 3},
     {AddressingMode::INDIRECT_X, 2},
     {AddressingMode::INDIRECT_Y, 2},
     {AddressingMode::ZERO_PAGE, 2},
@@ -134,6 +135,25 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             }
 
             val1_ = System::get<Memory>().readAddress(adjusted_lo_, adjusted_hi_);
+
+            break;
+        }
+        case AddressingMode::INDIRECT: {
+            auto& mem = System::get<Memory>();
+
+            adjusted_lo_ = mem.readAddress(arg1_.value(), arg2_.value());
+
+            auto tmp_lo = arg1_.value() + 1;
+            auto tmp_hi = arg2_.value();
+
+            if (tmp_lo < arg1_.value()) {
+                // Overflow, carry to hi
+                tmp_hi++;
+                // Page cross, extra cycle
+                cycles_++;
+            }
+
+            adjusted_hi_ = mem.readAddress(tmp_lo, tmp_hi);
 
             break;
         }
@@ -252,6 +272,14 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
                     adjusted_hi_,
                     adjusted_lo_,
                     val1_.value());
+            break;
+
+        case AddressingMode::INDIRECT:
+            output += format("(${:02X}{:02X}) = {:02X}{:02}              ",
+                    arg2_.value(),
+                    arg1_.value(),
+                    adjusted_hi_,
+                    adjusted_lo_);
             break;
         case AddressingMode::INDIRECT_X:
             output += format("(${:02X},X) @ {:02X} = {:02X}{:02X} = {:02X}    ",

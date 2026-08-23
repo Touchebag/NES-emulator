@@ -471,6 +471,20 @@ TEST_F(InterpreterTestFixture, test_0x4C) {
     EXPECT_EQ(getPc(), 0x1234);
 }
 
+// JMP indirect
+TEST_F(InterpreterTestFixture, test_0x6C) {
+    EXPECT_EQ(getPc(), 0x00);
+
+    pokeMemoryAddress(0x12, 0x43, 0x53);
+    pokeMemoryAddress(0x13, 0x43, 0x79);
+
+    addInstruction({0x6C, 0x12, 0x43});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(getPc(), 0x7953);
+}
+
 // JSR absolute
 TEST_F(InterpreterTestFixture, test_0x20) {
     setPc(0x23, 0x74);

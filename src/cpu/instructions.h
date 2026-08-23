@@ -330,3 +330,8 @@ case InstructionType::STX: {
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.x);
     break;
 }
+
+case InstructionType::STY: {
+    System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.y);
+    break;
+}

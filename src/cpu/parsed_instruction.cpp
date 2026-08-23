@@ -26,6 +26,7 @@ std::unordered_map<AddressingMode, int> addressing_mode_args_map {
     {AddressingMode::ABSOLUTE_X, 3},
     {AddressingMode::INDIRECT_X, 2},
     {AddressingMode::ZERO_PAGE, 2},
+    {AddressingMode::ZERO_PAGE_X, 2},
     {AddressingMode::IMPLIED, 1},
 };
 
@@ -131,6 +132,17 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             auto& mem = System::get<Memory>();
 
             adjusted_lo_ = arg1_.value();
+            adjusted_hi_ = 0x00;
+
+            val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);
+            break;
+        }
+        case AddressingMode::ZERO_PAGE_X: {
+            auto& mem = System::get<Memory>();
+
+            // Uint8 type handles wraparound
+            adjusted_lo_ = arg1_.value() + reg_x_;
+            // Zero page, no carry needed
             adjusted_hi_ = 0x00;
 
             val1_ = mem.readAddress(adjusted_lo_, adjusted_hi_);

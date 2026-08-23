@@ -57,6 +57,10 @@ class InterpreterTestFixture : public ::testing::Test {
         cpu_.reg_.x = value;
     }
 
+    void setRegisterY(uint8_t value) {
+        cpu_.reg_.y = value;
+    }
+
     void executeNextInstruction() {
         auto pc = cpu_.getRegisters().pc;
         auto current_instruction = ParsedInstruction(pc[0], pc[1]);
@@ -836,4 +840,18 @@ TEST_F(InterpreterTestFixture, test_0x86) {
     EXPECT_EQ(peekMemoryAddress(0x25, 0x00), 0x00);
     executeNextInstruction();
     EXPECT_EQ(peekMemoryAddress(0x25, 0x00), 0x73);
+}
+
+// STY zero page, X
+TEST_F(InterpreterTestFixture, test_0x94) {
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+
+    setRegisterY(0x54);
+    setRegisterX(0x03);
+
+    addInstruction({0x94, 0x17});
+
+    EXPECT_EQ(peekMemoryAddress(0x1A, 0x00), 0x00);
+    executeNextInstruction();
+    EXPECT_EQ(peekMemoryAddress(0x1A, 0x00), 0x54);
 }

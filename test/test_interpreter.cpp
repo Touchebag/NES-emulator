@@ -532,6 +532,35 @@ TEST_F(InterpreterTestFixture, test_0xC0) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 }
 
+// DEX
+TEST_F(InterpreterTestFixture, test_0xCA) {
+    setRegisterX(0xA9);
+
+    addInstruction({0xCA});
+    addInstruction({0xCA});
+    addInstruction({0xCA});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA8);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterX(0x02);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0x01);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // DEY
 TEST_F(InterpreterTestFixture, test_0x88) {
     setRegisterY(0xA9);

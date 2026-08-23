@@ -1207,3 +1207,35 @@ TEST_F(InterpreterTestFixture, test_0x94) {
     executeNextInstruction();
     EXPECT_EQ(peekMemoryAddress(0x1A, 0x00), 0x54);
 }
+
+// TAX
+TEST_F(InterpreterTestFixture, test_0xAA) {
+    setRegisterA(0x45);
+    setRegisterX(0x00);
+
+    addInstruction({0xAA});
+    addInstruction({0xAA});
+    addInstruction({0xAA});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterA(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().x, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}

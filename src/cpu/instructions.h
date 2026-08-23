@@ -461,3 +461,13 @@ case InstructionType::STY: {
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.y);
     break;
 }
+
+case InstructionType::TAX: {
+    reg_.x = reg_.a;
+
+    // Set flags
+    setNegativeFlag(reg_.x);
+    setZeroFlag(reg_.x);
+
+    break;
+}

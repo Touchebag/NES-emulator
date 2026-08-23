@@ -1,3 +1,23 @@
+case InstructionType::BCC: {
+    // If carry is not set
+    if (!getStatusFlag(StatusFlag::CARRY)) {
+        // Add extra cycle if branch taken
+        current_instruction.cycles_++;
+
+        auto [new_lo, new_hi, page_cross] = calculateRelativeJump(
+                current_instruction.adjusted_lo_,
+                current_instruction.adjusted_hi_,
+                current_instruction.val1_.value());
+
+        setPc(new_lo, new_hi);
+        if (page_cross) {
+            current_instruction.cycles_++;
+        }
+    };
+
+    break;
+}
+
 case InstructionType::BCS: {
     // If carry is set
     if (getStatusFlag(StatusFlag::CARRY)) {

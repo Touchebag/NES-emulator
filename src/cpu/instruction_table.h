@@ -291,7 +291,9 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0x96, { 4, AddressingMode::ZERO_PAGE_Y, InstructionType::STX }},
     { 0x8E, { 4, AddressingMode::ABSOLUTE, InstructionType::STX }},
 
+    { 0x84, { 3, AddressingMode::ZERO_PAGE, InstructionType::STY }},
     { 0x94, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::STY }},
+    { 0x8C, { 4, AddressingMode::ABSOLUTE, InstructionType::STY }},
 
     { 0xAA, { 2, AddressingMode::IMPLIED, InstructionType::TAX }},
 

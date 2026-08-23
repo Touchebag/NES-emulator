@@ -1239,3 +1239,35 @@ TEST_F(InterpreterTestFixture, test_0xAA) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
+
+// TAY
+TEST_F(InterpreterTestFixture, test_0xA8) {
+    setRegisterA(0x45);
+    setRegisterY(0x00);
+
+    addInstruction({0xA8});
+    addInstruction({0xA8});
+    addInstruction({0xA8});
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().y, 0x45);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0xA9);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().y, 0xA9);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    setRegisterA(0x00);
+
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}

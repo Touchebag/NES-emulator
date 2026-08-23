@@ -222,6 +222,8 @@ const std::unordered_map<uint8_t, InstructionData> instruction_table = {
     { 0x94, { 4, AddressingMode::ZERO_PAGE_X, InstructionType::STY }},
 
     { 0xAA, { 2, AddressingMode::IMPLIED, InstructionType::TAX }},
+
+    { 0xA8, { 2, AddressingMode::IMPLIED, InstructionType::TAY }},
 };
 
 #endif

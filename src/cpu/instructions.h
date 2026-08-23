@@ -471,3 +471,13 @@ case InstructionType::TAX: {
 
     break;
 }
+
+case InstructionType::TAY: {
+    reg_.y = reg_.a;
+
+    // Set flags
+    setNegativeFlag(reg_.y);
+    setZeroFlag(reg_.y);
+
+    break;
+}

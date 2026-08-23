@@ -225,6 +225,23 @@ TEST_F(InterpreterTestFixture, test_0x00) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::BREAK), false);
 }
 
+// BVC
+TEST_F(InterpreterTestFixture, test_0x50) {
+    setStatusFlag(StatusFlag::OVERFLOW, true);
+
+    addInstruction({0x50, 0x33});
+    addInstruction({0x50, 0x33});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::OVERFLOW, false);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0037);
+}
+
 // BVS
 TEST_F(InterpreterTestFixture, test_0x70) {
     setStatusFlag(StatusFlag::OVERFLOW, false);

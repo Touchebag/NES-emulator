@@ -79,6 +79,17 @@ case InstructionType::BRK: {
     break;
 }
 
+case InstructionType::BVC: {
+    // If latest operation didn't overflow
+    if (!getStatusFlag(StatusFlag::OVERFLOW)) {
+        // Add extra cycle if branch taken
+        current_instruction.cycles_++;
+        setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+    };
+
+    break;
+}
+
 case InstructionType::BVS: {
     // If latest operation overflowed
     if (getStatusFlag(StatusFlag::OVERFLOW)) {

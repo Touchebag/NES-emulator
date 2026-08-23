@@ -203,7 +203,7 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
             output += format("${:02X}{:02X}                       ", arg2_.value(), arg1_.value());
             break;
         case AddressingMode::ABSOLUTE_X:
-            output += format("${:02X}{:02X},X @ {:02X}{:02X} = {:02X}        ",
+            output += format("${:02X}{:02X},X @ {:02X}{:02X} = {:02X}         ",
                     arg2_.value(),
                     arg1_.value(),
                     adjusted_hi_,
@@ -215,6 +215,12 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
             break;
         case AddressingMode::ZERO_PAGE:
             output += format("${:02X} = {:02X}                    ", adjusted_lo_, val1_.value());
+            break;
+        case AddressingMode::ZERO_PAGE_X:
+            output += format("${:02X},Y @ {:02X} = {:02X}             ", arg1_.value(), adjusted_lo_, val1_.value());
+            break;
+        case AddressingMode::ZERO_PAGE_Y:
+            output += format("${:02X},Y @ {:02X} = {:02X}             ", arg1_.value(), adjusted_lo_, val1_.value());
             break;
         case AddressingMode::IMPLIED:
             output += format("                            ");

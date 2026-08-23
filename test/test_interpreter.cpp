@@ -1004,28 +1004,28 @@ TEST_F(InterpreterTestFixture, test_0xE1) {
     setStatusFlag(StatusFlag::CARRY, true);
 
     executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0x12);
+    EXPECT_EQ(cpu_.getRegisters().a, 0x11);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
-
-    setRegisterA(0x5B);
-    setStatusFlag(StatusFlag::CARRY, false);
-
-    executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0xFF);
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
 
     setRegisterA(0x5C);
     setStatusFlag(StatusFlag::CARRY, false);
 
     executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xFF);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+
+    setRegisterA(0x5D);
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    executeNextInstruction();
     EXPECT_EQ(cpu_.getRegisters().a, 0x00);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
 }
 
 // SEC

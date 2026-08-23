@@ -381,16 +381,21 @@ case InstructionType::RTS: {
 }
 
 case InstructionType::SBC: {
-    uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 1 : 0;
-
-    setStatusFlag(StatusFlag::CARRY, (current_instruction.val1_.value() + c) > reg_.a);
-
-    reg_.a = reg_.a - current_instruction.val1_.value() + (c);
-
+    // Not of carry
+    uint8_t c = getStatusFlag(StatusFlag::CARRY) ? 0 : 1;
     uint8_t a = reg_.a;
 
-    setNegativeFlag(a);
-    setZeroFlag(a);
+    uint8_t result = reg_.a - current_instruction.val1_.value() - c;
+
+    // Underflow clears carry (inverser from ADC)
+    setStatusFlag(StatusFlag::CARRY, result <= reg_.a);
+
+    reg_.a = result;
+
+    setNegativeFlag(reg_.a);
+    setZeroFlag(reg_.a);
+
+    setStatusFlag(StatusFlag::OVERFLOW, (reg_.a ^ a) & (reg_.a ^ ~(current_instruction.val1_.value())) & 0x80);
 
     current_instruction.handlePageCross();
 

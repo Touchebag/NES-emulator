@@ -45,7 +45,7 @@ ParsedInstruction::ParsedInstruction(uint8_t lo, uint8_t hi) {
         cycles_ = instruction_data.num_cycles;
         addressing_mode_ = instruction_data.addr_mode;
     } catch(std::out_of_range& e) {
-        fprintf(stderr, "ERROR: Uknown opcode 0x%2X\n", opcode_);
+        LOGE("Uknown opcode 0x%2X", opcode_);
         throw e;
     }
 

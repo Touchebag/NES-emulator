@@ -78,28 +78,33 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
             }
 
             if (running_ || run_single_instruction) {
-                auto pc = cpu_.getRegisters().pc;
-                auto current_instruction = ParsedInstruction(pc[0], pc[1]);
+                try {
+                    auto pc = cpu_.getRegisters().pc;
+                    auto current_instruction = ParsedInstruction(pc[0], pc[1]);
 
-                int cycles = cpu_.executeInstruction(current_instruction);
+                    int cycles = cpu_.executeInstruction(current_instruction);
 
-                if (nestest_output_) {
-                    current_instruction.print(cycles_since_reset);
-                }
+                    if (nestest_output_) {
+                        current_instruction.print(cycles_since_reset);
+                    }
 
-                ppu_.advance(cycles * 3);
+                    ppu_.advance(cycles * 3);
 
-                cycles_current_second += cycles;
-                cycles_since_reset += cycles;
+                    cycles_current_second += cycles;
+                    cycles_since_reset += cycles;
 
-                if (clock.getElapsedTime().asMilliseconds() >= 1000) {
-                    LOGD("Cycles/s %i (%.1f%%)", cycles_current_second, static_cast<float>(cycles_current_second) / 17897.73 );
-                    cycles_current_second = 0;
+                    if (clock.getElapsedTime().asMilliseconds() >= 1000) {
+                        LOGD("Cycles/s %i (%.1f%%)", cycles_current_second, static_cast<float>(cycles_current_second) / 17897.73 );
+                        cycles_current_second = 0;
 
-                    LOGD("Fps %i", num_frames_);
-                    num_frames_ = 0;
+                        LOGD("Fps %i", num_frames_);
+                        num_frames_ = 0;
 
-                    clock.restart();
+                        clock.restart();
+                    }
+                } catch (std::out_of_range& e) {
+                    LOGW("Total cycles: %i", cycles_since_reset);
+                    throw e;
                 }
             }
         }

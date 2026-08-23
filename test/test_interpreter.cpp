@@ -90,6 +90,40 @@ class InterpreterTestFixture : public ::testing::Test {
     int current_mem_byte_ = 0x6000;
 };
 
+// AND
+TEST_F(InterpreterTestFixture, test_0x29) {
+    setStatusFlag(StatusFlag::ZERO, false);
+    setStatusFlag(StatusFlag::NEGATIVE, false);
+
+    setRegisterA(0x00);
+
+    addInstruction({0x29, 0x08});
+    addInstruction({0x29, 0x00});
+    addInstruction({0x29, 0xE7});
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x00);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0x46);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterA(0xF9);
+    executeNextInstruction();
+    EXPECT_EQ(cpu_.getRegisters().a, 0xE1);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+}
+
 // BCC
 TEST_F(InterpreterTestFixture, test_0x90) {
     setStatusFlag(StatusFlag::CARRY, true);

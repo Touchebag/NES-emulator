@@ -1,3 +1,12 @@
+case InstructionType::AND: {
+    reg_.a = reg_.a & current_instruction.val1_.value();
+
+    setZeroFlag(reg_.a);
+    setNegativeFlag(reg_.a);
+
+    break;
+}
+
 case InstructionType::BCC: {
     // If carry is not set
     if (!getStatusFlag(StatusFlag::CARRY)) {

@@ -709,6 +709,17 @@ TEST_F(InterpreterTestFixture, test_0x49) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
 }
 
+// INC
+TEST_F(InterpreterTestFixture, test_0xEE) {
+    pokeMemoryAddress(0x12, 0x43, 0x53);
+
+    addInstruction({0xEE, 0x12, 0x43});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(peekMemoryAddress(0x12, 0x43), 0x54);
+}
+
 // INX
 TEST_F(InterpreterTestFixture, test_0xE8) {
     EXPECT_EQ(cpu_.getRegisters().x, 0x00);

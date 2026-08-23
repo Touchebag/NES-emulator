@@ -6,6 +6,8 @@ case InstructionType::ADC: {
     setNegativeFlag(reg_.a);
 
     setStatusFlag(StatusFlag::OVERFLOW, (reg_.a ^ a) & (reg_.a ^ current_instruction.val1_.value()) & 0x80);
+    // If wrapped around, set carry
+    setStatusFlag(StatusFlag::CARRY, reg_.a < a);
 
     break;
 }

@@ -249,6 +249,16 @@ case InstructionType::INX: {
     break;
 }
 
+case InstructionType::INY: {
+    reg_.y = (reg_.y + 1) % 256;
+
+    // Set flags
+    setNegativeFlag(reg_.y);
+    setZeroFlag(reg_.y);
+
+    break;
+}
+
 case InstructionType::JMP: {
     setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
 

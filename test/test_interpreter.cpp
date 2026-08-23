@@ -595,6 +595,35 @@ TEST_F(InterpreterTestFixture, test_0xE8) {
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 
+// INY
+TEST_F(InterpreterTestFixture, test_0xC8) {
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+
+    addInstruction({0xC8});
+    addInstruction({0xC8});
+    addInstruction({0xC8});
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x01);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    setRegisterY(0xFE);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0xFF);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().y, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // JMP absolute
 TEST_F(InterpreterTestFixture, test_0x4C) {
     EXPECT_EQ(getPc(), 0x00);

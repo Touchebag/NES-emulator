@@ -114,6 +114,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
         case AddressingMode::ABSOLUTE:
             adjusted_lo_ = arg1_.value();
             adjusted_hi_ = arg2_.value();
+
             break;
         case AddressingMode::ABSOLUTE_X: {
             adjusted_lo_ = arg1_.value() + reg_x_;
@@ -265,7 +266,12 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
             output += format("#${:02X}                        ", arg1_.value());
             break;
         case AddressingMode::ABSOLUTE:
-            output += format("${:02X}{:02X}                       ", arg2_.value(), arg1_.value());
+            output += format("${:02X}{:02X} ", arg2_.value(), arg1_.value());
+            if (store_absolute_value_) {
+                output += format("= {:02X}                  ", store_absolute_value_.value());
+            } else {
+                output += "                      ";
+            }
             break;
         case AddressingMode::ABSOLUTE_X:
             output += format("${:02X}{:02X},X @ {:02X}{:02X} = {:02X}         ",

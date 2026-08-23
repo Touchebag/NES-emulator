@@ -43,6 +43,9 @@ class ParsedInstruction {
     uint8_t adjusted_lo_;
     uint8_t adjusted_hi_;
 
+    // Used for extra output if storing to absolute memory address
+    std::optional<uint8_t> store_absolute_value_ = std::nullopt;
+
   private:
     void calcualateAdjustedMemoryAddresses();
 

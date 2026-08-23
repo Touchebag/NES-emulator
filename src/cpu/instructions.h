@@ -453,12 +453,18 @@ case InstructionType::STA: {
 }
 
 case InstructionType::STX: {
+    current_instruction.store_absolute_value_ = System::get<Memory>().readAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.x);
+
     break;
 }
 
 case InstructionType::STY: {
+    current_instruction.store_absolute_value_ = System::get<Memory>().readAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
+
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.y);
+
     break;
 }
 

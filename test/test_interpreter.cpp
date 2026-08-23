@@ -1348,6 +1348,7 @@ TEST_F(InterpreterTestFixture, test_0x9A) {
     executeNextInstruction();
     EXPECT_EQ(cpu_.getRegisters().sp, 0x45);
 
+    // Flags should not change
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 
@@ -1356,15 +1357,17 @@ TEST_F(InterpreterTestFixture, test_0x9A) {
     executeNextInstruction();
     EXPECT_EQ(cpu_.getRegisters().sp, 0xA9);
 
+    // Flags should not change
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 
     setRegisterX(0x00);
 
     executeNextInstruction();
     EXPECT_EQ(cpu_.getRegisters().sp, 0x00);
 
-    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    // Flags should not change
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
     EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
 }
 

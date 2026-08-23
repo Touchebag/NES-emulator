@@ -519,6 +519,38 @@ TEST_F(InterpreterTestFixture, test_0x08) {
                                              static_cast<uint8_t>(StatusFlag::ZERO));
 }
 
+// PLA
+TEST_F(InterpreterTestFixture, test_0x68) {
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+
+    addInstruction({0x68});
+    addInstruction({0x68});
+    addInstruction({0x68});
+
+    pokeMemoryAddress(0xFF, 0x01, 0x00);
+    pokeMemoryAddress(0xFE, 0x01, 0xE9);
+    pokeMemoryAddress(0xFD, 0x01, 0x64);
+    setStackPointer(0xFC);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x64);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0xE9);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), false);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), true);
+
+    executeNextInstruction();
+
+    EXPECT_EQ(cpu_.getRegisters().a, 0x00);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::ZERO), true);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::NEGATIVE), false);
+}
+
 // RTI
 TEST_F(InterpreterTestFixture, test_0x40) {
     pokeMemoryAddress(0xFF, 0x01, 0x23);

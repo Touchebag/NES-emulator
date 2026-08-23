@@ -211,6 +211,14 @@ case InstructionType::PHP: {
     break;
 }
 
+case InstructionType::PLA: {
+    reg_.a = popStack();
+
+    setStatusFlag(StatusFlag::ZERO, reg_.a == 0);
+    setStatusFlag(StatusFlag::NEGATIVE, reg_.a & 128);
+    break;
+}
+
 case InstructionType::RTI: {
     uint8_t p  = popStack();
     uint8_t lo = popStack();

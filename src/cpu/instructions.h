@@ -306,6 +306,8 @@ case InstructionType::JSR: {
 case InstructionType::LDA: {
     reg_.a = current_instruction.val1_.value();
 
+    current_instruction.store_absolute_value_ = reg_.a;
+
     // Set status
     setNegativeFlag(reg_.a);
     setZeroFlag(reg_.a);
@@ -318,6 +320,8 @@ case InstructionType::LDA: {
 case InstructionType::LDX: {
     reg_.x = current_instruction.val1_.value();
 
+    current_instruction.store_absolute_value_ = reg_.x;
+
     // Set status
     setNegativeFlag(current_instruction.val1_.value());
     setZeroFlag(current_instruction.val1_.value());
@@ -329,6 +333,8 @@ case InstructionType::LDX: {
 
 case InstructionType::LDY: {
     reg_.y = current_instruction.val1_.value();
+
+    current_instruction.store_absolute_value_ = reg_.y;
 
     // Set status
     setNegativeFlag(reg_.y);

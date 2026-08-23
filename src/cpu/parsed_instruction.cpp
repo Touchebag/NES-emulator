@@ -115,6 +115,8 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             adjusted_lo_ = arg1_.value();
             adjusted_hi_ = arg2_.value();
 
+            val1_ = System::get<Memory>().readAddress(adjusted_lo_, adjusted_hi_);
+
             break;
         case AddressingMode::ABSOLUTE_X: {
             adjusted_lo_ = arg1_.value() + reg_x_;

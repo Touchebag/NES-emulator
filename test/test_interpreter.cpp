@@ -55,7 +55,11 @@ class InterpreterTestFixture : public ::testing::Test {
 
     void executeNextInstruction() {
         auto pc = cpu_.getRegisters().pc;
-        cpu_.executeInstruction(ParsedInstruction(pc[0], pc[1]));
+        auto current_instruction = ParsedInstruction(pc[0], pc[1]);
+
+        // current_instruction.print();
+
+        cpu_.executeInstruction(current_instruction);
     }
 
     void setPc(uint8_t lo, uint8_t hi) {
@@ -393,13 +397,17 @@ TEST_F(InterpreterTestFixture, test_0x4C) {
 
 // JSR absolute
 TEST_F(InterpreterTestFixture, test_0x20) {
-    EXPECT_EQ(getPc(), 0x00);
+    setPc(0x23, 0x74);
 
-    addInstruction({0x20, 0xA5, 0x94});
+    pokeMemoryAddress(0x23, 0x74, 0x20);
+    pokeMemoryAddress(0x24, 0x74, 0xA5);
+    pokeMemoryAddress(0x25, 0x74, 0x94);
 
     executeNextInstruction();
 
     EXPECT_EQ(getPc(), 0x94A5);
+    EXPECT_EQ(peekMemoryAddress(0xFD, 0x01), 0x74);
+    EXPECT_EQ(peekMemoryAddress(0xFC, 0x01), 0x25);
 }
 
 // LDA immediate

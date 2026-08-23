@@ -165,8 +165,18 @@ case InstructionType::JMP: {
 }
 
 case InstructionType::JSR: {
-    pushStack(reg_.pc[1]);
-    pushStack(reg_.pc[0]);
+    uint8_t hi = current_instruction.pc_hi_;
+    uint8_t lo = current_instruction.pc_lo_;
+
+    // In case of lo overflow
+    if (lo >= 0xFE) {
+        hi++;
+    }
+
+    lo += 2;
+
+    pushStack(hi);
+    pushStack(lo);
     setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
 
     break;

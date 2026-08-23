@@ -94,6 +94,8 @@ struct InstructionData {
 };
 
 const std::unordered_map<uint8_t, InstructionData> instruction_table = {
+    { 0xB0, { 2, AddressingMode::RELATIVE, InstructionType::BCS }},
+
     { 0xF0, { 2, AddressingMode::RELATIVE, InstructionType::BEQ }},
 
     { 0xD0, { 2, AddressingMode::RELATIVE, InstructionType::BNE }},

@@ -82,6 +82,23 @@ class InterpreterTestFixture : public ::testing::Test {
     int current_mem_byte_ = 0x6000;
 };
 
+// BCS
+TEST_F(InterpreterTestFixture, test_0xB0) {
+    setStatusFlag(StatusFlag::CARRY, false);
+
+    addInstruction({0xB0, 0x6F});
+    addInstruction({0xB0, 0x6F});
+
+    EXPECT_EQ(getPc(), 0x0000);
+
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0002);
+
+    setStatusFlag(StatusFlag::CARRY, true);
+    executeNextInstruction();
+    EXPECT_EQ(getPc(), 0x0071);
+}
+
 // BEQ
 TEST_F(InterpreterTestFixture, test_0xF0) {
     setStatusFlag(StatusFlag::ZERO, false);

@@ -11,7 +11,7 @@ class ParsedInstruction {
   public:
     ParsedInstruction(uint8_t lo, uint8_t hi);
 
-    void print(int current_total_cycles = 0) const;
+    std::string toString(int current_total_cycles = 0) const;
 
     uint8_t pc_lo_;
     uint8_t pc_hi_;

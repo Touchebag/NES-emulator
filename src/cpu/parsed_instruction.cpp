@@ -3,6 +3,7 @@
 #include "system.h"
 
 #include <stdexcept>
+#include <format>
 
 namespace {
 
@@ -145,38 +146,40 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
     }
 }
 
-void ParsedInstruction::print(int extra_cycles) const {
-    fprintf(stderr, "%02X%02X  ", pc_hi_, pc_lo_);
-    fprintf(stderr, "%02X ", opcode_);
+std::string ParsedInstruction::toString(int extra_cycles) const {
+    using std::format;
+
+    std::string output;
+
+    output += format("{:02X}{:02X}  ", pc_hi_, pc_lo_);
+    output += format("{:02X} ", opcode_);
 
     // Optional arguments
     if (arg1_) {
-        fprintf(stderr, "%02X ", arg1_.value());
+        output += format("{:02X} ", arg1_.value());
 
         if (arg2_) {
-            fprintf(stderr, "%02X ", arg2_.value());
+            output += format("{:02X} ", arg2_.value());
         } else {
-            fprintf(stderr, "   ");
+            output += format("   ");
         }
     } else {
-        fprintf(stderr, "      ");
+        output += format("      ");
     }
-    fprintf(stderr, " ");
-
-    fprintf(stderr, "%s ", name_.c_str());
+    output += format(" {} ", name_);
 
     switch (addressing_mode_) {
         case AddressingMode::RELATIVE:
-            fprintf(stderr, "$%02X%02X                       ", adjusted_hi_, adjusted_lo_);
+            output += format("${:02X}{:02X}                       ", adjusted_hi_, adjusted_lo_);
             break;
         case AddressingMode::IMMEDIATE:
-            fprintf(stderr, "#$%02X                        ", arg1_.value());
+            output += format("#${:02X}                        ", arg1_.value());
             break;
         case AddressingMode::ABSOLUTE:
-            fprintf(stderr, "$%02X%02X                       ", arg2_.value(), arg1_.value());
+            output += format("${:02X}{:02X}                       ", arg2_.value(), arg1_.value());
             break;
         case AddressingMode::ABSOLUTE_X:
-            fprintf(stderr, "$%02X%02X,X @ %02X%02X = %02X        ",
+            output += format("${:02X}{:02X},X @ {:02X}{:02X} = {:02X}        ",
                     arg2_.value(),
                     arg1_.value(),
                     adjusted_hi_,
@@ -184,25 +187,24 @@ void ParsedInstruction::print(int extra_cycles) const {
                     val1_.value());
             break;
         case AddressingMode::INDIRECT_X:
-            fprintf(stderr, "INDIRECT_X");
+            output += format("INDIRECT_X");
             break;
         case AddressingMode::ZERO_PAGE:
-            fprintf(stderr, "$%02X = %02X                    ", adjusted_lo_, val1_.value());
+            output += format("${:02X} = {:02X}                    ", adjusted_lo_, val1_.value());
             break;
         case AddressingMode::IMPLIED:
-            fprintf(stderr, "                            ");
+            output += format("                            ");
             break;
         default:
             throw std::invalid_argument("PARSED_INSTRUCTION_PRINT: Unknown addressing mode. This should never happen");
             break;
     }
 
-    fprintf(stderr, "A:%02X X:%02X Y:%02X P:%02X SP:%02X ", reg_a_, reg_x_, reg_y_, reg_p_, sp_);
+    output += format("A:{:02X} X:{:02X} Y:{:02X} P:{:02X} SP:{:02X} ", reg_a_, reg_x_, reg_y_, reg_p_, sp_);
 
     auto ppu_position = System::get<Ppu>().getCurrentPosition();
-    fprintf(stderr, "PPU:%3i,%3i ", ppu_position.first, ppu_position.second);
-    fprintf(stderr, "CYC:%i", extra_cycles);
+    output += format("PPU:{:3},{:3} ", ppu_position.first, ppu_position.second);
+    output += format("CYC:{}", extra_cycles);
 
-    fprintf(stderr, "\n");
-    fflush(stderr);
+    return output;
 }

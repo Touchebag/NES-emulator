@@ -13,6 +13,11 @@ bool parseCommandLineArgs(int argc, char *argv[]) {
 
         if (current_arg == "--nestest"sv) {
             system.enableNestestOutput(true);
+        } else if (current_arg == "--nestest-output-file"sv) {
+            if (i + 1 < argc) {
+                system.openNestestOutputFile(argv[i + 1]);
+                i++;
+            }
         } else {
             if (!rom_loaded) {
                 system.loadRom(current_arg);

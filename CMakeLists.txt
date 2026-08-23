@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.7)
+cmake_minimum_required (VERSION 3.12)
 project (NES_emulator)
 
 set (CC_OPTIONS -Wall -DLOG_LEVEL=3)
@@ -14,6 +14,7 @@ list (REMOVE_ITEM SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp)
 
 add_executable (${EMULATOR_TARGET} ${SOURCES} src/main.cpp)
 target_compile_options (${EMULATOR_TARGET} PUBLIC ${CC_OPTIONS})
+target_compile_features (${EMULATOR_TARGET} PUBLIC cxx_std_20)
 target_include_directories (${EMULATOR_TARGET} PUBLIC src/)
 target_link_libraries(${EMULATOR_TARGET} ${SFML_LIBS})
 
@@ -25,6 +26,8 @@ if (GTest_FOUND)
 
     add_executable (${TEST_TARGET} ${SOURCES} ${TEST_SOURCES})
     target_compile_options (${TEST_TARGET} PUBLIC ${CC_OPTIONS})
+    target_compile_features (${TEST_TARGET} PUBLIC cxx_std_20)
+
     target_include_directories (${TEST_TARGET} PUBLIC src/ test/)
 
     target_link_libraries (${TEST_TARGET} ${GTEST_BOTH_LIBRARIES} ${SFML_LIBS})

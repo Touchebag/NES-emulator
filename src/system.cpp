@@ -85,7 +85,14 @@ void System::run(std::shared_ptr<sf::RenderWindow> window) {
                     int cycles = cpu_.executeInstruction(current_instruction);
 
                     if (nestest_output_) {
-                        current_instruction.print(cycles_since_reset);
+                        auto output_str = current_instruction.toString(cycles_since_reset);
+                        fprintf(stderr, "%s\n", output_str.c_str());
+                    }
+
+                    if (nestest_output_file_) {
+                        auto output_str = current_instruction.toString(cycles_since_reset);
+                        nestest_output_file_.value() << output_str << std::endl;
+                        nestest_output_file_.value().flush();
                     }
 
                     ppu_.advance(cycles * 3);
@@ -142,6 +149,13 @@ void System::enableNestestOutput(bool enable) {
         LOGI("Disabling nestest output");
     }
     nestest_output_ = enable;
+}
+
+void System::openNestestOutputFile(std::string file_name) {
+    if (!file_name.empty()) {
+        LOGI("Logging nestest output to file %s", file_name.c_str());
+        nestest_output_file_ = {std::ofstream(file_name)};
+    }
 }
 
 System& System::getInstance() {

@@ -2,6 +2,8 @@
 
 #include <string>
 #include <memory>
+#include <fstream>
+
 #include <SFML/Graphics.hpp>
 
 #include "rom.h"
@@ -27,6 +29,7 @@ class System {
     static const int WINDOW_HEIGHT = 244;
 
     void enableNestestOutput(bool);
+    void openNestestOutputFile(std::string file_name);
 
     void onVsyncTriggered();
 
@@ -41,6 +44,7 @@ class System {
     unsigned int num_frames_ = 0;
 
     bool nestest_output_ = false;
+    std::optional<std::ofstream> nestest_output_file_ = std::nullopt;
 
     bool running_ = false;
 

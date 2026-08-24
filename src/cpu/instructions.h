@@ -465,10 +465,12 @@ case InstructionType::PLP: {
 }
 
 case InstructionType::ROL: {
-    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x80);
-
     uint8_t result = current_instruction.val1_.value() << 1;
-    result = result | (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
+    if (getStatusFlag(StatusFlag::CARRY)) {
+        result = result | 0b00000001;
+    } else {
+        result = result & 0b11111110;
+    }
 
     if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
         reg_.a = result;
@@ -477,6 +479,8 @@ case InstructionType::ROL: {
         System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, current_instruction.val1_.value());
         System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
     }
+
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x80);
 
     setZeroFlag(result);
     setNegativeFlag(result);
@@ -485,10 +489,12 @@ case InstructionType::ROL: {
 }
 
 case InstructionType::ROR: {
-    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x01);
-
     uint8_t result = current_instruction.val1_.value() >> 1;
-    result = result | ((getStatusFlag(StatusFlag::CARRY) ? 1 : 0) << 7);
+    if (getStatusFlag(StatusFlag::CARRY)) {
+        result = result | 0b10000000;
+    } else {
+        result = result & 0b01111111;
+    }
 
     if (current_instruction.addressing_mode_ == AddressingMode::ACCUMULATOR) {
         reg_.a = result;
@@ -497,6 +503,8 @@ case InstructionType::ROR: {
         System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, current_instruction.val1_.value());
         System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, result);
     }
+
+    setStatusFlag(StatusFlag::CARRY, current_instruction.val1_.value() & 0x01);
 
     setZeroFlag(result);
     setNegativeFlag(result);

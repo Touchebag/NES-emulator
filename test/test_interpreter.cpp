@@ -1142,30 +1142,36 @@ TEST_F(InterpreterTestFixture, test_0x28) {
 
 // ROL
 TEST_F(InterpreterTestFixture, test_0x2A) {
-    setRegisterA(0x8E);
+    setRegisterA(0b01101001);
 
     addInstruction({0x2A});
     addInstruction({0x2A});
 
+    setStatusFlag(StatusFlag::CARRY, true);
     executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0x1D);
+    EXPECT_EQ(cpu_.getRegisters().a, 0b11010011);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 
     executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0x3A);
+    EXPECT_EQ(cpu_.getRegisters().a, 0b10100110);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
 }
 
 // ROR
 TEST_F(InterpreterTestFixture, test_0x6A) {
-    setRegisterA(0x8E);
+    setRegisterA(0b01101010);
 
     addInstruction({0x6A});
     addInstruction({0x6A});
 
+    setStatusFlag(StatusFlag::CARRY, true);
     executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0x47);
+    EXPECT_EQ(cpu_.getRegisters().a, 0b10110101);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), false);
 
     executeNextInstruction();
-    EXPECT_EQ(cpu_.getRegisters().a, 0xA3);
+    EXPECT_EQ(cpu_.getRegisters().a, 0b01011010);
+    EXPECT_EQ(cpu_.getStatusFlag(StatusFlag::CARRY), true);
 }
 
 // RTI

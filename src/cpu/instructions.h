@@ -1,5 +1,5 @@
 case InstructionType::ADC: {
-    auto a = reg_.a;
+    uint8_t a = reg_.a;
     reg_.a = reg_.a + current_instruction.val1_.value() + (getStatusFlag(StatusFlag::CARRY) ? 1 : 0);
 
     setZeroFlag(reg_.a);
@@ -338,12 +338,16 @@ case InstructionType::INY: {
 }
 
 case InstructionType::JMP: {
+    current_instruction.store_absolute_value_ = std::nullopt;
+
     setPc(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
 
     break;
 }
 
 case InstructionType::JSR: {
+    current_instruction.store_absolute_value_ = std::nullopt;
+
     uint8_t hi = current_instruction.pc_hi_;
     uint8_t lo = current_instruction.pc_lo_;
 
@@ -584,16 +588,12 @@ case InstructionType::STA: {
 }
 
 case InstructionType::STX: {
-    current_instruction.store_absolute_value_ = System::get<Memory>().readAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
-
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.x);
 
     break;
 }
 
 case InstructionType::STY: {
-    current_instruction.store_absolute_value_ = System::get<Memory>().readAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_);
-
     System::get<Memory>().writeAddress(current_instruction.adjusted_lo_, current_instruction.adjusted_hi_, reg_.y);
 
     break;

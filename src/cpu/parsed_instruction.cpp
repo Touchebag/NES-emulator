@@ -87,18 +87,25 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
     adjusted_hi_ = 0x00;
 
     switch (addressing_mode_) {
-        case AddressingMode::RELATIVE:
+        case AddressingMode::RELATIVE: {
             adjusted_hi_ = pc_hi_;
 
-            adjusted_lo_ = pc_lo_ + 2 + arg1_.value();
+            uint8_t tmp_pc = pc_lo_ + 2;
+
+            if (tmp_pc < pc_lo_) {
+                // Wraparound
+                adjusted_hi_++;
+            }
+
+            adjusted_lo_ = tmp_pc + arg1_.value();
             // If relative is negative
             if (arg1_.value() & 128) {
-                if (adjusted_lo_ > pc_lo_) {
+                if (adjusted_lo_ > tmp_pc) {
                     // Underflow, carry to hi;
                     adjusted_hi_--;
                     page_cross_ = true;
                 }
-            } else if (adjusted_lo_ < pc_lo_) {
+            } else if (adjusted_lo_ < tmp_pc) {
                 // Overflow, carry to hi;
                 adjusted_hi_++;
                 page_cross_ = true;
@@ -107,6 +114,7 @@ void ParsedInstruction::calcualateAdjustedMemoryAddresses() {
             val1_ = arg1_;
 
             break;
+        }
         case AddressingMode::IMMEDIATE:
             val1_ = arg1_;
 
@@ -302,7 +310,7 @@ std::string ParsedInstruction::toString(int extra_cycles) const {
         case AddressingMode::INDIRECT_X:
             output += format("(${:02X},X) @ {:02X} = {:02X}{:02X} = {:02X}    ",
                     arg1_.value(),
-                    arg1_.value() + reg_x_,
+                    (uint8_t)(arg1_.value() + reg_x_),
                     adjusted_hi_,
                     adjusted_lo_,
                     val1_.value());
